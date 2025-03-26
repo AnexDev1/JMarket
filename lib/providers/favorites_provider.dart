@@ -1,43 +1,38 @@
+// lib/providers/favorites_provider.dart
 import 'package:flutter/foundation.dart';
 
-class FavoritesProvider extends ChangeNotifier {
+class FavoritesProvider with ChangeNotifier {
   final Set<String> _favoriteIds = {};
+  final List<Map<String, dynamic>> _favoriteItems = [];
 
-  // Getters
-  Set<String> get favoriteIds => Set.unmodifiable(_favoriteIds);
-  int get count => _favoriteIds.length;
-  bool get isEmpty => _favoriteIds.isEmpty;
+  List<Map<String, dynamic>> get favoriteItems => _favoriteItems;
+  Set<String> get favoriteIds => _favoriteIds;
 
-  // Check if a product is in favorites
   bool isFavorite(String productId) {
     return _favoriteIds.contains(productId);
   }
 
-  // Add a product to favorites
-  void addFavorite(String productId) {
-    _favoriteIds.add(productId);
-    notifyListeners();
-  }
+  void toggleFavorite(Map<String, dynamic> product) {
+    final productId = product['id'].toString();
 
-  // Remove a product from favorites
-  void removeFavorite(String productId) {
-    _favoriteIds.remove(productId);
-    notifyListeners();
-  }
-
-  // Toggle favorite status
-  void toggleFavorite(String productId) {
     if (_favoriteIds.contains(productId)) {
       _favoriteIds.remove(productId);
+      _favoriteItems.removeWhere((item) => item['id'].toString() == productId);
     } else {
       _favoriteIds.add(productId);
+      _favoriteItems.add(product);
     }
     notifyListeners();
   }
 
-  // Clear all favorites
   void clearFavorites() {
-    _favoriteIds.clear();
+    _favoriteItems.clear();
+    notifyListeners();
+  }
+
+  void removeFavorite(String productId) {
+    _favoriteIds.remove(productId);
+    _favoriteItems.removeWhere((item) => item['id'].toString() == productId);
     notifyListeners();
   }
 }

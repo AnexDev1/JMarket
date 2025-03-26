@@ -37,14 +37,15 @@ class Product {
   bool get hasSizeOptions =>
       availableSizes != null && availableSizes!.isNotEmpty;
 
-  // Create CartItem from this product
+// Create CartItem from this product
   CartItem toCartItem({String? size, int quantity = 1}) {
     return CartItem(
       productId: id,
       productName: name,
       price: discountedPrice,
       size: size,
-      imageUrl: imageUrls.isNotEmpty ? imageUrls[0] : null,
+      // Fix the null error by providing a fallback empty string
+      imageUrl: imageUrls.isNotEmpty ? imageUrls[0] : '',
       quantity: quantity,
     );
   }

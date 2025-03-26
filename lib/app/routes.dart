@@ -2,12 +2,13 @@
 import 'package:go_router/go_router.dart';
 
 import '../features/cart/cart_screen.dart';
+import '../features/cart/checkout/checkout_screen.dart';
 import '../features/favorites/favorites_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/product/product_details_screen.dart';
 import '../features/profile/create_product_screen.dart';
 import '../features/profile/profile_screen.dart';
-import '../features/search/search_screen.dart';
+import '../features/search/screens/search_screen.dart';
 import 'app.dart';
 
 class AppRoutes {
@@ -67,6 +68,10 @@ final appRouter = GoRouter(
         final productId = state.pathParameters['id']!;
         return ProductDetailsScreen(productId: productId);
       },
+    ),
+    GoRoute(
+      path: AppRoutes.checkout,
+      builder: (context, state) => const CheckoutScreen(),
     ),
   ],
 );

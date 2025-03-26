@@ -1,73 +1,161 @@
+// lib/providers/cart_provider.dart
 import 'package:flutter/foundation.dart';
 
 import '../data/models/cart_model.dart';
 
-// Import model from previous implementation
-// Assuming the Cart and CartItem models are in 'models/cart.dart'
+class CartProvider with ChangeNotifier {
+  final List<CartItem> _items = [];
 
-class CartProvider extends ChangeNotifier {
-  final Cart _cart = Cart();
+  // Maximum allowed quantity per item
+  static const int maxQuantity = 10;
 
-  // Getters to access cart properties
-  List<CartItem> get items => _cart.items;
-  int get itemCount => _cart.itemCount;
-  double get totalPrice => _cart.totalPrice;
-  bool get isEmpty => _cart.isEmpty;
+  // Get items in cart
+  List<CartItem> get items => [..._items];
 
-  // Add a product to cart
-  void addItem({
-    required String productId,
-    required String productName,
-    required double price,
-    String? size,
-    String? imageUrl,
-    int quantity = 1,
+  // Get total number of items
+  int get itemCount => _items.fold(0, (sum, item) => sum + item.quantity);
+
+  // Get total price
+  double get totalPrice => _items.fold(
+        0.0,
+        (sum, item) => sum + (item.price * item.quantity),
+      );
+
+  // Check if cart contains item
+  bool containsItem(String productId, String? size) {
+    return _items
+        .any((item) => item.productId == productId && item.size == size);
+  }
+
+  // Get specific item
+  CartItem? getItem(String productId, String? size) {
+    try {
+      return _items.firstWhere(
+        (item) => item.productId == productId && item.size == size,
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Add item to cart - supports both positional and named parameters
+  void addItem(
+    String productId,
+    String productName,
+    double price,
+    int quantity,
+    String imageUrl,
+    String? size, {
+    String? color,
   }) {
-    _cart.addItem(
-      CartItem(
-        productId: productId,
-        productName: productName,
-        price: price,
-        size: size,
-        imageUrl: imageUrl,
-        quantity: quantity,
-      ),
+    final existingItemIndex = _items.indexWhere(
+      (item) => item.productId == productId && item.size == size,
     );
+
+    if (existingItemIndex >= 0) {
+      // Update existing item quantity
+      final existingItem = _items[existingItemIndex];
+      final newQuantity = existingItem.quantity + quantity;
+
+      // Enforce maximum quantity
+      if (newQuantity <= maxQuantity) {
+        _items[existingItemIndex].quantity = newQuantity;
+      } else {
+        _items[existingItemIndex].quantity = maxQuantity;
+      }
+    } else {
+      // Add new item
+      _items.add(
+        CartItem(
+          productId: productId,
+          productName: productName,
+          price: price,
+          quantity: quantity.clamp(1, maxQuantity),
+          imageUrl: imageUrl,
+          size: size,
+          color: color,
+        ),
+      );
+    }
     notifyListeners();
   }
 
   // Remove item from cart
   void removeItem(String productId, String? size) {
-    _cart.removeItem(productId, size);
+    _items.removeWhere(
+      (item) => item.productId == productId && item.size == size,
+    );
     notifyListeners();
   }
 
-  // Increment item quantity
-  void incrementQuantity(String productId, String? size) {
-    _cart.incrementQuantity(productId, size);
+  // Increase item quantity
+  void increaseQuantity(String productId, String? size) {
+    final index = _items.indexWhere(
+      (item) => item.productId == productId && item.size == size,
+    );
+
+    if (index >= 0 && _items[index].quantity < maxQuantity) {
+      _items[index].quantity++;
+      notifyListeners();
+    }
+  }
+
+  // Decrease item quantity
+  void decreaseQuantity(String productId, String? size) {
+    final index = _items.indexWhere(
+      (item) => item.productId == productId && item.size == size,
+    );
+
+    if (index >= 0) {
+      if (_items[index].quantity > 1) {
+        _items[index].quantity--;
+      } else {
+        // Remove item if quantity becomes zero
+        _items.removeAt(index);
+      }
+      notifyListeners();
+    }
+  }
+
+  // Add this method to your CartProvider class
+  void updateItemQuantity(String productId, String? size, int quantity) {
+    if (quantity <= 0) {
+      removeItem(productId, size);
+      return;
+    }
+
+    final index = _items.indexWhere(
+      (item) => item.productId == productId && item.size == size,
+    );
+
+    if (index >= 0) {
+      _items[index].quantity = quantity.clamp(1, maxQuantity);
+      notifyListeners();
+    }
+  }
+
+  // Clear cart
+  void clear() {
+    _items.clear();
     notifyListeners();
   }
 
-  // Decrement item quantity
-  void decrementQuantity(String productId, String? size) {
-    _cart.decrementQuantity(productId, size);
+  // Save cart for later
+  void saveForLater(String productId, String? size) {
+    // Implementation for saving items for later
+    // This could store items in a separate list or database
     notifyListeners();
   }
 
-  // Update quantity directly
-  void updateQuantity(String productId, String? size, int quantity) {
-    _cart.updateQuantity(productId, size, quantity);
-    notifyListeners();
-  }
+  // Check if eligible for free shipping
+  bool get isEligibleForFreeShipping => totalPrice >= 100;
 
-  // Check if product exists in cart
-  bool containsItem(String productId, String? size) {
-    return _cart.containsItem(productId, size);
-  }
+  // Get shipping cost
+  double get shippingCost => isEligibleForFreeShipping ? 0.0 : 10.0;
 
-  // Clear the entire cart
-  void clearCart() {
-    _cart.clear();
-    notifyListeners();
-  }
+  // Get tax amount (assuming 8% tax rate)
+  double get taxAmount => totalPrice * 0.08;
+
+  // Get final total including tax and shipping
+  double get finalTotal => totalPrice + taxAmount + shippingCost;
 }

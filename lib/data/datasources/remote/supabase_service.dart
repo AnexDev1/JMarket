@@ -5,6 +5,21 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseService {
   final SupabaseClient client = Supabase.instance.client;
+// Add to SupabaseService class
+  Future<List<Map<String, dynamic>>> searchProducts(String query) async {
+    try {
+      final response = await client
+          .from('products')
+          .select()
+          .ilike('name', '%$query%')
+          .order('rating', ascending: false);
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      print('Error searching products: $e');
+      return [];
+    }
+  }
 
   Future<List<String>> uploadImages(List<File> imageFiles) async {
     List<String> imageUrls = [];

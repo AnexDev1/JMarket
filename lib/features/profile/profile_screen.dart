@@ -1,8 +1,7 @@
+// lib/features/profile/profile_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../core/theme/app_colors.dart';
-import '../../core/theme/text_styles.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -10,24 +9,35 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: const Text('My Profile'),
+        title: const Text(
+          'My Profile',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
         centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.grey.shade800,
         actions: [
           IconButton(
             icon: const Icon(Icons.edit_outlined),
             onPressed: () {
-              // Navigate to edit profile
+              HapticFeedback.lightImpact();
               context.go('/edit-profile');
             },
           ),
         ],
       ),
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
             _buildProfileHeader(),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             _buildProfileMenus(context),
           ],
         ),
@@ -38,63 +48,123 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildProfileHeader() {
     return Container(
       padding: const EdgeInsets.all(24),
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         children: [
-          // Profile Picture
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              color: AppColors.gray200,
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.gray300, width: 2),
-            ),
-            child: Center(
-              child: Icon(
-                Icons.person,
-                size: 50,
-                color: AppColors.gray500,
+          // Profile Picture with edit button
+          Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.indigo.shade400, Colors.indigo.shade700],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 4),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.person,
+                    size: 50,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-            ),
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.indigo.shade700,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+                child: const Icon(
+                  Icons.camera_alt,
+                  size: 14,
+                  color: Colors.white,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
 
           // User Name
-          Text(
+          const Text(
             'John Doe',
-            style: TextStyles.heading4,
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 4),
 
           // User Email
           Text(
             'john.doe@example.com',
-            style: TextStyles.body2.copyWith(color: AppColors.textMuted),
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade600,
+            ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
 
           // Membership Level
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: AppColors.gray100,
+              gradient: LinearGradient(
+                colors: [Colors.amber.shade300, Colors.amber.shade700],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.gray300),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.amber.withOpacity(0.3),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            child: Row(
+            child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
                   Icons.star,
                   size: 16,
-                  color: AppColors.primaryBlack,
+                  color: Colors.white,
                 ),
-                const SizedBox(width: 4),
+                SizedBox(width: 4),
                 Text(
                   'Premium Member',
-                  style:
-                      TextStyles.caption.copyWith(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),
@@ -109,17 +179,18 @@ class ProfileScreen extends StatelessWidget {
       children: [
         _buildMenuSection(
           title: 'Products',
+          icon: Icons.inventory_2_outlined,
           items: [
             ProfileMenuItem(
-              icon: Icons.add,
+              icon: Icons.add_circle_outline,
               title: 'Create Product',
               onTap: () => context.go('/create-product'),
             ),
-            // You can add more product related options here if needed.
           ],
         ),
         _buildMenuSection(
           title: 'Account',
+          icon: Icons.account_circle_outlined,
           items: [
             ProfileMenuItem(
               icon: Icons.shopping_bag_outlined,
@@ -129,6 +200,7 @@ class ProfileScreen extends StatelessWidget {
             ProfileMenuItem(
               icon: Icons.card_giftcard_outlined,
               title: 'My Rewards',
+              badge: '3',
               onTap: () => context.go('/rewards'),
             ),
             ProfileMenuItem(
@@ -143,9 +215,9 @@ class ProfileScreen extends StatelessWidget {
             ),
           ],
         ),
-
         _buildMenuSection(
           title: 'Preferences',
+          icon: Icons.settings_outlined,
           items: [
             ProfileMenuItem(
               icon: Icons.notifications_outlined,
@@ -163,16 +235,18 @@ class ProfileScreen extends StatelessWidget {
               title: 'Dark Mode',
               trailing: Switch(
                 value: Theme.of(context).brightness == Brightness.dark,
+                activeColor: Colors.indigo.shade700,
                 onChanged: (value) {
                   // Toggle theme
+                  HapticFeedback.lightImpact();
                 },
               ),
             ),
           ],
         ),
-
         _buildMenuSection(
           title: 'Support',
+          icon: Icons.help_outline,
           items: [
             ProfileMenuItem(
               icon: Icons.help_outline,
@@ -193,10 +267,10 @@ class ProfileScreen extends StatelessWidget {
         ),
 
         Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
           child: ElevatedButton(
             onPressed: () {
-              // Logout functionality
+              HapticFeedback.mediumImpact();
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
@@ -205,24 +279,39 @@ class ProfileScreen extends StatelessWidget {
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
+                      child: const Text('CANCEL'),
                     ),
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);
                         context.go('/login');
                       },
-                      child: const Text('Sign Out'),
+                      child: const Text('SIGN OUT'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.red.shade600,
+                      ),
                     ),
                   ],
                 ),
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.error.withOpacity(0.1),
-              foregroundColor: AppColors.error,
+              backgroundColor: Colors.red.shade50,
+              foregroundColor: Colors.red.shade600,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              minimumSize: const Size(double.infinity, 0),
             ),
-            child: const Text('Sign Out'),
+            child: const Text(
+              'SIGN OUT',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
 
@@ -231,7 +320,10 @@ class ProfileScreen extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 24.0),
           child: Text(
             'Version 1.0.0',
-            style: TextStyles.caption.copyWith(color: AppColors.textMuted),
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey.shade500,
+            ),
           ),
         ),
       ],
@@ -241,25 +333,44 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildMenuSection({
     required String title,
     required List<ProfileMenuItem> items,
+    required IconData icon,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Text(
-            title,
-            style: TextStyles.body1.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppColors.gray700,
-            ),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                size: 18,
+                color: Colors.indigo.shade700,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade800,
+                ),
+              ),
+            ],
           ),
         ),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: AppColors.gray100,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: ListView.separated(
             physics: const NeverScrollableScrollPhysics(),
@@ -267,7 +378,8 @@ class ProfileScreen extends StatelessWidget {
             itemCount: items.length,
             separatorBuilder: (context, index) => Divider(
               height: 1,
-              color: AppColors.gray300,
+              thickness: 0.5,
+              color: Colors.grey.shade200,
               indent: 56,
             ),
             itemBuilder: (context, index) => items[index],
@@ -282,6 +394,7 @@ class ProfileMenuItem extends StatelessWidget {
   final IconData icon;
   final String title;
   final String? subtitle;
+  final String? badge;
   final Widget? trailing;
   final VoidCallback? onTap;
 
@@ -290,34 +403,82 @@ class ProfileMenuItem extends StatelessWidget {
     required this.icon,
     required this.title,
     this.subtitle,
+    this.badge,
     this.trailing,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(
-        icon,
-        color: AppColors.gray700,
-      ),
-      title: Text(
-        title,
-        style: TextStyles.body1,
-      ),
-      subtitle: subtitle != null
-          ? Text(
-              subtitle!,
-              style: TextStyles.caption.copyWith(color: AppColors.textMuted),
-            )
-          : null,
-      trailing: trailing ??
-          const Icon(
-            Icons.arrow_forward_ios,
-            size: 16,
-            color: AppColors.gray500,
+    return InkWell(
+      onTap: () {
+        if (onTap != null) {
+          HapticFeedback.lightImpact();
+          onTap!();
+        }
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: ListTile(
+          leading: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.indigo.shade50,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              color: Colors.indigo.shade700,
+              size: 20,
+            ),
           ),
-      onTap: onTap,
+          title: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          subtitle: subtitle != null
+              ? Text(
+                  subtitle!,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey.shade600,
+                  ),
+                )
+              : null,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (badge != null)
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.indigo.shade700,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    badge!,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              const SizedBox(width: 8),
+              trailing ??
+                  Icon(
+                    Icons.chevron_right,
+                    size: 20,
+                    color: Colors.grey.shade500,
+                  ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
