@@ -1,7 +1,10 @@
 // lib/app/app.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jmarket/providers/language_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
@@ -13,10 +16,18 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(
-      builder: (context, themeProvider, _) {
+    return Consumer2<ThemeProvider, LanguageProvider>(
+      builder: (context, themeProvider, languageProvider, _) {
         return MaterialApp.router(
           title: 'JMarket',
+          locale: languageProvider.locale,
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
           debugShowCheckedModeBanner: false,
           themeMode: themeProvider.themeMode,
           theme: _buildLightTheme(),
@@ -147,7 +158,7 @@ class App extends StatelessWidget {
         elevation: 8,
         backgroundColor: const Color(0xFF1E1E1E),
         indicatorColor: Colors.indigo.shade900,
-        labelTextStyle: MaterialStateProperty.all(
+        labelTextStyle: WidgetStateProperty.all(
           const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
@@ -310,7 +321,7 @@ class _MainScreenState extends State<MainScreen>
               Icons.home,
               color: Colors.indigo.shade700,
             ),
-            label: 'Home',
+            label: AppLocalizations.of(context)!.home,
           ),
           NavigationDestination(
             icon: Icon(
@@ -321,7 +332,7 @@ class _MainScreenState extends State<MainScreen>
               Icons.search,
               color: Colors.indigo.shade700,
             ),
-            label: 'Search',
+            label: AppLocalizations.of(context)!.search,
           ),
           NavigationDestination(
             icon: Icon(
@@ -332,7 +343,7 @@ class _MainScreenState extends State<MainScreen>
               Icons.shopping_cart,
               color: Colors.indigo.shade700,
             ),
-            label: 'Cart',
+            label: AppLocalizations.of(context)!.cart,
           ),
           NavigationDestination(
             icon: Icon(
@@ -343,7 +354,7 @@ class _MainScreenState extends State<MainScreen>
               Icons.favorite,
               color: Colors.indigo.shade700,
             ),
-            label: 'Favorites',
+            label: AppLocalizations.of(context)!.favorites,
           ),
           if (isAuthenticated)
             NavigationDestination(
@@ -355,7 +366,7 @@ class _MainScreenState extends State<MainScreen>
                 Icons.person,
                 color: Colors.indigo.shade700,
               ),
-              label: 'Profile',
+              label: AppLocalizations.of(context)!.profile,
             ),
         ],
       ),

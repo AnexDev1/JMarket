@@ -1,6 +1,6 @@
-// lib/features/cart/components/cart_summary.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../providers/cart_provider.dart';
@@ -15,6 +15,7 @@ class CartSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     final double subtotal = cartProvider.totalPrice;
     final double shipping = subtotal > 100 ? 0.0 : 10.0;
     final double tax = subtotal * 0.08;
@@ -39,38 +40,38 @@ class CartSummary extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildSummaryHeader(),
+          _buildSummaryHeader(context),
           const SizedBox(height: 20),
-          _buildSummaryRow('Subtotal', subtotal),
+          _buildSummaryRow(context, localizations.subtotal, subtotal),
           const SizedBox(height: 12),
-          _buildSummaryRow('Shipping', shipping,
-              note:
-                  shipping == 0 ? 'Free shipping on orders over \$100' : null),
+          _buildSummaryRow(context, localizations.shipping, shipping,
+              note: shipping == 0 ? localizations.freeShippingOver : null),
           const SizedBox(height: 12),
-          _buildSummaryRow('Tax (8%)', tax),
+          _buildSummaryRow(context, localizations.tax, tax),
           _buildDivider(),
-          _buildSummaryRow('Total', total, isTotal: true),
+          _buildSummaryRow(context, localizations.total, total, isTotal: true),
           const SizedBox(height: 24),
           _buildCheckoutButton(context, total),
-          _buildPaymentOptions(),
+          _buildPaymentOptions(context),
         ],
       ),
     );
   }
 
-  Widget _buildSummaryHeader() {
+  Widget _buildSummaryHeader(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Row(
       children: [
-        const Text(
-          'Order Summary',
-          style: TextStyle(
+        Text(
+          localizations.orderSummary,
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
         const Spacer(),
         Text(
-          '${cartProvider.itemCount} items',
+          localizations.itemsCount(cartProvider.itemCount),
           style: TextStyle(
             fontSize: 14,
             color: Colors.grey.shade600,
@@ -80,7 +81,7 @@ class CartSummary extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryRow(String label, double amount,
+  Widget _buildSummaryRow(BuildContext context, String label, double amount,
       {bool isTotal = false, String? note}) {
     return Row(
       children: [
@@ -109,7 +110,9 @@ class CartSummary extends StatelessWidget {
         ),
         const Spacer(),
         Text(
-          amount == 0 ? 'FREE' : '\$${amount.toStringAsFixed(2)}',
+          amount == 0
+              ? AppLocalizations.of(context)!.free
+              : '\$${amount.toStringAsFixed(2)}',
           style: TextStyle(
             fontSize: isTotal ? 18 : 14,
             fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
@@ -131,13 +134,11 @@ class CartSummary extends StatelessWidget {
   }
 
   Widget _buildCheckoutButton(BuildContext context, double total) {
+    final localizations = AppLocalizations.of(context)!;
     return SizedBox(
       width: double.infinity,
       height: 54,
-      child: // lib/features/cart/components/cart_summary.dart
-// In the build method, update the checkout button:
-
-          ElevatedButton(
+      child: ElevatedButton(
         onPressed: () {
           HapticFeedback.mediumImpact();
           context.push('/checkout');
@@ -149,9 +150,9 @@ class CartSummary extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        child: const Text(
-          'PROCEED TO CHECKOUT',
-          style: TextStyle(
+        child: Text(
+          localizations.proceedToCheckout,
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
@@ -160,15 +161,16 @@ class CartSummary extends StatelessWidget {
     );
   }
 
-  Widget _buildPaymentOptions() {
+  Widget _buildPaymentOptions(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            'Secure payment with',
-            style: TextStyle(
+          Text(
+            localizations.securePaymentWith,
+            style: const TextStyle(
               fontSize: 12,
               color: Colors.grey,
             ),

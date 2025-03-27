@@ -1,5 +1,6 @@
 // lib/features/favorites/components/empty_favorites.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/text_styles.dart';
@@ -9,6 +10,8 @@ class EmptyFavorites extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -28,7 +31,7 @@ class EmptyFavorites extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            'No Favorites Yet',
+            localizations.noFavoritesYet,
             style: TextStyles.heading4.copyWith(
               color: Colors.grey.shade800,
               fontSize: 24,
@@ -38,7 +41,7 @@ class EmptyFavorites extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Text(
-              'Save your favorite items to come back to them later',
+              localizations.startBrowsing,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
@@ -59,9 +62,9 @@ class EmptyFavorites extends StatelessWidget {
               ),
               elevation: 0,
             ),
-            child: const Text(
-              'Explore Products',
-              style: TextStyle(
+            child: Text(
+              localizations.products, // This uses the existing "products" key
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),

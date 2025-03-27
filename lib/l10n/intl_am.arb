@@ -1,0 +1,582 @@
+{
+  "@@locale": "am",
+
+  "appTitle": "ጄማርኬት",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+
+  "home": "መነሻ",
+  "@home": {
+    "description": "Navigation label for home screen"
+  },
+  "search": "ፍለጋ",
+  "@search": {
+    "description": "Navigation label for search screen"
+  },
+  "cart": "ጋሪ",
+  "@cart": {
+    "description": "Navigation label for shopping cart"
+  },
+
+  "favorites": "ምርጦች",
+  "@favorites": {
+    "description": "Navigation label for favorites screen"
+  },
+  "profile": "መገለጫ",
+  "@profile": {
+    "description": "Navigation label for profile screen"
+  },
+  "myFavorites": "የምወዳቸው",
+  "@myFavorites": {
+    "description": "Title for favorites screen"
+  },
+  "clearFavorites": "የምወዳቸውን አጥፋ",
+  "@clearFavorites": {
+    "description": "Title for clear favorites dialog"
+  },
+  "clearFavoritesConfirmation": "ሁሉንም የምወዳቸውን ማጥፋት ትፈልጋለህ/ሽ?",
+  "@clearFavoritesConfirmation": {
+    "description": "Confirmation message for clearing favorites"
+  },
+  "clear": "አጥፋ",
+  "@clear": {
+    "description": "Label for clear button"
+  },
+  "allFavoritesCleared": "ሁሉም የምወዳቸው ጠፍተዋል",
+  "@allFavoritesCleared": {
+    "description": "Message shown when all favorites are cleared"
+  },
+  "noFavoritesYet": "እስካሁን የምትወዳቸው የሉም",
+  "@noFavoritesYet": {
+    "description": "Text shown when favorites list is empty"
+  },
+  "startBrowsing": "መፈለግ ጀምር እና የምትወዳቸውን አክል",
+  "@startBrowsing": {
+    "description": "Suggestion text shown on empty favorites screen"
+  },
+  "removedFromFavorites": "ከምወዳቸው ተወግዷል",
+  "@removedFromFavorites": {
+    "description": "Text shown when an item is removed from favorites"
+  },
+  "off": "ቅናሽ",
+  "@off": {
+    "description": "Text displayed after discount percentage"
+  },
+  "searchResultsFor": "ለ \"{query}\" የፍለጋ ውጤቶች",
+  "@searchResultsFor": {
+    "description": "Title for search results",
+    "placeholders": {
+      "query": {
+        "type": "String",
+        "example": "shoes"
+      }
+    }
+  },
+  "noProductsFound": "ምንም ምርቶች አልተገኙም",
+  "@noProductsFound": {
+    "description": "Message when no products are found"
+  },
+  "tryDifferentSearchTerm": "የተለየ የፍለጋ ቃል ይሞክሩ",
+  "@tryDifferentSearchTerm": {
+    "description": "Suggestion when search returns no results"
+  },
+  "categories": "ምድቦች",
+  "@categories": {
+    "description": "Title for categories section"
+  },
+  "viewAll": "ሁሉንም ይመልከቱ",
+  "@viewAll": {
+    "description": "Label for view all button"
+  },
+  "popularProducts": "ታዋቂ ምርቶች",
+  "@popularProducts": {
+    "description": "Title for popular products section"
+  },
+
+  "discountPercent": "-{percent}%",
+  "@discountPercent": {
+    "description": "Label for discount percentage",
+    "placeholders": {
+      "percent": {
+        "type": "num",
+        "format": "compact",
+        "example": "20"
+      }
+    }
+  },
+  "yourShoppingCart": "የግዢ ቅርጫትዎ",
+  "@yourShoppingCart": {
+    "description": "Title for shopping cart screen"
+  },
+  "clearCart": "ቅርጫትን አጽዳ",
+  "@clearCart": {
+    "description": "Title for clear cart dialog"
+  },
+  "clearCartConfirmation": "ሁሉንም እቃዎች ማስወገድ እርግጠኛ ነዎት?",
+  "@clearCartConfirmation": {
+    "description": "Confirmation message for clearing cart"
+  },
+  "cartCleared": "ቅርጫት ተጽድቷል",
+  "@cartCleared": {
+    "description": "Message shown when cart is cleared"
+  },
+  "cartIsEmpty": "የእርስዎ ቅርጫት ባዶ ነው",
+  "@cartIsEmpty": {
+    "description": "Title shown when cart has no items"
+  },
+  "cartIsEmptyMessage": "ገና ምንም ነገር ወደ ቅርጫትዎ አልጨመሩም ይመስላል",
+  "@cartIsEmptyMessage": {
+    "description": "Message shown when cart has no items"
+  },
+  "exploreProducts": "ምርቶችን ይመልከቱ",
+  "@exploreProducts": {
+    "description": "Button text to explore products"
+  },
+  "searchProducts": "ምርቶችን ይፈልጉ...",
+  "@searchProducts": {
+    "description": "Placeholder text for search bar"
+  },
+  "loadingProducts": "ምርቶችን በመጫን ላይ...",
+  "@loadingProducts": {
+    "description": "Text shown when products are loading"
+  },
+  "errorLoadingProducts": "ምርቶችን መጫን ላይ ስህተት",
+  "@errorLoadingProducts": {
+    "description": "Text shown when there is an error loading products"
+  },
+  "pullToRefresh": "ለማደስ ይሳቡ",
+  "@pullToRefresh": {
+    "description": "Hint for users to refresh content"
+  },
+  "noProductsAvailable": "ምንም ምርቶች አልተገኙም",
+  "@noProductsAvailable": {
+    "description": "Text shown when no products are available"
+  },
+  "loadingProductDetails": "የምርት ዝርዝሮችን በመጫን ላይ...",
+  "@loadingProductDetails": {
+    "description": "Text shown when product details are loading"
+  },
+  "errorLoadingProduct": "ምርቱን መጫን አልተቻለም",
+  "@errorLoadingProduct": {
+    "description": "Text shown when there is an error loading product"
+  },
+  "tryAgain": "እንደገና ሞክር",
+  "@tryAgain": {
+    "description": "Button text to retry an action"
+  },
+  "addedToFavorites": "ወደ ተወዳጆች ተጨምሯል",
+  "@addedToFavorites": {
+    "description": "Message when product is added to favorites"
+  },
+  "removedFromFavorites": "ከተወዳጆች ተወግዷል",
+  "@removedFromFavorites": {
+    "description": "Message when product is removed from favorites"
+  },
+  "shareFunctionality": "አጋራ ተግባራዊነት",
+  "@shareFunctionality": {
+    "description": "Message about share functionality"
+  },
+  "productDetails": "የምርት ዝርዝሮች",
+  "@productDetails": {
+    "description": "Title for product details screen"
+  },
+  "noName": "ስም የለም",
+  "@noName": {
+    "description": "Default text when product has no name"
+  },
+  "reviewsCount": "({count} ግምገማዎች)",
+  "@reviewsCount": {
+    "description": "Text showing review count",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "42"
+      }
+    }
+  },
+  "selectSize": "መጠን ይምረጡ",
+  "@selectSize": {
+    "description": "Label for size selection"
+  },
+  "description": "መግለጫ",
+  "@description": {
+    "description": "Title for description section"
+  },
+  "seeMore": "ተጨማሪ ይታዩ",
+  "@seeMore": {
+    "description": "Button text for loading more results"
+  },
+  "noDescriptionAvailable": "መግለጫ አልተገኘም",
+  "@noDescriptionAvailable": {
+    "description": "Text when no product description is available"
+  },
+  "keyFeatures": "ዋና ዋና ባህሪያት",
+  "@keyFeatures": {
+    "description": "Title for key features section"
+  },
+  "youMayAlsoLike": "እንዲሁም ሊወዱ ይችላሉ",
+  "@youMayAlsoLike": {
+    "description": "Title for related products section"
+  },
+  "addToCartWithPrice": "ወደ ጋሪ አክል | ${price}",
+  "@addToCartWithPrice": {
+    "description": "Button text for adding to cart with price",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$19.99"
+      }
+    }
+  },
+  "addedToCart": "{productName} ወደ ጋሪ ተጨምሯል",
+  "@addedToCart": {
+    "description": "Message when product is added to cart",
+    "placeholders": {
+      "productName": {
+        "type": "String",
+        "example": "T-shirt"
+      }
+    }
+  },
+  "viewCart": "ጋሪን አሳይ",
+  "@viewCart": {
+    "description": "Button text to view cart"
+  },
+  "itemsCount": "{count} እቃዎች",
+  "@itemsCount": {
+    "description": "Text showing number of items in cart",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "subtotal": "ንዑስ ድምር",
+  "@subtotal": {
+    "description": "Label for subtotal amount"
+  },
+  "shipping": "መላኪያ",
+  "@shipping": {
+    "description": "Label for shipping cost"
+  },
+  "freeShippingOver": "ከ$100 በላይ ለሆኑ ትዕዛዞች ነፃ መላኪያ",
+  "@freeShippingOver": {
+    "description": "Text explaining free shipping policy"
+  },
+  "tax": "ግብር (8%)",
+  "@tax": {
+    "description": "Label for tax amount"
+  },
+  "total": "ጠቅላላ",
+  "@total": {
+    "description": "Label for total amount"
+  },
+  "free": "ነፃ",
+  "@free": {
+    "description": "Text shown when something costs nothing"
+  },
+  "checkout": "ክፍያ",
+  "@checkout": {
+    "description": "Title for checkout screen"
+  },
+  "userNotAuthenticated": "ተጠቃሚ አልተረጋገጠም",
+  "@userNotAuthenticated": {
+    "description": "Error message when user is not logged in"
+  },
+  "orderPlacedSuccessfully": "ትዕዛዝዎ በተሳካ ሁኔታ ተሰጥቷል!",
+  "@orderPlacedSuccessfully": {
+    "description": "Success message when order is placed"
+  },
+  "orderPlacementFailed": "ትዕዛዝ አልተሳካም። እባክዎን እንደገና ይሞክሩ።",
+  "@orderPlacementFailed": {
+    "description": "Error message when order placement fails"
+  },
+  "errorWithMessage": "ስህተት: {message}",
+  "@errorWithMessage": {
+    "description": "Error message with details",
+    "placeholders": {
+      "message": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+  "shipping": "መላኪያ",
+  "@shipping": {
+    "description": "Title for shipping step"
+  },
+  "payment": "ክፍያ",
+  "@payment": {
+    "description": "Title for payment step"
+  },
+  "confirm": "አረጋግጥ",
+  "@confirm": {
+    "description": "Title for confirmation step"
+  },
+  "back": "ተመለስ",
+  "@back": {
+    "description": "Label for back button"
+  },
+  "continue_": "ቀጥል",
+  "@continue_": {
+    "description": "Label for continue button"
+  },
+  "reviewOrder": "ትዕዛዝን ገምግም",
+  "@reviewOrder": {
+    "description": "Label for review order button"
+  },
+  "placeOrder": "ትዕዛዝ ያስቀምጡ",
+  "@placeOrder": {
+    "description": "Label for place order button"
+  },
+  "shippingInformation": "የመላኪያ መረጃ",
+  "@shippingInformation": {
+    "description": "Title for shipping information section"
+  },
+  "fullName": "ሙሉ ስም",
+  "@fullName": {
+    "description": "Label for full name field"
+  },
+  "enterFullName": "ሙሉ ስምዎን ያስገቡ",
+  "@enterFullName": {
+    "description": "Hint for full name field"
+  },
+  "pleaseEnterName": "እባክዎ ስምዎን ያስገቡ",
+  "@pleaseEnterName": {
+    "description": "Validation message for empty name"
+  },
+  "nameTooShort": "ስም ቢያንስ 3 ቁምፊዎች መሆን አለበት",
+  "@nameTooShort": {
+    "description": "Validation message for short name"
+  },
+  "streetAddress": "የጎዳና አድራሻ",
+  "@streetAddress": {
+    "description": "Label for street address field"
+  },
+  "enterStreetAddress": "የጎዳና አድራሻዎን ያስገቡ",
+  "@enterStreetAddress": {
+    "description": "Hint for street address field"
+  },
+  "pleaseEnterAddress": "እባክዎ አድራሻዎን ያስገቡ",
+  "@pleaseEnterAddress": {
+    "description": "Validation message for empty address"
+  },
+  "addressTooShort": "አድራሻው በጣም አጭር ነው",
+  "@addressTooShort": {
+    "description": "Validation message for short address"
+  },
+  "phoneNumber": "ስልክ ቁጥር",
+  "@phoneNumber": {
+    "description": "Label for phone number field"
+  },
+  "enterPhoneNumber": "ስልክ ቁጥር ያስገቡ",
+  "@enterPhoneNumber": {
+    "description": "Hint for phone number field"
+  },
+  "invalidPhoneNumber": "የማይሰራ ስልክ ቁጥር",
+  "@invalidPhoneNumber": {
+    "description": "Validation message for invalid phone number"
+  },
+  "informationSecureNote": "መረጃዎ ደህንነቱ የተጠበቀ ነው እና ለትዕዛዝ አፈፃፀም ብቻ ጥቅም ላይ ይውላል።",
+  "@informationSecureNote": {
+    "description": "Privacy note about user information"
+  },
+  "paymentMethod": "የክፍያ ዘዴ",
+  "@paymentMethod": {
+    "description": "Title for payment method selection"
+  },
+  "selectPaymentMethodPrompt": "እባክዎ ለመቀጠል የክፍያ ዘዴን ይምረጡ",
+  "@selectPaymentMethodPrompt": {
+    "description": "Prompt to select a payment method"
+  },
+  "cashOnDelivery": "በመገኘት ጊዜ ክፍያ",
+  "@cashOnDelivery": {
+    "description": "Title for cash on delivery payment option"
+  },
+  "payOnDeliveryDescription": "ትዕዛዝዎን ሲቀበሉ ይክፈሉ",
+  "@payOnDeliveryDescription": {
+    "description": "Description for cash on delivery payment option"
+  },
+  "payWithChapa": "በቻፓ ይክፈሉ",
+  "@payWithChapa": {
+    "description": "Title for Chapa payment option"
+  },
+  "chapaPaymentDescription": "ቻፓን በመጠቀም ደህንነቱ የተጠበ��� ክፍያ",
+  "@chapaPaymentDescription": {
+    "description": "Description for Chapa payment option"
+  },
+  "paymentSecurityMessage": "ሁሉም ክፍያዎች ደህንነታቸው የተጠበቁ እና የተመሰጠሩ ናቸው። የክፍያ መረጃዎን በፍጹም አናከማቸውም��",
+  "@paymentSecurityMessage": {
+    "description": "Message about payment security"
+  },
+  "orderSummary": "የትዕዛዝ ማጠቃለያ",
+  "@orderSummary": {
+    "description": "Title for the order summary section"
+  },
+  "shippingInformation": "የመላኪያ መረጃ",
+  "@shippingInformation": {
+    "description": "Title for shipping information section"
+  },
+  "paymentMethod": "የክፍያ ዘዴ",
+  "@paymentMethod": {
+    "description": "Title for payment method section"
+  },
+  "orderItems": "የትዕዛዝ እቃዎች ({count})",
+  "@orderItems": {
+    "description": "Title for order items section with count",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "priceDetails": "የዋጋ ዝርዝሮች",
+  "@priceDetails": {
+    "description": "Title for price details section"
+  },
+  "estimatedDelivery": "የሚጠበቅ አቅርቦት",
+  "@estimatedDelivery": {
+    "description": "Title for estimated delivery section"
+  },
+  "unknownProduct": "የማይታወቅ ምርት",
+  "@unknownProduct": {
+    "description": "Text for products with no name"
+  },
+  "size": "መጠን: {size}",
+  "@size": {
+    "description": "Label for product size",
+    "placeholders": {
+      "size": {
+        "type": "String",
+        "example": "M"
+      }
+    }
+  },
+  "quantity": "ብዛት: {count}",
+  "@quantity": {
+    "description": "Label for product quantity",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "unknown": "የማይታወቅ",
+  "@unknown": {
+    "description": "Text for unknown items"
+  },
+  "proceedToCheckout": "ወደ ክፍያ ይሂዱ",
+  "@proceedToCheckout": {
+    "description": "Label for checkout button"
+  },
+  "securePaymentWith": "ደህንነቱ የተጠበቀ ክፍያ በ",
+  "@securePaymentWith": {
+    "description": "Text for payment methods section"
+  },
+  "addToCart": "ወደ ጋሪ አክል",
+  "@addToCart": {
+    "description": "Text for add to cart button"
+  },
+  "language": "ቋንቋ",
+  "@language": {
+    "description": "Label for language selection"
+  },
+  "darkMode": "ጨለማ ሁነታ",
+  "@darkMode": {
+    "description": "Label for dark mode toggle"
+  },
+  "signOut": "ውጣ",
+  "@signOut": {
+    "description": "Label for sign out button"
+  },
+  "signOutConfirmation": "እርግጠኛ ነህ/ሽ መውጣት ትፈልጋለህ/ሽ?",
+  "@signOutConfirmation": {
+    "description": "Confirmation message for sign out"
+  },
+  "cancel": "ሰርዝ",
+  "@cancel": {
+    "description": "Label for cancel button"
+  },
+
+  "products": "ምርቶች",
+  "@products": {
+    "description": "Section title for products"
+  },
+  "createProduct": "ምርት ፍጠር",
+  "@createProduct": {
+    "description": "Label for create product button"
+  },
+
+  "account": "መለያ",
+  "@account": {
+    "description": "Section title for account"
+  },
+  "myOrders": "ትዕዛዞቼ",
+  "@myOrders": {
+    "description": "Label for orders screen"
+  },
+  "myRewards": "ሽልማቶቼ",
+  "@myRewards": {
+    "description": "Label for rewards screen"
+  },
+  "shippingAddresses": "የመላኪያ አድራሻዎች",
+  "@shippingAddresses": {
+    "description": "Label for shipping addresses screen"
+  },
+  "paymentMethods": "የመክፈያ ዘዴዎች",
+  "@paymentMethods": {
+    "description": "Label for payment methods screen"
+  },
+
+  "preferences": "ምርጫዎች",
+  "@preferences": {
+    "description": "Section title for preferences"
+  },
+  "notifications": "ማሳወቂያዎች",
+  "@notifications": {
+    "description": "Label for notifications settings"
+  },
+
+  "support": "ድጋፍ",
+  "@support": {
+    "description": "Section title for support"
+  },
+  "helpCenter": "የእርዳታ ማዕከል",
+  "@helpCenter": {
+    "description": "Label for help center"
+  },
+  "aboutUs": "ስለኛ",
+  "@aboutUs": {
+    "description": "Label for about us screen"
+  },
+  "privacyPolicy": "የግላዊነት ፖሊሲ",
+  "@privacyPolicy": {
+    "description": "Label for privacy policy screen"
+  },
+
+  "version": "ቅጂ {version}",
+  "@version": {
+    "description": "App version text",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
+
+  "errorSigningOut": "ውጪ መግባት ላይ ስህተት፡ {error}",
+  "@errorSigningOut": {
+    "description": "Error message when signing out fails",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 // lib/features/favorites/components/favorite_item_card.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -45,27 +46,31 @@ class FavoriteItemCard extends StatelessWidget {
   }
 
   Widget _buildProductImage() {
-    return Stack(
-      children: [
-        Container(
-          height: 150,
-          width: double.infinity,
-          color: Colors.grey.shade100,
-          child: _getProductImage(),
-        ),
-        Positioned(
-          top: 8,
-          right: 8,
-          child: _buildFavoriteButton(),
-        ),
-        if (item['discount'] != null && item['discount'] > 0)
+    return Builder(builder: (context) {
+      final localizations = AppLocalizations.of(context)!;
+
+      return Stack(
+        children: [
+          Container(
+            height: 150,
+            width: double.infinity,
+            color: Colors.grey.shade100,
+            child: _getProductImage(),
+          ),
           Positioned(
             top: 8,
-            left: 8,
-            child: _buildDiscountBadge(),
+            right: 8,
+            child: _buildFavoriteButton(),
           ),
-      ],
-    );
+          if (item['discount'] != null && item['discount'] > 0)
+            Positioned(
+              top: 8,
+              left: 8,
+              child: _buildDiscountBadge(localizations),
+            ),
+        ],
+      );
+    });
   }
 
   Widget _getProductImage() {
@@ -98,6 +103,8 @@ class FavoriteItemCard extends StatelessWidget {
 
   Widget _buildFavoriteButton() {
     return Builder(builder: (context) {
+      final localizations = AppLocalizations.of(context)!;
+
       return Material(
         elevation: 2,
         color: Colors.white,
@@ -113,7 +120,8 @@ class FavoriteItemCard extends StatelessWidget {
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('${item['name']} removed from favorites'),
+                content: Text(
+                    '${item['name']} ${localizations.removedFromFavorites}'),
                 behavior: SnackBarBehavior.floating,
                 duration: const Duration(seconds: 2),
               ),
@@ -132,7 +140,7 @@ class FavoriteItemCard extends StatelessWidget {
     });
   }
 
-  Widget _buildDiscountBadge() {
+  Widget _buildDiscountBadge(AppLocalizations localizations) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -140,7 +148,7 @@ class FavoriteItemCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        '${item['discount']}% OFF',
+        '${item['discount']}% ${localizations.off}',
         style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
@@ -149,61 +157,61 @@ class FavoriteItemCard extends StatelessWidget {
       ),
     );
   }
-// lib/features/favorites/components/favorite_item_card.dart
 
-// Inside _buildProductDetails method, adjust the spacing and layout:
   Widget _buildProductDetails(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(10.0), // Reduced padding
+        padding: const EdgeInsets.all(10.0),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Make column use minimum space
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              item['name'] ?? 'Unknown Product',
+              item['name'] ?? localizations.unknownProduct,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 14, // Smaller font size
+                fontSize: 14,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 4), // Reduced spacing
+            const SizedBox(height: 4),
             _buildPriceRow(),
-            const SizedBox(height: 4), // Reduced spacing
+            const SizedBox(height: 4),
             _buildRating(),
             const Spacer(),
-            _buildAddToCartButton(context),
+            _buildAddToCartButton(context, localizations),
           ],
         ),
       ),
     );
   }
 
-// Make the button more compact:
-  Widget _buildAddToCartButton(BuildContext context) {
+  Widget _buildAddToCartButton(
+      BuildContext context, AppLocalizations localizations) {
     return SizedBox(
       width: double.infinity,
-      height: 36, // Fixed height for button
+      height: 36,
       child: ElevatedButton(
         onPressed: () {
-          // Same implementation...
+          // Implementation...
         },
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
           backgroundColor: Colors.indigo.shade700,
-          padding: const EdgeInsets.symmetric(vertical: 8), // Reduced padding
+          padding: const EdgeInsets.symmetric(vertical: 8),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
           elevation: 0,
         ),
-        child: const Text(
-          'Add to Cart',
-          style: TextStyle(
+        child: Text(
+          localizations.addToCart,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 13, // Smaller font
+            fontSize: 13,
           ),
         ),
       ),

@@ -1,0 +1,128 @@
+{
+  "@@locale": "om",
+
+  "appTitle": "JMarket",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+
+  "home": "Mana",
+  "@home": {
+    "description": "Navigation label for home screen"
+  },
+  "search": "Barbaadi",
+  "@search": {
+    "description": "Navigation label for search screen"
+  },
+  "cart": "Gabbata",
+  "@cart": {
+    "description": "Navigation label for shopping cart"
+  },
+  "favorites": "Jaallatamoo",
+  "@favorites": {
+    "description": "Navigation label for favorites screen"
+  },
+  "profile": "Profaayilii",
+  "@profile": {
+    "description": "Navigation label for profile screen"
+  },
+
+  "language": "Afaan",
+  "@language": {
+    "description": "Label for language selection"
+  },
+  "darkMode": "Mooda Dukkana",
+  "@darkMode": {
+    "description": "Label for dark mode toggle"
+  },
+  "signOut": "Ba'i",
+  "@signOut": {
+    "description": "Label for sign out button"
+  },
+  "signOutConfirmation": "Dhugumaan bahuu barbaaddaa?",
+  "@signOutConfirmation": {
+    "description": "Confirmation message for sign out"
+  },
+  "cancel": "Haqi",
+  "@cancel": {
+    "description": "Label for cancel button"
+  },
+
+  "products": "Oomishaalee",
+  "@products": {
+    "description": "Section title for products"
+  },
+  "createProduct": "Oomisha Uumi",
+  "@createProduct": {
+    "description": "Label for create product button"
+  },
+
+  "account": "Herrega",
+  "@account": {
+    "description": "Section title for account"
+  },
+  "myOrders": "Ajajawwan Koo",
+  "@myOrders": {
+    "description": "Label for orders screen"
+  },
+  "myRewards": "Badhaasa Koo",
+  "@myRewards": {
+    "description": "Label for rewards screen"
+  },
+  "shippingAddresses": "Teessoo Ergaa",
+  "@shippingAddresses": {
+    "description": "Label for shipping addresses screen"
+  },
+  "paymentMethods": "Mala Kaffaltii",
+  "@paymentMethods": {
+    "description": "Label for payment methods screen"
+  },
+
+  "preferences": "Filannoo",
+  "@preferences": {
+    "description": "Section title for preferences"
+  },
+  "notifications": "Beeksisaa",
+  "@notifications": {
+    "description": "Label for notifications settings"
+  },
+
+  "support": "Gargaarsa",
+  "@support": {
+    "description": "Section title for support"
+  },
+  "helpCenter": "Wiirtuu Gargaarsaa",
+  "@helpCenter": {
+    "description": "Label for help center"
+  },
+  "aboutUs": "Waa'ee Keenya",
+  "@aboutUs": {
+    "description": "Label for about us screen"
+  },
+  "privacyPolicy": "Imaammata Dhuunfaa",
+  "@privacyPolicy": {
+    "description": "Label for privacy policy screen"
+  },
+
+  "version": "Sagantaa {version}",
+  "@version": {
+    "description": "App version text",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
+
+  "errorSigningOut": "Bahuu keessatti dogoggora: {error}",
+  "@errorSigningOut": {
+    "description": "Error message when signing out fails",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
-// lib/features/checkout/checkout_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -73,8 +73,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     setState(() => paymentMethod = method);
   }
 
-  // lib/features/checkout/checkout_screen.dart
   Future<void> _placeOrder() async {
+    final localizations = AppLocalizations.of(context)!;
     HapticFeedback.mediumImpact();
     final supabase = Supabase.instance.client;
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
@@ -83,7 +83,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('User not authenticated')),
+        SnackBar(content: Text(localizations.userNotAuthenticated)),
       );
       return;
     }
@@ -113,8 +113,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
         // Show a professional success message.
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Your order has been placed successfully!'),
+          SnackBar(
+            content: Text(localizations.orderPlacedSuccessfully),
             backgroundColor: Colors.green,
           ),
         );
@@ -125,14 +125,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Order placement failed. Please try again.'),
+          SnackBar(
+            content: Text(localizations.orderPlacementFailed),
           ),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
+        SnackBar(content: Text(localizations.errorWithMessage(e.toString()))),
       );
     }
   }
@@ -146,11 +146,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
+    final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: const Text('Checkout'),
+        title: Text(localizations.checkout),
         centerTitle: true,
         backgroundColor: Colors.white,
         foregroundColor: Colors.grey.shade800,
@@ -179,7 +180,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   child: _buildStepIndicator(
                     isActive: _currentStep >= 0,
                     isDone: _currentStep > 0,
-                    title: 'Shipping',
+                    title: localizations.shipping,
                     step: 1,
                   ),
                 ),
@@ -188,7 +189,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   child: _buildStepIndicator(
                     isActive: _currentStep >= 1,
                     isDone: _currentStep > 1,
-                    title: 'Payment',
+                    title: localizations.payment,
                     step: 2,
                   ),
                 ),
@@ -197,7 +198,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   child: _buildStepIndicator(
                     isActive: _currentStep >= 2,
                     isDone: false,
-                    title: 'Confirm',
+                    title: localizations.confirm,
                     step: 3,
                   ),
                 ),
@@ -265,7 +266,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   TextButton.icon(
                     onPressed: _goToPreviousStep,
                     icon: const Icon(Icons.arrow_back),
-                    label: const Text('BACK'),
+                    label: Text(localizations.back),
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.grey.shade700,
                     ),
@@ -281,8 +282,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         vertical: 12,
                       ),
                     ),
-                    child:
-                        Text(_currentStep == 0 ? 'CONTINUE' : 'REVIEW ORDER'),
+                    child: Text(_currentStep == 0
+                        ? localizations.continue_
+                        : localizations.reviewOrder),
                   )
                 else
                   ElevatedButton(
@@ -294,7 +296,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         vertical: 12,
                       ),
                     ),
-                    child: const Text('PLACE ORDER'),
+                    child: Text(localizations.placeOrder),
                   ),
               ],
             ),

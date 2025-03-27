@@ -1,5 +1,5 @@
-// lib/features/checkout/components/order_confirmation_step.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:jmarket/data/models/cart_model.dart';
 
@@ -25,16 +25,15 @@ class OrderConfirmationStep extends StatelessWidget {
     required this.tax,
   });
 
-  String get _getPaymentMethodName {
+  String _getPaymentMethodName(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     switch (paymentMethod) {
       case 'cod':
-        return 'Cash on Delivery';
-      case 'card':
-        return 'Credit/Debit Card';
-      case 'paypal':
-        return 'PayPal';
+        return localizations.cashOnDelivery;
+      case 'chapa':
+        return localizations.payWithChapa;
       default:
-        return 'Unknown';
+        return localizations.unknown;
     }
   }
 
@@ -42,10 +41,8 @@ class OrderConfirmationStep extends StatelessWidget {
     switch (paymentMethod) {
       case 'cod':
         return Icons.money;
-      case 'card':
-        return Icons.credit_card;
-      case 'paypal':
-        return Icons.account_balance_wallet;
+      case 'chapa':
+        return Icons.payment;
       default:
         return Icons.payment;
     }
@@ -55,9 +52,7 @@ class OrderConfirmationStep extends StatelessWidget {
     switch (paymentMethod) {
       case 'cod':
         return Colors.green.shade700;
-      case 'card':
-        return Colors.blue.shade700;
-      case 'paypal':
+      case 'chapa':
         return Colors.indigo.shade700;
       default:
         return Colors.grey.shade700;
@@ -66,6 +61,7 @@ class OrderConfirmationStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     final formatter = NumberFormat.currency(symbol: '\$');
     final total = subtotal + shipping + tax;
 
@@ -75,7 +71,7 @@ class OrderConfirmationStep extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Order Summary',
+            localizations.orderSummary,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -85,9 +81,9 @@ class OrderConfirmationStep extends StatelessWidget {
           const SizedBox(height: 24),
 
           // Shipping information section
-          // Shipping information section
           _buildSectionCard(
-            title: 'Shipping Information',
+            context: context,
+            title: localizations.shippingInformation,
             icon: Icons.local_shipping_outlined,
             iconColor: Colors.indigo.shade700,
             child: Column(
@@ -124,7 +120,8 @@ class OrderConfirmationStep extends StatelessWidget {
 
           // Payment method section
           _buildSectionCard(
-            title: 'Payment Method',
+            context: context,
+            title: localizations.paymentMethod,
             icon: _getPaymentMethodIcon,
             iconColor: _getPaymentMethodColor,
             child: Row(
@@ -143,7 +140,7 @@ class OrderConfirmationStep extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  _getPaymentMethodName,
+                  _getPaymentMethodName(context),
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
@@ -157,12 +154,15 @@ class OrderConfirmationStep extends StatelessWidget {
 
           // Order items section
           _buildSectionCard(
-            title: 'Order Items (${cartItems.length})',
+            context: context,
+            title: localizations.orderItems(cartItems.length),
             icon: Icons.shopping_bag_outlined,
             iconColor: Colors.indigo.shade700,
             child: Column(
               children: [
-                ...cartItems.map((item) => _buildOrderItem(item)).toList(),
+                ...cartItems
+                    .map((item) => _buildOrderItem(context, item))
+                    .toList(),
               ],
             ),
           ),
@@ -171,22 +171,27 @@ class OrderConfirmationStep extends StatelessWidget {
 
           // Price summary section
           _buildSectionCard(
-            title: 'Price Details',
+            context: context,
+            title: localizations.priceDetails,
             icon: Icons.receipt_long_outlined,
             iconColor: Colors.indigo.shade700,
             child: Column(
               children: [
-                _buildPriceRow('Subtotal', formatter.format(subtotal)),
+                _buildPriceRow(context, localizations.subtotal,
+                    formatter.format(subtotal)),
                 const SizedBox(height: 8),
-                _buildPriceRow('Shipping', formatter.format(shipping)),
+                _buildPriceRow(context, localizations.shipping,
+                    formatter.format(shipping)),
                 const SizedBox(height: 8),
-                _buildPriceRow('Tax', formatter.format(tax)),
+                _buildPriceRow(
+                    context, localizations.tax, formatter.format(tax)),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 8),
                   child: Divider(),
                 ),
                 _buildPriceRow(
-                  'Total',
+                  context,
+                  localizations.total,
                   formatter.format(total),
                   isTotal: true,
                 ),
@@ -217,7 +222,7 @@ class OrderConfirmationStep extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Estimated Delivery',
+                        localizations.estimatedDelivery,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -244,6 +249,7 @@ class OrderConfirmationStep extends StatelessWidget {
   }
 
   Widget _buildSectionCard({
+    required BuildContext context,
     required String title,
     required IconData icon,
     required Color iconColor,
@@ -294,7 +300,8 @@ class OrderConfirmationStep extends StatelessWidget {
     );
   }
 
-  Widget _buildOrderItem(CartItem item) {
+  Widget _buildOrderItem(BuildContext context, CartItem item) {
+    final localizations = AppLocalizations.of(context)!;
     final price = item.price * item.quantity;
 
     return Padding(
@@ -336,7 +343,7 @@ class OrderConfirmationStep extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  item.name ?? 'Unknown Product',
+                  item.name ?? localizations.unknownProduct,
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -347,7 +354,7 @@ class OrderConfirmationStep extends StatelessWidget {
                 const SizedBox(height: 4),
                 if (item.size != null)
                   Text(
-                    'Size: ${item.size}',
+                    localizations.size(item.size!),
                     style: TextStyle(
                       fontSize: 13,
                       color: Colors.grey.shade700,
@@ -355,7 +362,7 @@ class OrderConfirmationStep extends StatelessWidget {
                   ),
                 const SizedBox(height: 4),
                 Text(
-                  'Qty: ${item.quantity}',
+                  localizations.quantity(item.quantity),
                   style: TextStyle(
                     fontSize: 13,
                     color: Colors.grey.shade700,
@@ -377,7 +384,8 @@ class OrderConfirmationStep extends StatelessWidget {
     );
   }
 
-  Widget _buildPriceRow(String label, String value, {bool isTotal = false}) {
+  Widget _buildPriceRow(BuildContext context, String label, String value,
+      {bool isTotal = false}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

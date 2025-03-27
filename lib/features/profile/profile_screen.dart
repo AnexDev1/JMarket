@@ -1,10 +1,12 @@
 // lib/features/profile/profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/auth_provider.dart';
+import '../../providers/language_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -14,8 +16,8 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: const Text(
-          'My Profile',
+        title: Text(
+          AppLocalizations.of(context)!.profile,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
@@ -148,61 +150,61 @@ class ProfileScreen extends StatelessWidget {
     return Column(
       children: [
         _buildMenuSection(
-          title: 'Products',
+          title: AppLocalizations.of(context)!.products,
           icon: Icons.inventory_2_outlined,
           items: [
             ProfileMenuItem(
               icon: Icons.add_circle_outline,
-              title: 'Create Product',
+              title: AppLocalizations.of(context)!.createProduct,
               onTap: () => context.go('/create-product'),
             ),
           ],
         ),
         _buildMenuSection(
-          title: 'Account',
+          title: AppLocalizations.of(context)!.account,
           icon: Icons.account_circle_outlined,
           items: [
             ProfileMenuItem(
               icon: Icons.shopping_bag_outlined,
-              title: 'My Orders',
+              title: AppLocalizations.of(context)!.myOrders,
               onTap: () => context.go('/orders'),
             ),
             ProfileMenuItem(
               icon: Icons.card_giftcard_outlined,
-              title: 'My Rewards',
+              title: AppLocalizations.of(context)!.myRewards,
               badge: '3',
               onTap: () => context.go('/rewards'),
             ),
             ProfileMenuItem(
               icon: Icons.location_on_outlined,
-              title: 'Shipping Addresses',
+              title: AppLocalizations.of(context)!.shippingAddresses,
               onTap: () => context.go('/addresses'),
             ),
             ProfileMenuItem(
               icon: Icons.credit_card_outlined,
-              title: 'Payment Methods',
+              title: AppLocalizations.of(context)!.paymentMethods,
               onTap: () => context.go('/payment-methods'),
             ),
           ],
         ),
         _buildMenuSection(
-          title: 'Preferences',
+          title: AppLocalizations.of(context)!.preferences,
           icon: Icons.settings_outlined,
           items: [
             ProfileMenuItem(
               icon: Icons.notifications_outlined,
-              title: 'Notifications',
+              title: AppLocalizations.of(context)!.notifications,
               onTap: () => context.go('/notifications-settings'),
             ),
             ProfileMenuItem(
               icon: Icons.language_outlined,
-              title: 'Language',
-              subtitle: 'English',
+              title: AppLocalizations.of(context)!.language,
+              subtitle: Provider.of<LanguageProvider>(context).currentLanguage,
               onTap: () => context.go('/language-settings'),
             ),
             ProfileMenuItem(
               icon: Icons.dark_mode_outlined,
-              title: 'Dark Mode',
+              title: AppLocalizations.of(context)!.darkMode,
               trailing: Switch(
                 value: Theme.of(context).brightness == Brightness.dark,
                 activeColor: Colors.indigo.shade700,
@@ -215,22 +217,22 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),
         _buildMenuSection(
-          title: 'Support',
+          title: AppLocalizations.of(context)!.support,
           icon: Icons.help_outline,
           items: [
             ProfileMenuItem(
               icon: Icons.help_outline,
-              title: 'Help Center',
+              title: AppLocalizations.of(context)!.helpCenter,
               onTap: () => context.go('/help'),
             ),
             ProfileMenuItem(
               icon: Icons.info_outline,
-              title: 'About Us',
+              title: AppLocalizations.of(context)!.aboutUs,
               onTap: () => context.go('/about'),
             ),
             ProfileMenuItem(
               icon: Icons.policy_outlined,
-              title: 'Privacy Policy',
+              title: AppLocalizations.of(context)!.privacyPolicy,
               onTap: () => context.go('/privacy'),
             ),
           ],

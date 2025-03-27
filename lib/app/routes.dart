@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:jmarket/features/orders/orders_screen.dart';
+import 'package:jmarket/features/profile/language_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../features/auth/auth_screen.dart';
@@ -20,6 +21,7 @@ class AppRoutes {
   static const String cart = '/cart';
   static const String favorites = '/favorites';
   static const String profile = '/profile';
+  static const String languageSettings = '/language-settings';
   static const String createProduct = '/create-product';
 
   static const String login = '/login';
@@ -101,6 +103,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.orderDetails,
       builder: (context, state) => OrdersScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.languageSettings,
+      builder: (context, state) => LanguageScreen(),
     ),
     GoRoute(
       path: '${AppRoutes.productDetails}/:id',

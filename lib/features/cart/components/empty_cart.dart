@@ -1,6 +1,7 @@
 // lib/features/cart/components/empty_cart.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 class EmptyCart extends StatelessWidget {
@@ -8,6 +9,8 @@ class EmptyCart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -26,7 +29,7 @@ class EmptyCart extends StatelessWidget {
         ),
         const SizedBox(height: 32),
         Text(
-          'Your Cart is Empty',
+          localizations.cartIsEmpty,
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -37,7 +40,7 @@ class EmptyCart extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40),
           child: Text(
-            'Looks like you haven\'t added anything to your cart yet.',
+            localizations.cartIsEmptyMessage,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,
@@ -61,9 +64,9 @@ class EmptyCart extends StatelessWidget {
             ),
             elevation: 0,
           ),
-          child: const Text(
-            'Explore Products',
-            style: TextStyle(
+          child: Text(
+            localizations.exploreProducts,
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),

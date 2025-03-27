@@ -1,24 +1,34 @@
-// lib/features/home/widgets/home_products_grid.dart
+// dart
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../product/product_details_screen.dart';
 
-class HomeProductsGrid extends StatelessWidget {
+class HomeProductsGrid extends StatefulWidget {
   final Future<List<Map<String, dynamic>>> futureProducts;
 
   const HomeProductsGrid({
-    super.key,
+    Key? key,
     required this.futureProducts,
-  });
+  }) : super(key: key);
 
+  @override
+  _HomeProductsGridState createState() => _HomeProductsGridState();
+}
+
+class _HomeProductsGridState extends State<HomeProductsGrid> {
+  int visibleCount = 10; // initial number of products to display
+
+// dart
   @override
   Widget build(BuildContext context) {
     final primaryColor = Colors.indigo.shade700;
+    final localizations = AppLocalizations.of(context)!;
 
     return SliverPadding(
       padding: const EdgeInsets.all(16.0),
       sliver: FutureBuilder<List<Map<String, dynamic>>>(
-        future: futureProducts,
+        future: widget.futureProducts,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return SliverFillRemaining(
@@ -36,7 +46,7 @@ class HomeProductsGrid extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Loading products...',
+                      localizations.loadingProducts,
                       style: TextStyle(
                         color: Colors.grey.shade600,
                         fontSize: 14,
@@ -56,7 +66,7 @@ class HomeProductsGrid extends StatelessWidget {
                         size: 60, color: Colors.red.shade300),
                     const SizedBox(height: 16),
                     Text(
-                      'Error loading products',
+                      localizations.errorLoadingProducts,
                       style: TextStyle(
                         color: Colors.grey.shade700,
                         fontSize: 16,
@@ -65,7 +75,7 @@ class HomeProductsGrid extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Pull to refresh',
+                      localizations.pullToRefresh,
                       style: TextStyle(
                         color: Colors.grey.shade500,
                         fontSize: 14,
@@ -85,7 +95,7 @@ class HomeProductsGrid extends StatelessWidget {
                         size: 60, color: Colors.grey.shade400),
                     const SizedBox(height: 16),
                     Text(
-                      'No products available',
+                      localizations.noProductsAvailable,
                       style: TextStyle(
                         color: Colors.grey.shade700,
                         fontSize: 16,
@@ -98,19 +108,46 @@ class HomeProductsGrid extends StatelessWidget {
             );
           }
 
-          return SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.7,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final product = snapshot.data![index];
-                return _buildProductCard(context, product, primaryColor);
-              },
-              childCount: snapshot.data!.length,
+          List<Map<String, dynamic>> products = snapshot.data!;
+          int currentItemCount =
+              visibleCount < products.length ? visibleCount : products.length;
+
+          return SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.7,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                  ),
+                  itemCount: currentItemCount,
+                  itemBuilder: (context, index) {
+                    final product = products[index];
+                    return _buildProductCard(context, product, primaryColor);
+                  },
+                ),
+                if (currentItemCount < products.length)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20.0),
+                    child: Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            visibleCount =
+                                (visibleCount + 10 <= products.length)
+                                    ? visibleCount + 10
+                                    : products.length;
+                          });
+                        },
+                        child: Text(localizations.seeMore),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           );
         },
@@ -122,6 +159,7 @@ class HomeProductsGrid extends StatelessWidget {
       BuildContext context, Map<String, dynamic> product, Color primaryColor) {
     final bool hasDiscount =
         product['discount'] != null && product['discount'] > 0;
+    final localizations = AppLocalizations.of(context)!;
 
     return Hero(
       tag: 'product-${product['id']}',
@@ -196,7 +234,7 @@ class HomeProductsGrid extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            '-${product['discount']}%',
+                            localizations.discountPercent(product['discount']),
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -207,7 +245,6 @@ class HomeProductsGrid extends StatelessWidget {
                       ),
                   ],
                 ),
-
                 // Product details
                 Expanded(
                   child: Padding(
@@ -216,7 +253,7 @@ class HomeProductsGrid extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          product['name'] ?? 'Unknown Product',
+                          product['name'] ?? localizations.unknownProduct,
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 14,

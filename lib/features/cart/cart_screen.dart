@@ -1,5 +1,6 @@
 // lib/features/cart/cart_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/cart_provider.dart';
@@ -49,13 +50,15 @@ class _CartScreenState extends State<CartScreen>
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Consumer<CartProvider>(
       builder: (context, cartProvider, child) {
         return Scaffold(
           backgroundColor: Colors.grey.shade50,
           appBar: AppBar(
             title: Text(
-              'Your Shopping Cart',
+              localizations.yourShoppingCart,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -108,15 +111,17 @@ class _CartScreenState extends State<CartScreen>
   }
 
   void _showClearCartDialog(BuildContext context, CartProvider cartProvider) {
+    final localizations = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Clear Cart'),
-        content: const Text('Are you sure you want to remove all items?'),
+        title: Text(localizations.clearCart),
+        content: Text(localizations.clearCartConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('CANCEL'),
+            child: Text(localizations.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -124,7 +129,7 @@ class _CartScreenState extends State<CartScreen>
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: const Text('Cart cleared'),
+                  content: Text(localizations.cartCleared),
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -132,7 +137,7 @@ class _CartScreenState extends State<CartScreen>
                 ),
               );
             },
-            child: const Text('CLEAR'),
+            child: Text(localizations.clear),
           ),
         ],
       ),

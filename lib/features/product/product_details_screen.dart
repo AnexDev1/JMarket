@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -66,6 +67,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -92,7 +95,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Loading product details...',
+                          localizations.loadingProductDetails,
                           style: TextStyle(
                             color: Colors.grey.shade600,
                             fontSize: 14,
@@ -110,7 +113,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             size: 60, color: Colors.red.shade300),
                         const SizedBox(height: 16),
                         Text(
-                          'Error loading product',
+                          localizations.errorLoadingProduct,
                           style: TextStyle(
                             color: Colors.grey.shade700,
                             fontSize: 16,
@@ -125,7 +128,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   .fetchProductById(widget.productId);
                             });
                           },
-                          child: const Text('Try Again'),
+                          child: Text(localizations.tryAgain),
                         ),
                       ],
                     ),
@@ -169,7 +172,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                         title: _showTitle
                             ? Text(
-                                product['name'] ?? 'Product Details',
+                                product['name'] ?? localizations.productDetails,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -197,8 +200,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             ),
                             onPressed: () {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Share functionality')),
+                                SnackBar(
+                                  content:
+                                      Text(localizations.shareFunctionality),
+                                ),
                               );
                             },
                           ),
@@ -251,17 +256,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   listen: false);
                                           favoritesProvider
                                               .toggleFavorite(product);
-
                                           final updatedIsFavorite =
                                               favoritesProvider.isFavorite(
                                                   product['id'].toString());
-
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             SnackBar(
                                               content: Text(updatedIsFavorite
-                                                  ? 'Added to favorites'
-                                                  : 'Removed from favorites'),
+                                                  ? localizations
+                                                      .addedToFavorites
+                                                  : localizations
+                                                      .removedFromFavorites),
                                               behavior:
                                                   SnackBarBehavior.floating,
                                               width: 200,
@@ -314,7 +319,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 BorderRadius.circular(4),
                                           ),
                                           child: Text(
-                                            '-${product['discount']}%',
+                                            localizations.discountPercent(
+                                                product['discount']),
                                             style: const TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
@@ -376,7 +382,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Brand
                                   if (product['brand'] != null)
                                     Text(
                                       product['brand'],
@@ -386,20 +391,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
-
-                                  // Product name
                                   Text(
-                                    product['name'] ?? 'No Name',
+                                    product['name'] ?? localizations.noName,
                                     style: const TextStyle(
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
                                       height: 1.2,
                                     ),
                                   ),
-
                                   const SizedBox(height: 10),
-
-                                  // Rating and reviews
                                   Row(
                                     children: [
                                       Row(
@@ -424,7 +424,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
-                                        '(${product['reviews'] ?? 0} reviews)',
+                                        localizations.reviewsCount(
+                                            product['reviews'] ?? 0),
                                         style: TextStyle(
                                           color: Colors.grey.shade600,
                                           fontSize: 14,
@@ -432,10 +433,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       ),
                                     ],
                                   ),
-
                                   const SizedBox(height: 16),
-
-                                  // Price
                                   Row(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
@@ -462,65 +460,34 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       ],
                                     ],
                                   ),
-                                ],
-                              ),
-                            ),
-
-                            // Size Selection
-                            Container(
-                              margin: const EdgeInsets.only(top: 8),
-                              padding: const EdgeInsets.all(24),
-                              decoration:
-                                  const BoxDecoration(color: Colors.white),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text(
-                                        'Select Size',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                  const SizedBox(height: 20),
+                                  if (product['category'] != null &&
+                                          product['category']
+                                                  .toString()
+                                                  .toLowerCase() ==
+                                              'clothing' ||
+                                      product['category']
+                                              .toString()
+                                              .toLowerCase() ==
+                                          'sports') ...[
+                                    Text(
+                                      localizations.selectSize,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      TextButton(
-                                        onPressed: () {
-                                          // Size guide action
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                              content: Text('Size guide'),
-                                              behavior:
-                                                  SnackBarBehavior.floating,
-                                            ),
-                                          );
-                                        },
-                                        style: TextButton.styleFrom(
-                                          padding: EdgeInsets.zero,
-                                          minimumSize: const Size(0, 0),
-                                          tapTargetSize:
-                                              MaterialTapTargetSize.shrinkWrap,
-                                        ),
-                                        child: Text(
-                                          'Size Guide',
-                                          style: TextStyle(color: primaryColor),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  ProductSizeSelector(
-                                    sizes: product['sizes'] ?? ['M'],
-                                    selectedSize: _selectedSize,
-                                    onSizeSelected: (size) {
-                                      setState(() {
-                                        _selectedSize = size;
-                                      });
-                                    },
-                                  ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    ProductSizeSelector(
+                                      sizes: const ['S', 'M', 'L', 'XL', 'XXL'],
+                                      selectedSize: _selectedSize,
+                                      onSizeSelected: (size) {
+                                        setState(() {
+                                          _selectedSize = size;
+                                        });
+                                      },
+                                    ),
+                                  ],
                                 ],
                               ),
                             ),
@@ -534,9 +501,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    'Description',
-                                    style: TextStyle(
+                                  Text(
+                                    localizations.description,
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -544,7 +511,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   const SizedBox(height: 12),
                                   Text(
                                     product['description'] ??
-                                        'No description available',
+                                        localizations.noDescriptionAvailable,
                                     style: TextStyle(
                                       fontSize: 14,
                                       height: 1.5,
@@ -564,9 +531,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    'Key Features',
-                                    style: TextStyle(
+                                  Text(
+                                    localizations.keyFeatures,
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -587,9 +554,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    'You May Also Like',
-                                    style: TextStyle(
+                                  Text(
+                                    localizations.youMayAlsoLike,
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -614,7 +581,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ),
           ),
         ),
-
         // Floating Add to Cart Panel
         bottomNavigationBar: FutureBuilder<Map<String, dynamic>>(
           future: _futureProduct,
@@ -652,8 +618,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         cartProvider.addItem(
                           product['id'].toString(), // productId
                           product['name'], // productName
-                          double.parse(product['price']
-                              .toString()), // price (ensure it's double)
+                          double.parse(product['price'].toString()), // price
                           _quantity, // quantity
                           product['image_urls'] != null &&
                                   (product['image_urls'] as List).isNotEmpty
@@ -670,17 +635,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     color: Colors.white),
                                 const SizedBox(width: 12),
                                 Expanded(
-                                  child:
-                                      Text('${product['name']} added to cart'),
+                                  child: Text(localizations
+                                      .addedToCart(product['name'])),
                                 ),
                               ],
                             ),
                             behavior: SnackBarBehavior.floating,
                             duration: const Duration(seconds: 2),
                             action: SnackBarAction(
-                              label: 'VIEW CART',
+                              label: localizations.viewCart,
                               onPressed: () {
-                                // Navigate to cart
                                 context.go('/cart');
                               },
                             ),
@@ -697,7 +661,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                       ),
                       child: Text(
-                        'Add to Cart | \$${(product['price'] * _quantity).toStringAsFixed(2)}',
+                        localizations.addToCartWithPrice(
+                            (product['price'] * _quantity).toStringAsFixed(2)),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           letterSpacing: 0.5,

@@ -1,5 +1,5 @@
-// lib/features/favorites/favorites_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/favorites_provider.dart';
@@ -18,7 +18,7 @@ class FavoritesScreen extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             title: Text(
-              'My Favorites',
+              AppLocalizations.of(context)!.myFavorites,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.grey.shade800,
@@ -49,25 +49,26 @@ class FavoritesScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Clear Favorites'),
-        content: const Text('Are you sure you want to remove all favorites?'),
+        title: Text(AppLocalizations.of(context)!.clearFavorites),
+        content: Text(AppLocalizations.of(context)!.clearFavoritesConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('CANCEL'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () {
               provider.clearFavorites();
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('All favorites cleared'),
+                SnackBar(
+                  content:
+                      Text(AppLocalizations.of(context)!.allFavoritesCleared),
                   behavior: SnackBarBehavior.floating,
                 ),
               );
             },
-            child: const Text('CLEAR'),
+            child: Text(AppLocalizations.of(context)!.clear),
           ),
         ],
       ),

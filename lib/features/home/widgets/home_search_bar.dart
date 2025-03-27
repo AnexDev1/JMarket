@@ -1,5 +1,5 @@
-// lib/features/home/widgets/home_search_bar.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/search_provider.dart';
@@ -23,6 +23,7 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
   @override
   Widget build(BuildContext context) {
     final primaryColor = Colors.indigo.shade700;
+    final localizations = AppLocalizations.of(context)!;
 
     return Container(
       decoration: BoxDecoration(
@@ -41,7 +42,7 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
         decoration: InputDecoration(
           contentPadding:
               const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-          hintText: 'Search products...',
+          hintText: localizations.searchProducts,
           hintStyle: TextStyle(color: Colors.grey.shade400),
           prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
           suffixIcon: Consumer<SearchProvider>(

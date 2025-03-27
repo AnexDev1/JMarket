@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:jmarket/features/home/widgets/feature_banner_carousel.dart';
 import 'package:jmarket/features/home/widgets/home_categories_tab.dart';
 import 'package:jmarket/features/home/widgets/home_products_grid.dart';
@@ -51,8 +52,12 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
-  Future<List<Map<String, dynamic>>> _fetchProducts(String category) {
-    return SupabaseService().fetchProducts(category: category);
+  Future<List<Map<String, dynamic>>> _fetchProducts(String category) async {
+    final products = await SupabaseService().fetchProducts(category: category);
+    if (category.toLowerCase() == 'all') {
+      products.shuffle();
+    }
+    return products;
   }
 
   @override
@@ -66,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     final searchProvider = Provider.of<SearchProvider>(context);
     final hasSearchQuery = searchProvider.searchQuery.isNotEmpty;
+    final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -96,7 +102,8 @@ class _HomeScreenState extends State<HomeScreen>
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
                     child: Text(
-                      'Search Results for "${searchProvider.searchQuery}"',
+                      localizations
+                          .searchResultsFor(searchProvider.searchQuery),
                       style: TextStyles.heading5
                           .copyWith(fontWeight: FontWeight.w600),
                     ),
@@ -121,12 +128,12 @@ class _HomeScreenState extends State<HomeScreen>
                                   Icon(Icons.search_off,
                                       size: 74, color: Colors.grey.shade400),
                                   const SizedBox(height: 16),
-                                  Text('No products found',
+                                  Text(localizations.noProductsFound,
                                       style: TextStyles.body1.copyWith(
                                         color: Colors.grey.shade600,
                                       )),
                                   const SizedBox(height: 8),
-                                  Text('Try a different search term',
+                                  Text(localizations.tryDifferentSearchTerm,
                                       style: TextStyles.caption.copyWith(
                                         color: Colors.grey.shade500,
                                       )),
@@ -171,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Categories',
+                          localizations.categories,
                           style: TextStyles.heading5.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -179,15 +186,14 @@ class _HomeScreenState extends State<HomeScreen>
                         TextButton(
                           onPressed: () {},
                           style: TextButton.styleFrom(
-                            // Fixed: Replace AppColors.primary with primaryColor
                             foregroundColor: primaryColor,
                             visualDensity: VisualDensity.compact,
                           ),
                           child: Row(
-                            children: const [
-                              Text('View All'),
-                              SizedBox(width: 4),
-                              Icon(Icons.arrow_forward, size: 16),
+                            children: [
+                              Text(localizations.viewAll),
+                              const SizedBox(width: 4),
+                              const Icon(Icons.arrow_forward, size: 16),
                             ],
                           ),
                         ),
@@ -209,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen>
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 8.0),
                     child: Text(
-                      'Popular Products',
+                      localizations.popularProducts,
                       style: TextStyles.heading5.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -230,6 +236,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget _buildProductCard(BuildContext context, Map<String, dynamic> product) {
     final bool hasDiscount =
         product['discount'] != null && product['discount'] > 0;
+    final localizations = AppLocalizations.of(context)!;
 
     return Hero(
       tag: 'product-${product['id']}',
@@ -304,7 +311,7 @@ class _HomeScreenState extends State<HomeScreen>
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            '-${product['discount']}%',
+                            localizations.discountPercent(product['discount']),
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -324,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          product['name'] ?? 'Unknown Product',
+                          product['name'] ?? localizations.unknownProduct,
                           style: TextStyles.body1.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -339,7 +346,6 @@ class _HomeScreenState extends State<HomeScreen>
                               '\$${product['price']}',
                               style: TextStyles.body2.copyWith(
                                 fontWeight: FontWeight.w700,
-                                // Fixed: Replace AppColors.primary with primaryColor
                                 color: primaryColor,
                               ),
                             ),
@@ -374,14 +380,12 @@ class _HomeScreenState extends State<HomeScreen>
                             Container(
                               padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
-                                // Fixed: Replace AppColors.primary with primaryColor
                                 color: primaryColor.withOpacity(0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
                                 Icons.add_shopping_cart_rounded,
                                 size: 18,
-                                // Fixed: Replace AppColors.primary with primaryColor
                                 color: primaryColor,
                               ),
                             ),
@@ -400,24 +404,33 @@ class _HomeScreenState extends State<HomeScreen>
   }
 }
 
-// Custom persistent header delegate for floating search bar
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
+  final double height;
 
-  _SliverAppBarDelegate({required this.child});
+  _SliverAppBarDelegate({
+    required this.child,
+    this.height = 60.0,
+  });
 
   @override
-  double get minExtent => 70;
-  @override
-  double get maxExtent => 70;
+  double get minExtent => height;
 
   @override
-  Widget build(context, shrinkOffset, overlapsContent) {
-    return child;
+  double get maxExtent => height;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return SizedBox(
+      width: double.infinity,
+      height: height,
+      child: child,
+    );
   }
 
   @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return false;
+  bool shouldRebuild(covariant _SliverAppBarDelegate oldDelegate) {
+    return oldDelegate.height != height || oldDelegate.child != child;
   }
 }

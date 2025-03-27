@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jmarket/providers/auth_provider.dart';
 import 'package:jmarket/providers/cart_provider.dart';
 import 'package:jmarket/providers/favorites_provider.dart';
+import 'package:jmarket/providers/language_provider.dart';
 import 'package:jmarket/providers/search_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -120,6 +121,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => FavoritesProvider()),
         ChangeNotifierProvider(create: (_) => SearchProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => LanguageProvider())
         // Add more providers here
       ],
       child: const App(),

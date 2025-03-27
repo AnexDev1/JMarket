@@ -1,6 +1,6 @@
-// dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PaymentMethodStep extends StatelessWidget {
   final String selectedMethod;
@@ -14,13 +14,15 @@ class PaymentMethodStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Payment Method',
+            localizations.paymentMethod,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -29,7 +31,7 @@ class PaymentMethodStep extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Please select a payment method to proceed',
+            localizations.selectPaymentMethodPrompt,
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey.shade600,
@@ -41,8 +43,8 @@ class PaymentMethodStep extends StatelessWidget {
           _buildPaymentOption(
             context: context,
             isSelected: selectedMethod == 'cod',
-            title: 'Cash on Delivery',
-            subtitle: 'Pay when you receive your order',
+            title: localizations.cashOnDelivery,
+            subtitle: localizations.payOnDeliveryDescription,
             icon: Icons.money,
             iconColor: Colors.green.shade700,
             onTap: () {
@@ -57,8 +59,8 @@ class PaymentMethodStep extends StatelessWidget {
           _buildPaymentOption(
             context: context,
             isSelected: selectedMethod == 'chapa',
-            title: 'Pay with Chapa',
-            subtitle: 'Secure payment using Chapa',
+            title: localizations.payWithChapa,
+            subtitle: localizations.chapaPaymentDescription,
             icon: Icons.payment,
             iconColor: Colors.indigo.shade700,
             onTap: () {
@@ -87,7 +89,7 @@ class PaymentMethodStep extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'All payments are secure and encrypted. We never store your payment information.',
+                    localizations.paymentSecurityMessage,
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey.shade700,

@@ -1,6 +1,6 @@
-// lib/features/checkout/components/shipping_details_step.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ShippingDetailsStep extends StatelessWidget {
   final Function(String?) onNameSaved;
@@ -20,13 +20,15 @@ class ShippingDetailsStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Shipping Information',
+            localizations.shippingInformation,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -37,15 +39,16 @@ class ShippingDetailsStep extends StatelessWidget {
 
           // Name field
           _buildInputField(
-            label: 'Full Name',
-            hint: 'Enter your full name',
+            context: context,
+            label: localizations.fullName,
+            hint: localizations.enterFullName,
             prefixIcon: Icons.person_outline,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your name';
+                return localizations.pleaseEnterName;
               }
               if (value.length < 3) {
-                return 'Name must be at least 3 characters';
+                return localizations.nameTooShort;
               }
               return null;
             },
@@ -57,15 +60,16 @@ class ShippingDetailsStep extends StatelessWidget {
 
           // Address field
           _buildInputField(
-            label: 'Street Address',
-            hint: 'Enter your street address',
+            context: context,
+            label: localizations.streetAddress,
+            hint: localizations.enterStreetAddress,
             prefixIcon: Icons.home_outlined,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your address';
+                return localizations.pleaseEnterAddress;
               }
               if (value.length < 5) {
-                return 'Address is too short';
+                return localizations.addressTooShort;
               }
               return null;
             },
@@ -77,16 +81,17 @@ class ShippingDetailsStep extends StatelessWidget {
 
           // Phone number field
           _buildInputField(
-            label: 'Phone Number',
-            hint: 'Enter phone number',
+            context: context,
+            label: localizations.phoneNumber,
+            hint: localizations.enterPhoneNumber,
             prefixIcon: Icons.phone_outlined,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Enter phone number';
+                return localizations.enterPhoneNumber;
               }
               if (!RegExp(r'^\d{10}$')
                   .hasMatch(value.replaceAll(RegExp(r'\D'), ''))) {
-                return 'Invalid phone number';
+                return localizations.invalidPhoneNumber;
               }
               return null;
             },
@@ -118,7 +123,7 @@ class ShippingDetailsStep extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Your information is secure and will only be used for order processing.',
+                    localizations.informationSecureNote,
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey.shade700,
@@ -134,6 +139,7 @@ class ShippingDetailsStep extends StatelessWidget {
   }
 
   Widget _buildInputField({
+    required BuildContext context,
     required String label,
     required String hint,
     required IconData prefixIcon,

@@ -54,6 +54,9 @@ class Assets {
   static const String homeHomeScreen = 'lib/features/home/home_screen.dart';
   static const String iconIcon = 'assets/icon/icon.png';
   static const String jmarket = '.env';
+  static const String l10nAppEn = 'lib/l10n/app_en.arb';
+  static const String l10nIntlAm = 'lib/l10n/intl_am.arb';
+  static const String l10nIntlOm = 'lib/l10n/intl_om.arb';
   static const String libMain = 'lib/main.dart';
   static const String libServicesProductService =
       'lib/services/product_service.dart';
@@ -77,6 +80,8 @@ class Assets {
       'lib/features/product/product_details_screen.dart';
   static const String profileCreateProductScreen =
       'lib/features/profile/create_product_screen.dart';
+  static const String profileLanguageScreen =
+      'lib/features/profile/language_screen.dart';
   static const String profileProfileScreen =
       'lib/features/profile/profile_screen.dart';
   static const String providersAuthProvider =
@@ -85,6 +90,8 @@ class Assets {
       'lib/providers/cart_provider.dart';
   static const String providersFavoritesProvider =
       'lib/providers/favorites_provider.dart';
+  static const String providersLanguageProvider =
+      'lib/providers/language_provider.dart';
   static const String providersSearchProvider =
       'lib/providers/search_provider.dart';
   static const String providersThemeProvider =

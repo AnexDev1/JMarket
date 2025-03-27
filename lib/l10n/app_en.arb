@@ -1,0 +1,589 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "JMarket",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+
+  "home": "Home",
+  "@home": {
+    "description": "Navigation label for home screen"
+  },
+  "search": "Search",
+  "@search": {
+    "description": "Navigation label for search screen"
+  },
+  "cart": "Cart",
+  "@cart": {
+    "description": "Navigation label for shopping cart"
+  },
+  "favorites": "Favorites",
+  "@favorites": {
+    "description": "Navigation label for favorites screen"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Navigation label for profile screen"
+  },
+  "myFavorites": "My Favorites",
+  "@myFavorites": {
+    "description": "Title for favorites screen"
+  },
+  "clearFavorites": "Clear Favorites",
+  "@clearFavorites": {
+    "description": "Title for clear favorites dialog"
+  },
+  "clearFavoritesConfirmation": "Are you sure you want to remove all favorites?",
+  "@clearFavoritesConfirmation": {
+    "description": "Confirmation message for clearing favorites"
+  },
+  "clear": "CLEAR",
+  "@clear": {
+    "description": "Label for clear button"
+  },
+  "allFavoritesCleared": "All favorites cleared",
+  "@allFavoritesCleared": {
+    "description": "Message shown when all favorites are cleared"
+  },
+  "noFavoritesYet": "No favorites yet",
+  "@noFavoritesYet": {
+    "description": "Text shown when favorites list is empty"
+  },
+  "startBrowsing": "Start browsing and add items to your favorites",
+  "@startBrowsing": {
+    "description": "Suggestion text shown on empty favorites screen"
+  },
+  "removedFromFavorites": "removed from favorites",
+  "@removedFromFavorites": {
+    "description": "Text shown when an item is removed from favorites"
+  },
+  "off": "OFF",
+  "@off": {
+    "description": "Text displayed after discount percentage"
+  },
+  "unknownProduct": "Unknown Product",
+  "@unknownProduct": {
+    "description": "Text displayed when product name is missing"
+  },
+  "addToCart": "Add to Cart",
+  "@addToCart": {
+    "description": "Text for add to cart button"
+  },
+  "searchResultsFor": "Search Results for \"{query}\"",
+  "@searchResultsFor": {
+    "description": "Title for search results",
+    "placeholders": {
+      "query": {
+        "type": "String",
+        "example": "shoes"
+      }
+    }
+  },
+  "noProductsFound": "No products found",
+  "@noProductsFound": {
+    "description": "Message when no products are found"
+  },
+  "tryDifferentSearchTerm": "Try a different search term",
+  "@tryDifferentSearchTerm": {
+    "description": "Suggestion when search returns no results"
+  },
+  "categories": "Categories",
+  "@categories": {
+    "description": "Title for categories section"
+  },
+  "viewAll": "View All",
+  "@viewAll": {
+    "description": "Label for view all button"
+  },
+  "popularProducts": "Popular Products",
+  "@popularProducts": {
+    "description": "Title for popular products section"
+  },
+  "searchProducts": "Search products...",
+  "@searchProducts": {
+    "description": "Placeholder text for search bar"
+  },
+  "loadingProducts": "Loading products...",
+  "@loadingProducts": {
+    "description": "Text shown when products are loading"
+  },
+  "errorLoadingProducts": "Error loading products",
+  "@errorLoadingProducts": {
+    "description": "Text shown when there is an error loading products"
+  },
+  "pullToRefresh": "Pull to refresh",
+  "@pullToRefresh": {
+    "description": "Hint for users to refresh content"
+  },
+  "noProductsAvailable": "No products available",
+  "@noProductsAvailable": {
+    "description": "Text shown when no products are available"
+  },
+  "loadingProductDetails": "Loading product details...",
+  "@loadingProductDetails": {
+    "description": "Text shown when product details are loading"
+  },
+  "errorLoadingProduct": "Error loading product",
+  "@errorLoadingProduct": {
+    "description": "Text shown when there is an error loading product"
+  },
+  "tryAgain": "Try Again",
+  "@tryAgain": {
+    "description": "Button text to retry an action"
+  },
+  "addedToFavorites": "Added to favorites",
+  "@addedToFavorites": {
+    "description": "Message when product is added to favorites"
+  },
+  "removedFromFavorites": "Removed from favorites",
+  "@removedFromFavorites": {
+    "description": "Message when product is removed from favorites"
+  },
+  "shareFunctionality": "Share functionality",
+  "@shareFunctionality": {
+    "description": "Message about share functionality"
+  },
+  "productDetails": "Product Details",
+  "@productDetails": {
+    "description": "Title for product details screen"
+  },
+  "noName": "No Name",
+  "@noName": {
+    "description": "Default text when product has no name"
+  },
+  "reviewsCount": "({count} reviews)",
+  "@reviewsCount": {
+    "description": "Text showing review count",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "42"
+      }
+    }
+  },
+  "selectSize": "Select Size",
+  "@selectSize": {
+    "description": "Label for size selection"
+  },
+  "description": "Description",
+  "@description": {
+    "description": "Title for description section"
+  },
+  "noDescriptionAvailable": "No description available",
+  "@noDescriptionAvailable": {
+    "description": "Text when no product description is available"
+  },
+  "keyFeatures": "Key Features",
+  "@keyFeatures": {
+    "description": "Title for key features section"
+  },
+  "youMayAlsoLike": "You May Also Like",
+  "@youMayAlsoLike": {
+    "description": "Title for related products section"
+  },
+  "addToCartWithPrice": "Add to Cart | ${price}",
+  "@addToCartWithPrice": {
+    "description": "Button text for adding to cart with price",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$19.99"
+      }
+    }
+  },
+  "addedToCart": "{productName} added to cart",
+  "@addedToCart": {
+    "description": "Message when product is added to cart",
+    "placeholders": {
+      "productName": {
+        "type": "String",
+        "example": "T-shirt"
+      }
+    }
+  },
+
+  "seeMore": "See More",
+  "@seeMore": {
+    "description": "Button text for loading more results"
+  },
+  "viewCart": "VIEW CART",
+  "@viewCart": {
+    "description": "Button text to view cart"
+  },
+  "discountPercent": "-{percent}%",
+  "@discountPercent": {
+    "description": "Label for discount percentage",
+    "placeholders": {
+      "percent": {
+        "type": "num",
+        "format": "compact",
+        "example": "20"
+      }
+    }
+  },
+  "yourShoppingCart": "Your Shopping Cart",
+  "@yourShoppingCart": {
+    "description": "Title for shopping cart screen"
+  },
+  "clearCart": "Clear Cart",
+  "@clearCart": {
+    "description": "Title for clear cart dialog"
+  },
+  "clearCartConfirmation": "Are you sure you want to remove all items?",
+  "@clearCartConfirmation": {
+    "description": "Confirmation message for clearing cart"
+  },
+  "cartCleared": "Cart cleared",
+  "@cartCleared": {
+    "description": "Message shown when cart is cleared"
+  },
+  "cartIsEmpty": "Your Cart is Empty",
+  "@cartIsEmpty": {
+    "description": "Title shown when cart has no items"
+  },
+  "cartIsEmptyMessage": "Looks like you haven't added anything to your cart yet.",
+  "@cartIsEmptyMessage": {
+    "description": "Message shown when cart has no items"
+  },
+  "exploreProducts": "Explore Products",
+  "@exploreProducts": {
+    "description": "Button text to explore products"
+  },
+  "orderSummary": "Order Summary",
+  "@orderSummary": {
+    "description": "Title for the order summary section"
+  },
+  "itemsCount": "{count} items",
+  "@itemsCount": {
+    "description": "Text showing number of items in cart",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "subtotal": "Subtotal",
+  "@subtotal": {
+    "description": "Label for subtotal amount"
+  },
+  "shipping": "Shipping",
+  "@shipping": {
+    "description": "Label for shipping cost"
+  },
+  "freeShippingOver": "Free shipping on orders over $100",
+  "@freeShippingOver": {
+    "description": "Text explaining free shipping policy"
+  },
+  "tax": "Tax (8%)",
+  "@tax": {
+    "description": "Label for tax amount"
+  },
+  "total": "Total",
+  "@total": {
+    "description": "Label for total amount"
+  },
+  "free": "FREE",
+  "@free": {
+    "description": "Text shown when something costs nothing"
+  },
+  "proceedToCheckout": "PROCEED TO CHECKOUT",
+  "@proceedToCheckout": {
+    "description": "Label for checkout button"
+  },
+  "securePaymentWith": "Secure payment with",
+  "@securePaymentWith": {
+    "description": "Text for payment methods section"
+  },
+  "checkout": "Checkout",
+  "@checkout": {
+    "description": "Title for checkout screen"
+  },
+  "userNotAuthenticated": "User not authenticated",
+  "@userNotAuthenticated": {
+    "description": "Error message when user is not logged in"
+  },
+  "orderPlacedSuccessfully": "Your order has been placed successfully!",
+  "@orderPlacedSuccessfully": {
+    "description": "Success message when order is placed"
+  },
+  "orderPlacementFailed": "Order placement failed. Please try again.",
+  "@orderPlacementFailed": {
+    "description": "Error message when order placement fails"
+  },
+  "errorWithMessage": "Error: {message}",
+  "@errorWithMessage": {
+    "description": "Error message with details",
+    "placeholders": {
+      "message": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+  "shipping": "Shipping",
+  "@shipping": {
+    "description": "Title for shipping step"
+  },
+  "payment": "Payment",
+  "@payment": {
+    "description": "Title for payment step"
+  },
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Title for confirmation step"
+  },
+  "back": "BACK",
+  "@back": {
+    "description": "Label for back button"
+  },
+  "continue_": "CONTINUE",
+  "@continue_": {
+    "description": "Label for continue button"
+  },
+  "reviewOrder": "REVIEW ORDER",
+  "@reviewOrder": {
+    "description": "Label for review order button"
+  },
+  "placeOrder": "PLACE ORDER",
+  "@placeOrder": {
+    "description": "Label for place order button"
+  },
+  "shippingInformation": "Shipping Information",
+  "@shippingInformation": {
+    "description": "Title for shipping information section"
+  },
+  "fullName": "Full Name",
+  "@fullName": {
+    "description": "Label for full name field"
+  },
+  "enterFullName": "Enter your full name",
+  "@enterFullName": {
+    "description": "Hint for full name field"
+  },
+  "pleaseEnterName": "Please enter your name",
+  "@pleaseEnterName": {
+    "description": "Validation message for empty name"
+  },
+  "nameTooShort": "Name must be at least 3 characters",
+  "@nameTooShort": {
+    "description": "Validation message for short name"
+  },
+  "streetAddress": "Street Address",
+  "@streetAddress": {
+    "description": "Label for street address field"
+  },
+  "enterStreetAddress": "Enter your street address",
+  "@enterStreetAddress": {
+    "description": "Hint for street address field"
+  },
+  "pleaseEnterAddress": "Please enter your address",
+  "@pleaseEnterAddress": {
+    "description": "Validation message for empty address"
+  },
+  "addressTooShort": "Address is too short",
+  "@addressTooShort": {
+    "description": "Validation message for short address"
+  },
+  "phoneNumber": "Phone Number",
+  "@phoneNumber": {
+    "description": "Label for phone number field"
+  },
+  "enterPhoneNumber": "Enter phone number",
+  "@enterPhoneNumber": {
+    "description": "Hint for phone number field"
+  },
+  "invalidPhoneNumber": "Invalid phone number",
+  "@invalidPhoneNumber": {
+    "description": "Validation message for invalid phone number"
+  },
+  "informationSecureNote": "Your information is secure and will only be used for order processing.",
+  "@informationSecureNote": {
+    "description": "Privacy note about user information"
+  },
+  "paymentMethod": "Payment Method",
+  "@paymentMethod": {
+    "description": "Title for payment method selection"
+  },
+  "selectPaymentMethodPrompt": "Please select a payment method to proceed",
+  "@selectPaymentMethodPrompt": {
+    "description": "Prompt to select a payment method"
+  },
+  "cashOnDelivery": "Cash on Delivery",
+  "@cashOnDelivery": {
+    "description": "Title for cash on delivery payment option"
+  },
+  "payOnDeliveryDescription": "Pay when you receive your order",
+  "@payOnDeliveryDescription": {
+    "description": "Description for cash on delivery payment option"
+  },
+  "payWithChapa": "Pay with Chapa",
+  "@payWithChapa": {
+    "description": "Title for Chapa payment option"
+  },
+  "chapaPaymentDescription": "Secure payment using Chapa",
+  "@chapaPaymentDescription": {
+    "description": "Description for Chapa payment option"
+  },
+  "paymentSecurityMessage": "All payments are secure and encrypted. We never store your payment information.",
+  "@paymentSecurityMessage": {
+    "description": "Message about payment security"
+  },
+  "orderSummary": "Order Summary",
+  "@orderSummary": {
+    "description": "Title for the order summary section"
+  },
+  "shippingInformation": "Shipping Information",
+  "@shippingInformation": {
+    "description": "Title for shipping information section"
+  },
+  "paymentMethod": "Payment Method",
+  "@paymentMethod": {
+    "description": "Title for payment method section"
+  },
+  "orderItems": "Order Items ({count})",
+  "@orderItems": {
+    "description": "Title for order items section with count",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "priceDetails": "Price Details",
+  "@priceDetails": {
+    "description": "Title for price details section"
+  },
+  "estimatedDelivery": "Estimated Delivery",
+  "@estimatedDelivery": {
+    "description": "Title for estimated delivery section"
+  },
+  "unknownProduct": "Unknown Product",
+  "@unknownProduct": {
+    "description": "Text for products with no name"
+  },
+  "size": "Size: {size}",
+  "@size": {
+    "description": "Label for product size",
+    "placeholders": {
+      "size": {
+        "type": "String",
+        "example": "M"
+      }
+    }
+  },
+  "quantity": "Qty: {count}",
+  "@quantity": {
+    "description": "Label for product quantity",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "unknown": "Unknown",
+  "@unknown": {
+    "description": "Text for unknown items"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Label for language selection"
+  },
+  "darkMode": "Dark Mode",
+  "@darkMode": {
+    "description": "Label for dark mode toggle"
+  },
+  "signOut": "Sign Out",
+  "@signOut": {
+    "description": "Label for sign out button"
+  },
+  "signOutConfirmation": "Are you sure you want to sign out?",
+  "@signOutConfirmation": {
+    "description": "Confirmation message for sign out"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Label for cancel button"
+  },
+
+  "products": "Products",
+  "@products": {
+    "description": "Section title for products"
+  },
+  "createProduct": "Create Product",
+  "@createProduct": {
+    "description": "Label for create product button"
+  },
+
+  "account": "Account",
+  "@account": {
+    "description": "Section title for account"
+  },
+  "myOrders": "My Orders",
+  "@myOrders": {
+    "description": "Label for orders screen"
+  },
+  "myRewards": "My Rewards",
+  "@myRewards": {
+    "description": "Label for rewards screen"
+  },
+  "shippingAddresses": "Shipping Addresses",
+  "@shippingAddresses": {
+    "description": "Label for shipping addresses screen"
+  },
+  "paymentMethods": "Payment Methods",
+  "@paymentMethods": {
+    "description": "Label for payment methods screen"
+  },
+
+  "preferences": "Preferences",
+  "@preferences": {
+    "description": "Section title for preferences"
+  },
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Label for notifications settings"
+  },
+
+  "support": "Support",
+  "@support": {
+    "description": "Section title for support"
+  },
+  "helpCenter": "Help Center",
+  "@helpCenter": {
+    "description": "Label for help center"
+  },
+  "aboutUs": "About Us",
+  "@aboutUs": {
+    "description": "Label for about us screen"
+  },
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {
+    "description": "Label for privacy policy screen"
+  },
+
+  "version": "Version {version}",
+  "@version": {
+    "description": "App version text",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
+
+  "errorSigningOut": "Error signing out: {error}",
+  "@errorSigningOut": {
+    "description": "Error message when signing out fails",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  }
+}
