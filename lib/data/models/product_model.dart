@@ -50,6 +50,27 @@ class Product {
     );
   }
 
+// Dart
+  factory Product.fromJson(Map<String, dynamic> json) {
+    return Product(
+      id: json['id']?.toString() ?? '',
+      name: json['name'] ?? '',
+      price: (json['price'] as num).toDouble(),
+      description: json['description'] ?? '',
+      category: json['category'] ?? '',
+      imageUrls:
+          json['imageUrls'] != null ? List<String>.from(json['imageUrls']) : [],
+      availableSizes: json['availableSizes'] != null
+          ? List<String>.from(json['availableSizes'])
+          : null,
+      inStock: json['inStock'] ?? true,
+      discountPercentage: json['discountPercentage'] != null
+          ? (json['discountPercentage'] as num).toDouble()
+          : null,
+      rating:
+          json['rating'] != null ? (json['rating'] as num).toDouble() : null,
+    );
+  }
   // Copy with method for immutability
   Product copyWith({
     String? id,

@@ -55,6 +55,8 @@ class Assets {
   static const String iconIcon = 'assets/icon/icon.png';
   static const String jmarket = '.env';
   static const String libMain = 'lib/main.dart';
+  static const String libServicesProductService =
+      'lib/services/product_service.dart';
   static const String localHiveBoxes =
       'lib/data/datasources/local/hive_boxes.dart';
   static const String localHiveService =
