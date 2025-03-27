@@ -51,7 +51,7 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildProfileHeader() {
     return Consumer<AuthProvider>(
       builder: (context, authProvider, _) {
-        final user = authProvider.user;
+        final extendedUser = authProvider.extendedUser;
 
         return Container(
           padding: const EdgeInsets.all(24),
@@ -119,67 +119,24 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-
-              // User Name - using name property instead of displayName
+              // User Name - using extended user's fullName
               Text(
-                'User', // Try 'name' instead of 'displayName'
+                extendedUser?.fullName ?? 'User',
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 4),
-
-              // User Email
+              // User Email - using basic auth user's email if necessary
               Text(
-                user?.email ?? '',
+                authProvider.user?.email ?? '',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey.shade600,
                 ),
               ),
-
-              const SizedBox(height: 20),
-
-              // Membership Level
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.amber.shade300, Colors.amber.shade700],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.amber.withOpacity(0.3),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.star,
-                      size: 16,
-                      color: Colors.white,
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      'Premium Member',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // ... rest of your widget code
             ],
           ),
         );
@@ -306,7 +263,7 @@ class ProfileScreen extends StatelessWidget {
 
                           // Navigate to home page instead of auth page
                           if (context.mounted) {
-                            context.go('/');
+                            context.go('/home');
 
                             // Show confirmation to user
                             ScaffoldMessenger.of(context).showSnackBar(

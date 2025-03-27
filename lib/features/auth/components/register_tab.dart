@@ -45,11 +45,14 @@ class _RegisterTabState extends State<RegisterTab> {
     super.dispose();
   }
 
+// dart
   Future<void> _handleRegister() async {
     if (_formKey.currentState?.validate() ?? false) {
       if (!_acceptTerms) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please accept terms and conditions')),
+          const SnackBar(
+            content: Text('Please accept terms and conditions'),
+          ),
         );
         return;
       }
@@ -57,6 +60,7 @@ class _RegisterTabState extends State<RegisterTab> {
       setState(() => _isLoading = true);
 
       try {
+        // First create user in auth
         final response = await _supabaseService.signUp(
           email: _emailController.text,
           password: _passwordController.text,
@@ -66,48 +70,32 @@ class _RegisterTabState extends State<RegisterTab> {
           },
         );
 
-        if (mounted) {
-          setState(() => _isLoading = false);
+        setState(() => _isLoading = false);
 
-          if (response.user != null) {
-            // Successful registration
-            if (response.session == null) {
-              // Email confirmation required
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text(
-                        'Please check your email to confirm your account')),
-              );
-
-              // Switch to login tab
-              if (widget.tabController != null) {
-                widget.tabController!.animateTo(0);
-              }
-            } else {
-              // Auto-login successful - force router refresh
-              GoRouter.of(context).refresh();
-
-              // Navigate to the redirect location or home
-              if (context.mounted) {
-                final destination = widget.redirectLocation ?? '/';
-                context.go(destination);
-
-                // Show welcome message
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text('Registration successful. Welcome!')),
-                );
-              }
-            }
-          }
-        }
-      } catch (e) {
-        if (mounted) {
-          setState(() => _isLoading = false);
+        if (response.session == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Registration failed: ${e.toString()}')),
+            const SnackBar(
+              content: Text('Please check your email to confirm your account'),
+            ),
+          );
+          if (widget.tabController != null) {
+            widget.tabController!.animateTo(0);
+          }
+        } else {
+          GoRouter.of(context).refresh();
+          final destination = widget.redirectLocation ?? '/';
+          context.go(destination);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Registration successful. Welcome!'),
+            ),
           );
         }
+      } catch (e) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Registration failed: ${e.toString()}')),
+        );
       }
     }
   }

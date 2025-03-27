@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../providers/auth_provider.dart';
 import '../../../providers/cart_provider.dart';
+import '../../../services/order_service.dart';
 import 'components/order_confirmation_step.dart';
 import 'components/payment_method_step.dart';
 import 'components/shipping_details_step.dart';
@@ -70,71 +73,68 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     setState(() => paymentMethod = method);
   }
 
-  void _placeOrder() {
+  // lib/features/checkout/checkout_screen.dart
+  Future<void> _placeOrder() async {
     HapticFeedback.mediumImpact();
-
-    // Process order with collected information
+    final supabase = Supabase.instance.client;
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final user = supabase.auth.currentUser;
 
-    // Here you would send the order to your backend
-    // For now, just clear the cart and show success
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User not authenticated')),
+      );
+      return;
+    }
 
-    // Clear cart
-    cartProvider.clear();
+    final shippingAddress = address;
+    final ordersPayload = cartProvider.items.map((item) {
+      return {
+        'user_id': user.id,
+        'order_id': item.productId,
+        'shipping_address': shippingAddress,
+        'order_status': 'pending',
+        'quantity': item.quantity,
+        'created_at': DateTime.now().toIso8601String(),
+      };
+    }).toList();
 
-    // Show success dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Text('Order Placed Successfully'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.green.shade100,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.check_circle,
-                color: Colors.green.shade700,
-                size: 50,
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Thank you for your order!',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'You will receive a confirmation soon.',
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                fontSize: 14,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.go('/');
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.indigo.shade700,
-              minimumSize: const Size(double.infinity, 45),
-            ),
-            child: const Text('CONTINUE SHOPPING'),
+    final orderService = OrderService();
+    try {
+      final response = await orderService.createOrders(ordersPayload);
+      if (response.isNotEmpty) {
+        // Add the newly ordered items to myOrders in the profile.
+        // It is assumed that AuthProvider has a method to add orders.
+        // authProvider.addOrders(response);
+
+        // Clear the cart.
+        cartProvider.clear();
+
+        // Show a professional success message.
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Your order has been placed successfully!'),
+            backgroundColor: Colors.green,
           ),
-        ],
-      ),
-    );
+        );
+
+        // Navigate back to the home page after a short delay.
+        Future.delayed(const Duration(seconds: 2), () {
+          context.go('/');
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Order placement failed. Please try again.'),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    }
   }
 
   @override
@@ -162,7 +162,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               _goToPreviousStep();
             } else {
               // Navigate to home instead of popping
-              context.go('/');
+              context.go('/home');
             }
           },
         ),
@@ -233,7 +233,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   // Step 3: Order Confirmation
                   OrderConfirmationStep(
                     name: name,
-                    address: '$address, $city, $zipCode',
+                    address: address,
                     phoneNumber: phoneNumber,
                     paymentMethod: paymentMethod,
                     cartItems: cartProvider.items,

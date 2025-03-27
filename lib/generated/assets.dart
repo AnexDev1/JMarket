@@ -69,6 +69,8 @@ class Assets {
   static const String modelsTrendingSearch =
       'lib/features/search/models/trending_search.dart';
   static const String modelsUserModel = 'lib/data/models/user_model.dart';
+  static const String ordersOrdersScreen =
+      'lib/features/orders/orders_screen.dart';
   static const String productProductDetailsScreen =
       'lib/features/product/product_details_screen.dart';
   static const String profileCreateProductScreen =
@@ -92,10 +94,12 @@ class Assets {
   static const String servicesAuthService = 'lib/services/auth_service.dart';
   static const String servicesDatabaseService =
       'lib/services/database_service.dart';
+  static const String servicesOrderService = 'lib/services/order_service.dart';
   static const String servicesProductService =
       'lib/features/search/services/product_service.dart';
   static const String servicesStorageService =
       'lib/services/storage_service.dart';
+  static const String servicesUserService = 'lib/services/user_service.dart';
   static const String themeAppColors = 'lib/core/theme/app_colors.dart';
   static const String themeAppTheme = 'lib/core/theme/app_theme.dart';
   static const String themeTextStyles = 'lib/core/theme/text_styles.dart';

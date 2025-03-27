@@ -304,7 +304,7 @@ class OrderConfirmationStep extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: item.imageUrl != null && item.imageUrl.isNotEmpty
+            child: item.imageUrl.isNotEmpty
                 ? Image.network(
                     item.imageUrl,
                     width: 60,

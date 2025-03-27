@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:jmarket/features/orders/orders_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../features/auth/auth_screen.dart';
@@ -28,6 +29,7 @@ class AppRoutes {
   static const String productDetails = '/product-details';
   static const String checkout = '/checkout';
   static const String orderHistory = '/order-history';
+  static const String orderDetails = '/orders';
 }
 
 final appRouter = GoRouter(
@@ -95,6 +97,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.createProduct,
       builder: (context, state) => const CreateProductScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.orderDetails,
+      builder: (context, state) => OrdersScreen(),
     ),
     GoRoute(
       path: '${AppRoutes.productDetails}/:id',

@@ -14,12 +14,13 @@ class SupabaseService {
 
   bool get isAuthenticated => currentUser != null;
 
+// dart
   Future<AuthResponse> signUp({
     required String email,
     required String password,
     required Map<String, dynamic> userData,
   }) async {
-    // First sign up the user with Auth
+    // Sign up the user with Supabase Auth.
     final response = await client.auth.signUp(
       email: email,
       password: password,
@@ -28,23 +29,16 @@ class SupabaseService {
       },
     );
 
-    // If sign up was successful and we have a user
+    // If the user is successfully created in auth.
     if (response.user != null) {
-      try {
-        // Insert or update user data in the 'profiles' or 'users' table
-        await client.from('profiles').upsert({
-          'id': response.user!.id, // Use the auth user id as the primary key
-          'email': email,
-          'full_name': userData['full_name'],
-          'phone': userData['phone'],
-          'updated_at': DateTime.now().toIso8601String(),
-        });
-      } catch (e) {
-        print('Error storing user profile data: $e');
-        // Consider whether to throw this error or not
-      }
+      final upsertResponse = await client.from('users').upsert({
+        'id': response.user!.id, // primary key.
+        'email': email,
+        'full_name': userData['full_name'],
+        'phone': userData['phone'],
+        'created_at': DateTime.now().toIso8601String(),
+      });
     }
-
     return response;
   }
 
