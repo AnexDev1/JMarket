@@ -207,6 +207,130 @@
   "@seeMore": {
     "description": "Button text for loading more results"
   },
+  "helpCenter": "Help Center",
+  "@helpCenter": {
+    "description": "Title for help center screen"
+  },
+  "searchHelp": "Search for help",
+  "@searchHelp": {
+    "description": "Placeholder for help search field"
+  },
+  "howCanWeHelp": "How can we help you?",
+  "@howCanWeHelp": {
+    "description": "Header text for support section"
+  },
+  "helpCenterDescription": "Find answers to your questions or contact our support team for assistance.",
+  "@helpCenterDescription": {
+    "description": "Description text for help center"
+  },
+  "chatWithSupport": "Chat with Support",
+  "@chatWithSupport": {
+    "description": "Button text to start chat support"
+  },
+  "frequentlyAskedQuestions": "Frequently Asked Questions",
+  "@frequentlyAskedQuestions": {
+    "description": "Title for frequently asked questions section"
+  },
+  "orders": "Orders",
+  "@orders": {
+    "description": "Menu item title for orders"
+  },
+  "trackOrder": "Track my order",
+  "@trackOrder": {
+    "description": "Sub-menu item for tracking orders"
+  },
+  "cancelOrder": "Cancel order",
+  "@cancelOrder": {
+    "description": "Sub-menu item for canceling orders"
+  },
+  "returnRefund": "Returns and refunds",
+  "@returnRefund": {
+    "description": "Sub-menu item for returns and refunds"
+  },
+  "deliveryIssues": "Delivery issues",
+  "@deliveryIssues": {
+    "description": "Sub-menu item for delivery related issues"
+  },
+  "account": "Account",
+  "@account": {
+    "description": "Menu item title for account"
+  },
+  "accountSettings": "Account settings",
+  "@accountSettings": {
+    "description": "Sub-menu item for account settings"
+  },
+  "passwordReset": "Reset password",
+  "@passwordReset": {
+    "description": "Sub-menu item for password reset"
+  },
+  "loginIssues": "Login issues",
+  "@loginIssues": {
+    "description": "Sub-menu item for login issues"
+  },
+  "dataPrivacy": "Data and privacy",
+  "@dataPrivacy": {
+    "description": "Sub-menu item for data privacy information"
+  },
+  "payments": "Payments",
+  "@payments": {
+    "description": "Menu item title for payments"
+  },
+  "paymentMethods": "Payment methods",
+  "@paymentMethods": {
+    "description": "Sub-menu item for payment methods"
+  },
+  "paymentFailures": "Payment failures",
+  "@paymentFailures": {
+    "description": "Sub-menu item for payment failures"
+  },
+  "refundProcess": "Refund process",
+  "@refundProcess": {
+    "description": "Sub-menu item for refund process"
+  },
+  "walletQuestions": "Wallet questions",
+  "@walletQuestions": {
+    "description": "Sub-menu item for wallet related queries"
+  },
+  "products": "Products",
+  "@products": {
+    "description": "Menu item title for products"
+  },
+  "productDetails": "Product details",
+  "@productDetails": {
+    "description": "Sub-menu item for product details"
+  },
+  "availability": "Product availability",
+  "@availability": {
+    "description": "Sub-menu item for product availability"
+  },
+  "warranties": "Warranties",
+  "@warranties": {
+    "description": "Sub-menu item for warranties"
+  },
+  "reportIssue": "Report issue",
+  "@reportIssue": {
+    "description": "Sub-menu item for reporting an issue"
+  },
+  "contactUs": "Contact Us",
+  "@contactUs": {
+    "description": "Title for contact section"
+  },
+  "email": "Email",
+  "@email": {
+    "description": "Label for email"
+  },
+  "phone": "Phone",
+  "@phone": {
+    "description": "Label for phone"
+  },
+  "liveChat": "Live Chat",
+  "@liveChat": {
+    "description": "Label for live chat support"
+  },
+  "availableHours": "Available 24/7",
+  "@availableHours": {
+    "description": "Description for live chat availability"
+  },
   "viewCart": "VIEW CART",
   "@viewCart": {
     "description": "Button text to view cart"

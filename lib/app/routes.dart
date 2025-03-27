@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:jmarket/features/orders/orders_screen.dart';
+import 'package:jmarket/features/profile/help_center_screen.dart';
 import 'package:jmarket/features/profile/language_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -32,6 +33,7 @@ class AppRoutes {
   static const String checkout = '/checkout';
   static const String orderHistory = '/order-history';
   static const String orderDetails = '/orders';
+  static const String help = '/help';
 }
 
 final appRouter = GoRouter(
@@ -89,6 +91,10 @@ final appRouter = GoRouter(
         GoRoute(
           path: AppRoutes.favorites,
           builder: (context, state) => const FavoritesScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.help,
+          builder: (context, state) => const HelpCenterScreen(),
         ),
         GoRoute(
           path: AppRoutes.profile,

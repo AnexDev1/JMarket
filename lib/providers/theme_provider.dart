@@ -6,7 +6,9 @@ import '../core/config/hive_config.dart';
 class ThemeProvider extends ChangeNotifier {
   // Changed default theme mode to light
   ThemeMode _themeMode = ThemeMode.light;
+  bool _isDarkMode = false;
 
+  bool get isDarkMode => _isDarkMode;
   // Constructor - forces light theme
   ThemeProvider() {
     // Force light theme instead of loading saved theme

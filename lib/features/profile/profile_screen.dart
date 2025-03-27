@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../providers/auth_provider.dart';
 import '../../providers/language_provider.dart';
+import '../../providers/theme_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -206,11 +207,12 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.dark_mode_outlined,
               title: AppLocalizations.of(context)!.darkMode,
               trailing: Switch(
-                value: Theme.of(context).brightness == Brightness.dark,
+                value: Provider.of<ThemeProvider>(context).isDarkMode,
                 activeColor: Colors.indigo.shade700,
                 onChanged: (value) {
-                  // Toggle theme
                   HapticFeedback.lightImpact();
+                  Provider.of<ThemeProvider>(context, listen: false)
+                      .toggleTheme();
                 },
               ),
             ),

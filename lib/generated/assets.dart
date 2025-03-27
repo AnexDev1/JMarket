@@ -80,6 +80,8 @@ class Assets {
       'lib/features/product/product_details_screen.dart';
   static const String profileCreateProductScreen =
       'lib/features/profile/create_product_screen.dart';
+  static const String profileHelpCenterScreen =
+      'lib/features/profile/help_center_screen.dart';
   static const String profileLanguageScreen =
       'lib/features/profile/language_screen.dart';
   static const String profileProfileScreen =

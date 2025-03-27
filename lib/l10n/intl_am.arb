@@ -207,6 +207,130 @@
   "@seeMore": {
     "description": "Button text for loading more results"
   },
+  "helpCenter": "እርዳታ ማዕከል",
+  "@helpCenter": {
+    "description": "Title for help center screen in Amharic"
+  },
+  "searchHelp": "እርዳታ ፍለጋ",
+  "@searchHelp": {
+    "description": "Placeholder for help search field in Amharic"
+  },
+  "howCanWeHelp": "እኛ እንዴት ልናገዝ?",
+  "@howCanWeHelp": {
+    "description": "Header text for support section in Amharic"
+  },
+  "helpCenterDescription": "ጥያቄዎችዎን ይፈትሹ ወይም ከድጋፍ ቡድናችን ጋር ያገናኙ።",
+  "@helpCenterDescription": {
+    "description": "Description text for help center in Amharic"
+  },
+  "chatWithSupport": "ከድጋፍ ቡድን ጋር ውይይት ያድርጉ",
+  "@chatWithSupport": {
+    "description": "Button text to start chat support in Amharic"
+  },
+  "frequentlyAskedQuestions": "ተደጋጋሚ ጥያቄዎች",
+  "@frequentlyAskedQuestions": {
+    "description": "Title for frequently asked questions section in Amharic"
+  },
+  "orders": "ትዕዛዞች",
+  "@orders": {
+    "description": "Menu item title for orders in Amharic"
+  },
+  "trackOrder": "ትዕዛዝ ተከታትል",
+  "@trackOrder": {
+    "description": "Sub-menu item for tracking orders in Amharic"
+  },
+  "cancelOrder": "ትዕዛዝ ሰርዝ",
+  "@cancelOrder": {
+    "description": "Sub-menu item for canceling orders in Amharic"
+  },
+  "returnRefund": "መመለስ እና ክፍያ",
+  "@returnRefund": {
+    "description": "Sub-menu item for returns and refunds in Amharic"
+  },
+  "deliveryIssues": "የመድረሻ ችግኞች",
+  "@deliveryIssues": {
+    "description": "Sub-menu item for delivery related issues in Amharic"
+  },
+  "account": "መለያ",
+  "@account": {
+    "description": "Menu item title for account in Amharic"
+  },
+  "accountSettings": "የመለያ ቅንብሮች",
+  "@accountSettings": {
+    "description": "Sub-menu item for account settings in Amharic"
+  },
+  "passwordReset": "የይለፍ ቃል አዲስ ማስተካከል",
+  "@passwordReset": {
+    "description": "Sub-menu item for password reset in Amharic"
+  },
+  "loginIssues": "የግባት ችግኞች",
+  "@loginIssues": {
+    "description": "Sub-menu item for login issues in Amharic"
+  },
+  "dataPrivacy": "የመረጃ ግላዊነት",
+  "@dataPrivacy": {
+    "description": "Sub-menu item for data privacy information in Amharic"
+  },
+  "payments": "ክፍያዎች",
+  "@payments": {
+    "description": "Menu item title for payments in Amharic"
+  },
+  "paymentMethods": "የክፍያ መስመሮች",
+  "@paymentMethods": {
+    "description": "Sub-menu item for payment methods in Amharic"
+  },
+  "paymentFailures": "የክፍያ እንቅስቃሴ",
+  "@paymentFailures": {
+    "description": "Sub-menu item for payment failures in Amharic"
+  },
+  "refundProcess": "የተመለሰ ሂደት",
+  "@refundProcess": {
+    "description": "Sub-menu item for refund process in Amharic"
+  },
+  "walletQuestions": "የብሪቶች ጥያቄዎች",
+  "@walletQuestions": {
+    "description": "Sub-menu item for wallet queries in Amharic"
+  },
+  "products": "ምርቶች",
+  "@products": {
+    "description": "Menu item title for products in Amharic"
+  },
+  "productDetails": "የምርት ዝርዝሮች",
+  "@productDetails": {
+    "description": "Sub-menu item for product details in Amharic"
+  },
+  "availability": "የምርት ገንዘብ",
+  "@availability": {
+    "description": "Sub-menu item for product availability in Amharic"
+  },
+  "warranties": "ዋራንቲዎች",
+  "@warranties": {
+    "description": "Sub-menu item for warranties in Amharic"
+  },
+  "reportIssue": "የችግኝ ሪፖርት",
+  "@reportIssue": {
+    "description": "Sub-menu item for reporting an issue in Amharic"
+  },
+  "contactUs": "አግኙን",
+  "@contactUs": {
+    "description": "Title for contact section in Amharic"
+  },
+  "email": "ኢሜል",
+  "@email": {
+    "description": "Label for email in Amharic"
+  },
+  "phone": "ስልክ",
+  "@phone": {
+    "description": "Label for phone in Amharic"
+  },
+  "liveChat": "በቀጥታ ውይይት",
+  "@liveChat": {
+    "description": "Label for live chat support in Amharic"
+  },
+  "availableHours": "24/7 ተገኞ",
+  "@availableHours": {
+    "description": "Description for live chat availability in Amharic"
+  },
   "noDescriptionAvailable": "መግለጫ አልተገኘም",
   "@noDescriptionAvailable": {
     "description": "Text when no product description is available"
