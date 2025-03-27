@@ -161,7 +161,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             if (_currentStep > 0) {
               _goToPreviousStep();
             } else {
-              context.pop();
+              // Navigate to home instead of popping
+              context.go('/');
             }
           },
         ),

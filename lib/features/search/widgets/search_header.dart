@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../app/routes.dart';
 
 class SearchHeader extends StatelessWidget {
   final TextEditingController controller;
@@ -23,88 +23,60 @@ class SearchHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            offset: const Offset(0, 1),
             blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Row(
         children: [
-          // Back button
-          GestureDetector(
-            onTap: () => context.pop(),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.gray100,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: AppColors.gray700,
-                size: 20,
-              ),
-            ),
+          // Back button that navigates to homepage
+          IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black87),
+            onPressed: () {
+              context.go(AppRoutes.home); // Navigate to homepage
+            },
           ),
-          const SizedBox(width: 12),
-
-          // Search field
           Expanded(
-            child: TextField(
-              controller: controller,
-              focusNode: focusNode,
-              style: const TextStyle(fontSize: 16),
-              decoration: InputDecoration(
-                hintText: 'Search products...',
-                hintStyle: TextStyle(color: AppColors.gray400),
-                prefixIcon:
-                    Icon(Icons.search, color: AppColors.gray400, size: 20),
-                suffixIcon: searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: Icon(Icons.clear,
-                            color: AppColors.gray400, size: 20),
-                        onPressed: onClearSearch,
-                      )
-                    : null,
-                filled: true,
-                fillColor: AppColors.gray100,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 12),
+            child: Container(
+              height: 46,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(12),
               ),
-              textInputAction: TextInputAction.search,
-              onSubmitted: onSubmitted,
+              child: TextField(
+                controller: controller,
+                focusNode: focusNode,
+                textInputAction: TextInputAction.search,
+                onSubmitted: onSubmitted,
+                decoration: InputDecoration(
+                  hintText: 'Search for products...',
+                  hintStyle: TextStyle(color: Colors.grey.shade500),
+                  border: InputBorder.none,
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Colors.grey.shade600,
+                  ),
+                  suffixIcon: searchQuery.isNotEmpty
+                      ? GestureDetector(
+                          onTap: onClearSearch,
+                          child: Icon(
+                            Icons.clear,
+                            color: Colors.grey.shade600,
+                          ),
+                        )
+                      : null,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 13),
+                ),
+              ),
             ),
           ),
-
-          // Cancel button
-          if (searchQuery.isNotEmpty) ...[
-            const SizedBox(width: 12),
-            TextButton(
-              onPressed: onClearSearch,
-              style: TextButton.styleFrom(
-                minimumSize: const Size(60, 40),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                foregroundColor: Colors.indigo.shade700,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: const Text(
-                'Cancel',
-                style: TextStyle(fontWeight: FontWeight.w500),
-              ),
-            ),
-          ],
         ],
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../app/routes.dart';
 import '../models/search_product.dart';
 
 class ProductSearchCard extends StatelessWidget {
@@ -18,7 +19,7 @@ class ProductSearchCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
-        context.push('/product/${product.id}');
+        context.push('${AppRoutes.productDetails}/${product.id}');
       },
       child: Container(
         decoration: BoxDecoration(

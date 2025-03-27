@@ -2,6 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/auth_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -46,131 +49,141 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildProfileHeader() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      margin: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, _) {
+        final user = authProvider.user;
+
+        return Container(
+          padding: const EdgeInsets.all(24),
+          margin: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Profile Picture with edit button
-          Stack(
-            alignment: Alignment.bottomRight,
+          child: Column(
             children: [
+              // Profile Picture with edit button
+              Stack(
+                alignment: Alignment.bottomRight,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.indigo.shade400,
+                          Colors.indigo.shade700
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 4),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.person,
+                        size: 50,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.indigo.shade700,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                    ),
+                    child: const Icon(
+                      Icons.camera_alt,
+                      size: 14,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // User Name - using name property instead of displayName
+              Text(
+                'User', // Try 'name' instead of 'displayName'
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+
+              // User Email
+              Text(
+                user?.email ?? '',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // Membership Level
               Container(
-                width: 100,
-                height: 100,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.indigo.shade400, Colors.indigo.shade700],
+                    colors: [Colors.amber.shade300, Colors.amber.shade700],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 4),
+                  borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 8,
+                      color: Colors.amber.withOpacity(0.3),
+                      blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-                child: const Center(
-                  child: Icon(
-                    Icons.person,
-                    size: 50,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Colors.indigo.shade700,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
-                ),
-                child: const Icon(
-                  Icons.camera_alt,
-                  size: 14,
-                  color: Colors.white,
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.star,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      'Premium Member',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-
-          // User Name
-          const Text(
-            'John Doe',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-
-          // User Email
-          Text(
-            'john.doe@example.com',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade600,
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          // Membership Level
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.amber.shade300, Colors.amber.shade700],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.amber.withOpacity(0.3),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.star,
-                  size: 16,
-                  color: Colors.white,
-                ),
-                SizedBox(width: 4),
-                Text(
-                  'Premium Member',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -282,14 +295,39 @@ class ProfileScreen extends StatelessWidget {
                       child: const Text('CANCEL'),
                     ),
                     TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        context.go('/login');
+                      onPressed: () async {
+                        Navigator.pop(context); // Close dialog
+
+                        try {
+                          // Use AuthProvider to sign out
+                          final authProvider =
+                              Provider.of<AuthProvider>(context, listen: false);
+                          await authProvider.signOut(context);
+
+                          // Navigate to home page instead of auth page
+                          if (context.mounted) {
+                            context.go('/');
+
+                            // Show confirmation to user
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('You have been signed out'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content:
+                                    Text('Sign out failed: ${e.toString()}'),
+                              ),
+                            );
+                          }
+                        }
                       },
                       child: const Text('SIGN OUT'),
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.red.shade600,
-                      ),
                     ),
                   ],
                 ),

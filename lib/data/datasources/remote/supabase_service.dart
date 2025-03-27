@@ -1,11 +1,89 @@
-// File: lib/data/datasources/remote/supabase_service.dart
+// lib/data/datasources/remote/supabase_service.dart
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseService {
   final SupabaseClient client = Supabase.instance.client;
-// Add to SupabaseService class
+
+  // Auth methods
+  User? get currentUser => client.auth.currentUser;
+
+  Stream<AuthState> get authStateChanges => client.auth.onAuthStateChange;
+
+  bool get isAuthenticated => currentUser != null;
+
+  Future<AuthResponse> signUp({
+    required String email,
+    required String password,
+    required Map<String, dynamic> userData,
+  }) async {
+    // First sign up the user with Auth
+    final response = await client.auth.signUp(
+      email: email,
+      password: password,
+      data: {
+        'full_name': userData['full_name'],
+      },
+    );
+
+    // If sign up was successful and we have a user
+    if (response.user != null) {
+      try {
+        // Insert or update user data in the 'profiles' or 'users' table
+        await client.from('profiles').upsert({
+          'id': response.user!.id, // Use the auth user id as the primary key
+          'email': email,
+          'full_name': userData['full_name'],
+          'phone': userData['phone'],
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+      } catch (e) {
+        print('Error storing user profile data: $e');
+        // Consider whether to throw this error or not
+      }
+    }
+
+    return response;
+  }
+
+  Future<AuthResponse> signIn({
+    required String email,
+    required String password,
+  }) async {
+    return await client.auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
+  }
+
+  Future<void> signOut() async {
+    await client.auth.signOut();
+  }
+
+  Future<void> resetPassword(String email) async {
+    await client.auth.resetPasswordForEmail(
+      email,
+      redirectTo: kIsWeb ? null : 'io.supabase.yourappname://reset-callback',
+    );
+  }
+
+  Future<bool> signInWithGoogle() async {
+    return await client.auth.signInWithOAuth(
+      OAuthProvider.google,
+      redirectTo: kIsWeb ? null : 'io.supabase.yourappname://login-callback',
+    );
+  }
+
+  Future<bool> signInWithFacebook() async {
+    return await client.auth.signInWithOAuth(
+      OAuthProvider.facebook,
+      redirectTo: kIsWeb ? null : 'io.supabase.yourappname://login-callback',
+    );
+  }
+
+  // Existing product methods
   Future<List<Map<String, dynamic>>> searchProducts(String query) async {
     try {
       final response = await client

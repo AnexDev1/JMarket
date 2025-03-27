@@ -4,6 +4,12 @@ class Assets {
 
   static const String appApp = 'lib/app/app.dart';
   static const String appRoutes = 'lib/app/routes.dart';
+  static const String assetsFeatures = 'assets/features.jpg';
+  static const String assetsFeatures2 = 'assets/features2.jpg';
+  static const String assetsFeatures3 = 'assets/features3.jpg';
+  static const String authAuthScreen = 'lib/features/auth/auth_screen.dart';
+  static const String buttonsPrimaryButton =
+      'lib/widgets/buttons/primary_button.dart';
   static const String cartCartScreen = 'lib/features/cart/cart_screen.dart';
   static const String checkoutCheckoutScreen =
       'lib/features/cart/checkout/checkout_screen.dart';
@@ -21,12 +27,18 @@ class Assets {
       'lib/features/favorites/components/favorites_grid_view.dart';
   static const String componentsFavoritesItemCard =
       'lib/features/favorites/components/favorites_item_card.dart';
+  static const String componentsForgotPasswordScreen =
+      'lib/features/auth/components/forgot_password_screen.dart';
+  static const String componentsLoginTab =
+      'lib/features/auth/components/login_tab.dart';
   static const String componentsOrderConfirmationStep =
       'lib/features/cart/checkout/components/order_confirmation_step.dart';
   static const String componentsPaymentMethodStep =
       'lib/features/cart/checkout/components/payment_method_step.dart';
   static const String componentsQuantityButton =
       'lib/features/cart/components/quantity_button.dart';
+  static const String componentsRegisterTab =
+      'lib/features/auth/components/register_tab.dart';
   static const String componentsShippingDetailsStep =
       'lib/features/cart/checkout/components/shipping_details_step.dart';
   static const String configHiveConfig = 'lib/core/config/hive_config.dart';
@@ -40,6 +52,7 @@ class Assets {
       'lib/features/favorites/favorites_screen.dart';
   static const String generatedAssets = 'lib/generated/assets.dart';
   static const String homeHomeScreen = 'lib/features/home/home_screen.dart';
+  static const String iconIcon = 'assets/icon/icon.png';
   static const String jmarket = '.env';
   static const String libMain = 'lib/main.dart';
   static const String localHiveBoxes =
@@ -79,12 +92,16 @@ class Assets {
   static const String servicesAuthService = 'lib/services/auth_service.dart';
   static const String servicesDatabaseService =
       'lib/services/database_service.dart';
+  static const String servicesProductService =
+      'lib/features/search/services/product_service.dart';
   static const String servicesStorageService =
       'lib/services/storage_service.dart';
   static const String themeAppColors = 'lib/core/theme/app_colors.dart';
   static const String themeAppTheme = 'lib/core/theme/app_theme.dart';
   static const String themeTextStyles = 'lib/core/theme/text_styles.dart';
   static const String utilsExtentions = 'lib/core/utils/extentions.dart';
+  static const String utilsFormValidators =
+      'lib/core/utils/form_validators.dart';
   static const String utilsHelpers = 'lib/core/utils/helpers.dart';
   static const String widgetsFeatureBannerCarousel =
       'lib/features/home/widgets/feature_banner_carousel.dart';

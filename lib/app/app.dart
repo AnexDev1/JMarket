@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
 import 'routes.dart';
 
@@ -208,7 +209,6 @@ class _MainScreenState extends State<MainScreen>
     );
     _controller.forward();
 
-    // Listen to route changes using routeInformationProvider
     WidgetsBinding.instance.addPostFrameCallback((_) {
       GoRouter.of(context)
           .routeInformationProvider
@@ -219,7 +219,6 @@ class _MainScreenState extends State<MainScreen>
   void _handleRouteChange() {
     if (mounted) {
       setState(() {
-        // Animate when route changes
         _controller.reset();
         _controller.forward();
       });
@@ -229,7 +228,6 @@ class _MainScreenState extends State<MainScreen>
   @override
   void dispose() {
     _controller.dispose();
-    // Safely remove the listener
     WidgetsBinding.instance.addPostFrameCallback((_) {
       try {
         GoRouter.of(context)
@@ -242,7 +240,7 @@ class _MainScreenState extends State<MainScreen>
     super.dispose();
   }
 
-  int _calculateSelectedIndex() {
+  int _calculateSelectedIndex(bool isAuthenticated) {
     final currentLocation =
         GoRouter.of(context).routeInformationProvider.value.uri.path;
 
@@ -251,21 +249,23 @@ class _MainScreenState extends State<MainScreen>
     if (currentLocation == AppRoutes.search) return 1;
     if (currentLocation == AppRoutes.cart) return 2;
     if (currentLocation == AppRoutes.favorites) return 3;
-    if (currentLocation == AppRoutes.profile) return 4;
+    if (currentLocation == AppRoutes.profile && isAuthenticated) return 4;
 
     // Then fallback to startsWith for nested routes
     if (currentLocation.startsWith(AppRoutes.home)) return 0;
     if (currentLocation.startsWith(AppRoutes.search)) return 1;
     if (currentLocation.startsWith(AppRoutes.cart)) return 2;
     if (currentLocation.startsWith(AppRoutes.favorites)) return 3;
-    if (currentLocation.startsWith(AppRoutes.profile)) return 4;
+    if (currentLocation.startsWith(AppRoutes.profile) && isAuthenticated)
+      return 4;
 
     return 0;
   }
 
   @override
   Widget build(BuildContext context) {
-    final selectedIndex = _calculateSelectedIndex();
+    final isAuthenticated = context.watch<AuthProvider>().isAuthenticated;
+    final selectedIndex = _calculateSelectedIndex(isAuthenticated);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -288,22 +288,16 @@ class _MainScreenState extends State<MainScreen>
         onDestinationSelected: (index) {
           HapticFeedback.lightImpact();
 
-          switch (index) {
-            case 0:
-              context.go(AppRoutes.home);
-              break;
-            case 1:
-              context.go(AppRoutes.search);
-              break;
-            case 2:
-              context.go(AppRoutes.cart);
-              break;
-            case 3:
-              context.go(AppRoutes.favorites);
-              break;
-            case 4:
-              context.go(AppRoutes.profile);
-              break;
+          final destinations = [
+            AppRoutes.home,
+            AppRoutes.search,
+            AppRoutes.cart,
+            AppRoutes.favorites,
+            if (isAuthenticated) AppRoutes.profile,
+          ];
+
+          if (index < destinations.length) {
+            context.go(destinations[index]);
           }
         },
         destinations: [
@@ -351,17 +345,18 @@ class _MainScreenState extends State<MainScreen>
             ),
             label: 'Favorites',
           ),
-          NavigationDestination(
-            icon: Icon(
-              Icons.person_outline,
-              color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+          if (isAuthenticated)
+            NavigationDestination(
+              icon: Icon(
+                Icons.person_outline,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+              selectedIcon: Icon(
+                Icons.person,
+                color: Colors.indigo.shade700,
+              ),
+              label: 'Profile',
             ),
-            selectedIcon: Icon(
-              Icons.person,
-              color: Colors.indigo.shade700,
-            ),
-            label: 'Profile',
-          ),
         ],
       ),
     );

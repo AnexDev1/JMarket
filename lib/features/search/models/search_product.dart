@@ -30,7 +30,7 @@ class SearchProduct {
       price: (map['price'] as num).toDouble(),
       rating: (map['rating'] as num).toDouble(),
       reviews: map['reviews'] as int,
-      imageUrl: map['image'] ?? '',
+      imageUrl: map['imageUrls'][0] ?? '',
       color: map['color'] as Color,
     );
   }

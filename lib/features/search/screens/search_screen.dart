@@ -1,10 +1,10 @@
-// lib/features/search/screens/search_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../models/search_category.dart';
 import '../models/search_product.dart';
 import '../models/trending_search.dart';
+import '../services/product_service.dart';
 import '../widgets/recent_searches_list.dart';
 import '../widgets/search_categories_grid.dart';
 import '../widgets/search_header.dart';
@@ -27,6 +27,9 @@ class _SearchScreenState extends State<SearchScreen>
   String _searchQuery = '';
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+
+  // Initialize product service
+  final ProductService _productService = ProductService();
 
   // Recent searches
   final List<String> _recentSearches = [
@@ -70,31 +73,6 @@ class _SearchScreenState extends State<SearchScreen>
       icon: Icons.face_outlined,
       color: Colors.purple.shade600,
     ),
-  ];
-
-  // Enhanced product data for better display
-  final List<Map<String, dynamic>> _dummyProducts = [
-    {
-      'id': '1',
-      'name': 'Premium Wireless Headphones',
-      'description': 'High-quality sound with noise cancellation',
-      'price': 89.99,
-      'rating': 4.5,
-      'reviews': 128,
-      'image': 'https://picsum.photos/id/3/400/400',
-      'color': Colors.indigo.shade700
-    },
-    {
-      'id': '2',
-      'name': 'Smart Watch Series 5',
-      'description': 'Track your fitness and stay connected',
-      'price': 199.99,
-      'rating': 4.2,
-      'reviews': 94,
-      'image': 'https://picsum.photos/id/26/400/400',
-      'color': Colors.teal.shade700
-    },
-    // Additional products...
   ];
 
   // Trending searches
@@ -145,7 +123,7 @@ class _SearchScreenState extends State<SearchScreen>
     });
   }
 
-  void _performSearch(String query) {
+  Future<void> _performSearch(String query) async {
     if (query.isEmpty) {
       setState(() {
         _isSearching = false;
@@ -159,22 +137,11 @@ class _SearchScreenState extends State<SearchScreen>
       FocusScope.of(context).unfocus();
     });
 
-    // Simulate search with delay
-    Future.delayed(const Duration(milliseconds: 1200), () {
-      if (!mounted) return;
+    try {
+      // Get real data from Supabase using ProductService
+      final results = await _productService.searchProducts(query);
 
-      final results = _dummyProducts
-          .where((product) =>
-              product['name']
-                  .toString()
-                  .toLowerCase()
-                  .contains(query.toLowerCase()) ||
-              product['description']
-                  .toString()
-                  .toLowerCase()
-                  .contains(query.toLowerCase()))
-          .map((data) => SearchProduct.fromMap(data))
-          .toList();
+      if (!mounted) return;
 
       setState(() {
         _searchResults = results;
@@ -192,7 +159,18 @@ class _SearchScreenState extends State<SearchScreen>
 
       _animationController.reset();
       _animationController.forward();
-    });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _isSearching = false;
+        _searchResults = [];
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Search failed: ${e.toString()}')),
+      );
+    }
   }
 
   void _clearSearch() {
