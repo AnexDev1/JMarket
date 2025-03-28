@@ -62,7 +62,7 @@ class LanguageScreen extends StatelessWidget {
                     : null,
                 onTap: () {
                   languageProvider.setLanguage(language);
-                  context.pop();
+                  context.go('/profile');
                 },
               );
             },

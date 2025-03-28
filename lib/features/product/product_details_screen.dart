@@ -31,6 +31,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   int _quantity = 1;
   bool isFavorite = false;
   String _selectedSize = 'M';
+  bool _isAuthenticated = false;
   final Color primaryColor = Colors.indigo.shade700;
 
   final ScrollController _scrollController = ScrollController();
@@ -40,13 +41,42 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   void initState() {
     super.initState();
     _futureProduct = SupabaseService().fetchProductById(widget.productId);
-
+    _checkAuthentication();
     // Listen to scroll to show/hide title in app bar
     _scrollController.addListener(() {
       setState(() {
         _showTitle = _scrollController.offset > 180;
       });
     });
+  }
+
+  Future<void> _checkAuthentication() async {
+    final currentUser = await SupabaseService().getCurrentUser();
+    setState(() {
+      _isAuthenticated = currentUser != null;
+    });
+  }
+
+  Future<void> _submitRating(double rating) async {
+    try {
+      await SupabaseService().submitProductRating(widget.productId, rating);
+      setState(() {
+        _futureProduct = SupabaseService().fetchProductById(widget.productId);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.ratingSubmitted),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.errorSubmittingRating),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -425,7 +455,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       const SizedBox(width: 8),
                                       Text(
                                         localizations.reviewsCount(
-                                            product['reviews'] ?? 0),
+                                            product['reviews'] ?? 4),
                                         style: TextStyle(
                                           color: Colors.grey.shade600,
                                           fontSize: 14,
@@ -433,12 +463,19 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       ),
                                     ],
                                   ),
+                                  // In the product info card section, after the existing rating display
+                                  // const SizedBox(height: 16),
+                                  // ProductRatingWidget(
+                                  //   productId: product['id'].toString(),
+                                  //   isAuthenticated: _isAuthenticated,
+                                  //   onRatingSubmitted: _submitRating,
+                                  // ),
                                   const SizedBox(height: 16),
                                   Row(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
-                                        '\$${product['price']}',
+                                        '${product['price']} ETB',
                                         style: TextStyle(
                                           fontSize: 28,
                                           fontWeight: FontWeight.bold,
@@ -562,7 +599,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 16),
-                                  const ProductRelatedProducts(),
+                                  ProductRelatedProducts(
+                                    category: product['category'] ?? '',
+                                    currentProductId: product['id'].toString(),
+                                  ),
                                 ],
                               ),
                             ),
@@ -662,7 +702,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                       child: Text(
                         localizations.addToCartWithPrice(
-                            (product['price'] * _quantity).toStringAsFixed(2)),
+                            "${(product['price'] * _quantity).toStringAsFixed(2)} ETB"),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           letterSpacing: 0.5,
@@ -676,6 +716,110 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           },
         ),
       ),
+    );
+  }
+}
+
+class ProductRatingWidget extends StatefulWidget {
+  final String productId;
+  final bool isAuthenticated;
+  final Function(double) onRatingSubmitted;
+
+  const ProductRatingWidget({
+    Key? key,
+    required this.productId,
+    required this.isAuthenticated,
+    required this.onRatingSubmitted,
+  }) : super(key: key);
+
+  @override
+  State<ProductRatingWidget> createState() => _ProductRatingWidgetState();
+}
+
+class _ProductRatingWidgetState extends State<ProductRatingWidget> {
+  double _selectedRating = 0;
+  bool _hasSubmitted = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
+    if (!widget.isAuthenticated) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 16.0),
+        child: Row(
+          children: [
+            const Icon(Icons.star_border, color: Colors.grey),
+            const SizedBox(width: 8),
+            TextButton(
+              onPressed: () => context.go('/login'),
+              child: Text(localizations.loginToRate),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        Text(
+          localizations.rateThisProduct,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: List.generate(
+            5,
+            (index) => GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedRating = index + 1;
+                  _hasSubmitted = false;
+                });
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Icon(
+                  index < _selectedRating ? Icons.star : Icons.star_border,
+                  color: Colors.amber,
+                  size: 36,
+                ),
+              ),
+            ),
+          ),
+        ),
+        if (_selectedRating > 0 && !_hasSubmitted) ...[
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {
+              widget.onRatingSubmitted(_selectedRating);
+              setState(() {
+                _hasSubmitted = true;
+              });
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.indigo.shade700,
+              foregroundColor: Colors.white,
+            ),
+            child: Text(localizations.submitRating),
+          ),
+        ],
+        if (_hasSubmitted) ...[
+          const SizedBox(height: 12),
+          Text(
+            localizations.thankYouForRating,
+            style: const TextStyle(
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

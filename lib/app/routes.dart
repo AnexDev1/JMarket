@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jmarket/features/orders/orders_screen.dart';
 import 'package:jmarket/features/profile/help_center_screen.dart';
@@ -39,6 +40,7 @@ class AppRoutes {
 final appRouter = GoRouter(
   initialLocation: AppRoutes.home,
   debugLogDiagnostics: true,
+  observers: [NavigatorObserver()],
   redirect: (context, state) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 

@@ -62,9 +62,30 @@
   "@off": {
     "description": "Text displayed after discount percentage"
   },
-  "unknownProduct": "Unknown Product",
-  "@unknownProduct": {
-    "description": "Text displayed when product name is missing"
+
+  "loginToRate": "Login to rate this product",
+  "@loginToRate": {
+    "description": "Message prompting user to login before rating a product"
+  },
+  "rateThisProduct": "Rate this product",
+  "@rateThisProduct": {
+    "description": "Title for product rating section"
+  },
+  "submitRating": "Submit Rating",
+  "@submitRating": {
+    "description": "Button text for submitting a product rating"
+  },
+  "thankYouForRating": "Thank you for your rating!",
+  "@thankYouForRating": {
+    "description": "Confirmation message shown after rating submission"
+  },
+  "ratingSubmitted": "Rating submitted successfully",
+  "@ratingSubmitted": {
+    "description": "Success message for rating submission"
+  },
+  "errorSubmittingRating": "Error submitting rating",
+  "@errorSubmittingRating": {
+    "description": "Error message shown when rating submission fails"
   },
   "addToCart": "Add to Cart",
   "@addToCart": {
@@ -136,18 +157,12 @@
   "@addedToFavorites": {
     "description": "Message when product is added to favorites"
   },
-  "removedFromFavorites": "Removed from favorites",
-  "@removedFromFavorites": {
-    "description": "Message when product is removed from favorites"
-  },
+
   "shareFunctionality": "Share functionality",
   "@shareFunctionality": {
     "description": "Message about share functionality"
   },
-  "productDetails": "Product Details",
-  "@productDetails": {
-    "description": "Title for product details screen"
-  },
+
   "noName": "No Name",
   "@noName": {
     "description": "Default text when product has no name"
@@ -182,13 +197,13 @@
   "@youMayAlsoLike": {
     "description": "Title for related products section"
   },
-  "addToCartWithPrice": "Add to Cart | ${price}",
+  "addToCartWithPrice": "Add to Cart | {price}",
   "@addToCartWithPrice": {
     "description": "Button text for adding to cart with price",
     "placeholders": {
       "price": {
         "type": "String",
-        "example": "$19.99"
+        "example": "19.99 ETB"
       }
     }
   },

@@ -11,6 +11,10 @@ class Assets {
   static const String buttonsPrimaryButton =
       'lib/widgets/buttons/primary_button.dart';
   static const String cartCartScreen = 'lib/features/cart/cart_screen.dart';
+  static const String categoryCategoriesScreen =
+      'lib/features/category/categories_screen.dart';
+  static const String categoryCategoryProductsScreen =
+      'lib/features/category/category_products_screen.dart';
   static const String checkoutCheckoutScreen =
       'lib/features/cart/checkout/checkout_screen.dart';
   static const String componentsCartItemCard =

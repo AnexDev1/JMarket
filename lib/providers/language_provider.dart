@@ -6,7 +6,8 @@ class LanguageProvider extends ChangeNotifier {
   Locale get locale => _locale;
   final Map<String, Locale> availableLocales = {
     'English': const Locale('en'),
-    'Amharic': const Locale('am'),
+
+    'አማርኛ': const Locale('am'),
     // 'Afan Oromoo': const Locale('om'),
   };
 

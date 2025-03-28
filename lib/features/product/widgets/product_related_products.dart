@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../services/product_service.dart';
+
 class ProductRelatedProducts extends StatefulWidget {
-  const ProductRelatedProducts({super.key});
+  final String category;
+  final String currentProductId;
+
+  const ProductRelatedProducts({
+    super.key,
+    required this.category,
+    required this.currentProductId,
+  });
 
   @override
   State<ProductRelatedProducts> createState() => _ProductRelatedProductsState();
@@ -15,44 +24,15 @@ class _ProductRelatedProductsState extends State<ProductRelatedProducts> {
   @override
   void initState() {
     super.initState();
-    // Simulate fetching related products
-    _futureRelatedProducts = Future.delayed(
-      const Duration(seconds: 1),
-      () => _getMockRelatedProducts(),
-    );
+    _fetchRelatedProducts();
   }
 
-  List<Map<String, dynamic>> _getMockRelatedProducts() {
-    return [
-      {
-        'id': '101',
-        'name': 'Canvas Sneakers',
-        'price': 59.99,
-        'image_url': 'https://picsum.photos/id/24/200/200',
-        'rating': 4.5,
-      },
-      {
-        'id': '102',
-        'name': 'Running Shoes',
-        'price': 89.99,
-        'image_url': 'https://picsum.photos/id/21/200/200',
-        'rating': 4.7,
-      },
-      {
-        'id': '103',
-        'name': 'Leather Boots',
-        'price': 129.99,
-        'image_url': 'https://picsum.photos/id/15/200/200',
-        'rating': 4.8,
-      },
-      {
-        'id': '104',
-        'name': 'Hiking Shoes',
-        'price': 99.99,
-        'image_url': 'https://picsum.photos/id/36/200/200',
-        'rating': 4.6,
-      },
-    ];
+  void _fetchRelatedProducts() {
+    _futureRelatedProducts = ProductService().getProductsByCategory(
+      widget.category,
+      excludeProductId: widget.currentProductId,
+      limit: 10,
+    );
   }
 
   @override
@@ -107,8 +87,7 @@ class _ProductRelatedProductsState extends State<ProductRelatedProducts> {
   Widget _buildRelatedProductCard(Map<String, dynamic> product) {
     return GestureDetector(
       onTap: () {
-        // Navigate to the product detail page
-        GoRouter.of(context).push('/product/${product['id']}');
+        GoRouter.of(context).push('/product-details/${product['id']}');
       },
       child: Container(
         width: 160,
@@ -126,7 +105,6 @@ class _ProductRelatedProductsState extends State<ProductRelatedProducts> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Product Image
             ClipRRect(
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(12)),
@@ -134,7 +112,7 @@ class _ProductRelatedProductsState extends State<ProductRelatedProducts> {
                 height: 120,
                 width: double.infinity,
                 child: Image.network(
-                  product['image_url'],
+                  product['image_url'] ?? product['image_urls']?[0] ?? '',
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
                     color: Colors.grey[100],
@@ -143,15 +121,13 @@ class _ProductRelatedProductsState extends State<ProductRelatedProducts> {
                 ),
               ),
             ),
-
-            // Product Details
             Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    product['name'],
+                    product['name'] ?? 'Product',
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
@@ -161,7 +137,7 @@ class _ProductRelatedProductsState extends State<ProductRelatedProducts> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '\$${product['price']}',
+                    '\$${product['price'] ?? 0}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: primaryColor,
@@ -178,7 +154,7 @@ class _ProductRelatedProductsState extends State<ProductRelatedProducts> {
                       ),
                       const SizedBox(width: 2),
                       Text(
-                        '${product['rating']}',
+                        '${product['rating'] ?? 0}',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey.shade700,

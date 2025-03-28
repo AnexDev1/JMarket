@@ -19,6 +19,7 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _featureController = TextEditingController();
 
   // For category selection
   String? _selectedCategory;
@@ -36,7 +37,8 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
   List<File> _selectedImages = [];
 
   bool _isLoading = false;
-
+// Add this to your state variables
+  List<String> _keyFeatures = [];
   Future<void> _pickImages() async {
     final List<XFile>? pickedFiles = await _picker.pickMultiImage();
     if (pickedFiles != null) {
@@ -66,6 +68,7 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
           'in_stock': true,
           'discount_percentage': 0,
           'rating': 0,
+          'key_features': _keyFeatures,
         };
         await SupabaseService().createProduct(productData);
 
@@ -89,11 +92,26 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
     }
   }
 
+  void _addFeature(String feature) {
+    if (feature.isNotEmpty) {
+      setState(() {
+        _keyFeatures.add(feature);
+      });
+    }
+  }
+
+  void _removeFeature(int index) {
+    setState(() {
+      _keyFeatures.removeAt(index);
+    });
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
     _priceController.dispose();
     _descriptionController.dispose();
+    _featureController.dispose();
     super.dispose();
   }
 
@@ -102,6 +120,16 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Product'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/profile');
+            }
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -154,6 +182,63 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
                 },
                 validator: (value) =>
                     value == null ? 'Select a category' : null,
+              ),
+// Add this before the submit button in your build method
+              const SizedBox(height: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Key Features',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _featureController,
+                          decoration: const InputDecoration(
+                            hintText: 'Add a key feature',
+                            border: OutlineInputBorder(),
+                          ),
+                          onFieldSubmitted: (value) {
+                            _addFeature(value);
+                            _featureController.clear();
+                          },
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.add_circle, color: Colors.green),
+                        onPressed: () {
+                          _addFeature(_featureController.text);
+                          _featureController.clear();
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  _keyFeatures.isEmpty
+                      ? const Text('No key features added yet')
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: _keyFeatures.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              dense: true,
+                              contentPadding: EdgeInsets.zero,
+                              leading: const Icon(Icons.circle, size: 8),
+                              title: Text(_keyFeatures[index]),
+                              trailing: IconButton(
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
+                                onPressed: () => _removeFeature(index),
+                              ),
+                            );
+                          },
+                        ),
+                ],
               ),
               const SizedBox(height: 16),
               // Image picker section

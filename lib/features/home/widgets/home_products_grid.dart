@@ -1,7 +1,9 @@
 // dart
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
+import '../../../providers/cart_provider.dart';
 import '../../product/product_details_screen.dart';
 
 class HomeProductsGrid extends StatefulWidget {
@@ -18,8 +20,21 @@ class HomeProductsGrid extends StatefulWidget {
 
 class _HomeProductsGridState extends State<HomeProductsGrid> {
   int visibleCount = 10; // initial number of products to display
-
 // dart
+  void _addToCart(Map<String, dynamic> product) {
+    // Retrieve the cart provider instance
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    // Add the product to the cart
+    cartProvider.addProduct(product);
+    // Show a confirmation message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${product['name'] ?? 'Product'} added to cart'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final primaryColor = Colors.indigo.shade700;
@@ -266,7 +281,7 @@ class _HomeProductsGridState extends State<HomeProductsGrid> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              '\$${product['price']}',
+                              '${product['price']} ETB',
                               style: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 color: primaryColor,
@@ -303,16 +318,19 @@ class _HomeProductsGridState extends State<HomeProductsGrid> {
                               ),
                             ),
                             const Spacer(),
-                            Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: primaryColor.withOpacity(0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.add_shopping_cart_rounded,
-                                size: 18,
-                                color: primaryColor,
+                            GestureDetector(
+                              onTap: () => _addToCart(product),
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: primaryColor.withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.add_shopping_cart_rounded,
+                                  size: 18,
+                                  color: primaryColor,
+                                ),
                               ),
                             ),
                           ],

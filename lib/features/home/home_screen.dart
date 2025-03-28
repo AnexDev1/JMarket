@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../core/theme/text_styles.dart';
 import '../../data/datasources/remote/supabase_service.dart';
 import '../../providers/search_provider.dart';
+import '../category/categories_screen.dart';
 import '../product/product_details_screen.dart';
 import 'widgets/home_search_bar.dart';
 
@@ -84,12 +85,12 @@ class _HomeScreenState extends State<HomeScreen>
             slivers: [
               // Elevated Search Bar
               SliverPersistentHeader(
-                floating: true,
+                // floating: true,
                 delegate: _SliverAppBarDelegate(
                   child: Container(
                     color: Colors.grey[50],
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        const EdgeInsets.only(left: 26, right: 26, top: 12),
                     child: const HomeSearchBar(),
                   ),
                 ),
@@ -184,7 +185,22 @@ class _HomeScreenState extends State<HomeScreen>
                           ),
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            final selectedCategory = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CategoriesScreen(),
+                              ),
+                            );
+
+                            if (selectedCategory != null && mounted) {
+                              final index =
+                                  _categories.indexOf(selectedCategory);
+                              if (index != -1) {
+                                _tabController.animateTo(index);
+                              }
+                            }
+                          },
                           style: TextButton.styleFrom(
                             foregroundColor: primaryColor,
                             visualDensity: VisualDensity.compact,
@@ -343,7 +359,7 @@ class _HomeScreenState extends State<HomeScreen>
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              '\$${product['price']}',
+                              '${product['price']} ETB',
                               style: TextStyles.body2.copyWith(
                                 fontWeight: FontWeight.w700,
                                 color: primaryColor,

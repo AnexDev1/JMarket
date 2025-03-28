@@ -15,21 +15,21 @@ class _FeatureBannerCarouselState extends State<FeatureBannerCarousel> {
     {
       // 'title': 'Summer Sale',
       // 'subtitle': 'Up to 50% off on selected items',
-      'tag': 'LIMITED OFFER',
+      // 'tag': 'LIMITED OFFER',
       'image': 'assets/features.jpg',
       'icon': Icons.shopping_bag_outlined,
     },
     {
       // 'title': 'New Arrivals',
       // 'subtitle': 'Check out our latest collection',
-      'tag': 'JUST IN',
+      // 'tag': 'JUST IN',
       'image': 'assets/features2.jpg',
       'icon': Icons.local_shipping_outlined,
     },
     {
       // 'title': 'Flash Deals',
       // 'subtitle': '24-hour deals on top products',
-      'tag': 'TODAY ONLY',
+      // 'tag': 'TODAY ONLY',
       'image': 'assets/features3.jpg',
       'icon': Icons.flash_on_outlined,
     },
@@ -140,73 +140,73 @@ class _FeatureBannerCarouselState extends State<FeatureBannerCarousel> {
               color: Colors.white.withOpacity(0.15),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    banner['tag'],
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-                // const SizedBox(height: 10),
-                // Text(
-                //   banner['title'],
-                //   style: const TextStyle(
-                //     color: Colors.white,
-                //     fontWeight: FontWeight.bold,
-                //     fontSize: 28,
-                //   ),
-                // ),
-                // const SizedBox(height: 6),
-                // Text(
-                //   banner['subtitle'],
-                //   style: TextStyle(
-                //     color: Colors.white.withOpacity(0.8),
-                //     fontSize: 16,
-                //   ),
-                // ),
-                // const SizedBox(height: 14),
-                // InkWell(
-                //   onTap: () {
-                //     // Shop now action
-                //   },
-                //   child: Container(
-                //     padding: const EdgeInsets.symmetric(
-                //       horizontal: 16,
-                //       vertical: 10,
-                //     ),
-                //     decoration: BoxDecoration(
-                //       color: Colors.white,
-                //       borderRadius: BorderRadius.circular(24),
-                //     ),
-                //     child: const Text(
-                //       'Shop Now',
-                //       style: TextStyle(
-                //         color: Colors.black,
-                //         fontWeight: FontWeight.bold,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-              ],
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+          //   child: Column(
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     mainAxisSize: MainAxisSize.min,
+          //     children: [
+          //       Container(
+          //         padding: const EdgeInsets.symmetric(
+          //           horizontal: 12,
+          //           vertical: 6,
+          //         ),
+          //         decoration: BoxDecoration(
+          //           color: Colors.white.withOpacity(0.2),
+          //           borderRadius: BorderRadius.circular(20),
+          //         ),
+          //         child: Text(
+          //           banner['tag'],
+          //           style: const TextStyle(
+          //             color: Colors.white,
+          //             fontWeight: FontWeight.bold,
+          //             fontSize: 12,
+          //           ),
+          //         ),
+          //       ),
+          //       // const SizedBox(height: 10),
+          //       // Text(
+          //       //   banner['title'],
+          //       //   style: const TextStyle(
+          //       //     color: Colors.white,
+          //       //     fontWeight: FontWeight.bold,
+          //       //     fontSize: 28,
+          //       //   ),
+          //       // ),
+          //       // const SizedBox(height: 6),
+          //       // Text(
+          //       //   banner['subtitle'],
+          //       //   style: TextStyle(
+          //       //     color: Colors.white.withOpacity(0.8),
+          //       //     fontSize: 16,
+          //       //   ),
+          //       // ),
+          //       // const SizedBox(height: 14),
+          //       // InkWell(
+          //       //   onTap: () {
+          //       //     // Shop now action
+          //       //   },
+          //       //   child: Container(
+          //       //     padding: const EdgeInsets.symmetric(
+          //       //       horizontal: 16,
+          //       //       vertical: 10,
+          //       //     ),
+          //       //     decoration: BoxDecoration(
+          //       //       color: Colors.white,
+          //       //       borderRadius: BorderRadius.circular(24),
+          //       //     ),
+          //       //     child: const Text(
+          //       //       'Shop Now',
+          //       //       style: TextStyle(
+          //       //         color: Colors.black,
+          //       //         fontWeight: FontWeight.bold,
+          //       //       ),
+          //       //     ),
+          //       //   ),
+          //       // ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );

@@ -38,6 +38,23 @@ class CartProvider with ChangeNotifier {
     }
   }
 
+  // dart
+  void addProduct(Map<String, dynamic> product) {
+    final String productId = product['id'].toString();
+    final String productName = product['name'] ?? 'Unknown';
+    final double price = (product['price'] as num).toDouble();
+    final int quantity = 1; // Default quantity
+    final String imageUrl = (product['image_urls'] != null &&
+            (product['image_urls'] as List).isNotEmpty)
+        ? product['image_urls'][0]
+        : '';
+    final String? size = product['size'];
+    final String? color = product['color'];
+
+    addItem(productId, productName, price, quantity, imageUrl, size,
+        color: color);
+  }
+
   // Add item to cart - supports both positional and named parameters
   void addItem(
     String productId,

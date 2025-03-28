@@ -93,6 +93,41 @@ class SupabaseService {
     }
   }
 
+  Future<User?> getCurrentUser() async {
+    return client.auth.currentUser;
+  }
+
+  Future<void> submitProductRating(String productId, double rating) async {
+    final user = client.auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    // Get the current product data
+    final product = await client
+        .from('products')
+        .select('rating, reviews')
+        .eq('id', productId)
+        .single();
+
+    // Calculate new rating
+    final currentRating = double.tryParse(product['rating'] ?? '0') ?? 0;
+    final reviewCount = product['reviews'] ?? 0;
+
+    // Simple average calculation (this is simplified; in a real app you'd store individual ratings)
+    double newRating;
+    if (reviewCount == 0) {
+      newRating = rating;
+    } else {
+      // Weight the new rating appropriately
+      newRating = ((currentRating * reviewCount) + rating) / (reviewCount + 1);
+    }
+
+    // Update product with new rating
+    await client.from('products').update({
+      'rating': newRating.toStringAsFixed(1),
+      'reviews': reviewCount + 1
+    }).eq('id', productId);
+  }
+
   Future<List<String>> uploadImages(List<File> imageFiles) async {
     List<String> imageUrls = [];
     for (var imageFile in imageFiles) {
@@ -135,5 +170,16 @@ class SupabaseService {
   Future<void> createProduct(Map<String, dynamic> productData) async {
     final response = await client.from('products').insert(productData);
     return response;
+  }
+
+  Future<Map<String, dynamic>?> getUserDetails(String userId) async {
+    try {
+      final response =
+          await client.from('users').select().eq('id', userId).single();
+      return response;
+    } catch (e) {
+      debugPrint('Error fetching user details: $e');
+      return null;
+    }
   }
 }

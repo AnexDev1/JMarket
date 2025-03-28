@@ -32,7 +32,7 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
+            blurRadius: 2,
             offset: const Offset(0, 3),
           ),
         ],
@@ -41,7 +41,7 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
         controller: _searchController,
         decoration: InputDecoration(
           contentPadding:
-              const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              const EdgeInsets.symmetric(vertical: 11, horizontal: 20),
           hintText: localizations.searchProducts,
           hintStyle: TextStyle(color: Colors.grey.shade400),
           prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),

@@ -319,6 +319,35 @@
   "@email": {
     "description": "Label for email in Amharic"
   },
+  "loginToRate": "ይህን ምርት ለመገምገም ይግቡ",
+  "@loginToRate": {
+    "description": "Text shown to prompt user to log in before rating"
+  },
+
+  "rateThisProduct": "ይህን ምርት ይገምግሙ",
+  "@rateThisProduct": {
+    "description": "Title for the product rating section"
+  },
+
+  "submitRating": "ውጤትን አስገባ",
+  "@submitRating": {
+    "description": "Button text for submitting a product rating"
+  },
+
+  "thankYouForRating": "ለግምገማዎ እናመሰግናለን!",
+  "@thankYouForRating": {
+    "description": "Confirmation message shown after submitting a rating"
+  },
+
+  "ratingSubmitted": "ግምገማው በተሳካ ሁኔታ ተልኳል",
+  "@ratingSubmitted": {
+    "description": "Success message for rating submission"
+  },
+
+  "errorSubmittingRating": "ግምገማውን በመላክ ላይ ስህተት ተፈጥሯል",
+  "@errorSubmittingRating": {
+    "description": "Error message shown when rating submission fails"
+  },
   "phone": "ስልክ",
   "@phone": {
     "description": "Label for phone in Amharic"
@@ -343,13 +372,13 @@
   "@youMayAlsoLike": {
     "description": "Title for related products section"
   },
-  "addToCartWithPrice": "ወደ ጋሪ አክል | ${price}",
+  "addToCartWithPrice": "ወደ ጋሪ አክል | {price}",
   "@addToCartWithPrice": {
     "description": "Button text for adding to cart with price",
     "placeholders": {
       "price": {
         "type": "String",
-        "example": "$19.99"
+        "example": "19.99 ብር"
       }
     }
   },

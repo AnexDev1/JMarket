@@ -33,7 +33,7 @@ class ProfileScreen extends StatelessWidget {
             icon: const Icon(Icons.edit_outlined),
             onPressed: () {
               HapticFeedback.lightImpact();
-              context.go('/edit-profile');
+              context.push('/edit-profile');
             },
           ),
         ],
@@ -157,7 +157,7 @@ class ProfileScreen extends StatelessWidget {
             ProfileMenuItem(
               icon: Icons.add_circle_outline,
               title: AppLocalizations.of(context)!.createProduct,
-              onTap: () => context.go('/create-product'),
+              onTap: () => context.push('/create-product'),
             ),
           ],
         ),
@@ -168,23 +168,23 @@ class ProfileScreen extends StatelessWidget {
             ProfileMenuItem(
               icon: Icons.shopping_bag_outlined,
               title: AppLocalizations.of(context)!.myOrders,
-              onTap: () => context.go('/orders'),
+              onTap: () => context.push('/orders'),
             ),
             ProfileMenuItem(
               icon: Icons.card_giftcard_outlined,
               title: AppLocalizations.of(context)!.myRewards,
               badge: '3',
-              onTap: () => context.go('/rewards'),
+              onTap: () => context.push('/rewards'),
             ),
             ProfileMenuItem(
               icon: Icons.location_on_outlined,
               title: AppLocalizations.of(context)!.shippingAddresses,
-              onTap: () => context.go('/addresses'),
+              onTap: () => context.push('/addresses'),
             ),
             ProfileMenuItem(
               icon: Icons.credit_card_outlined,
               title: AppLocalizations.of(context)!.paymentMethods,
-              onTap: () => context.go('/payment-methods'),
+              onTap: () => context.push('/payment-methods'),
             ),
           ],
         ),
@@ -195,13 +195,13 @@ class ProfileScreen extends StatelessWidget {
             ProfileMenuItem(
               icon: Icons.notifications_outlined,
               title: AppLocalizations.of(context)!.notifications,
-              onTap: () => context.go('/notifications-settings'),
+              onTap: () => context.push('/notifications-settings'),
             ),
             ProfileMenuItem(
               icon: Icons.language_outlined,
               title: AppLocalizations.of(context)!.language,
               subtitle: Provider.of<LanguageProvider>(context).currentLanguage,
-              onTap: () => context.go('/language-settings'),
+              onTap: () => context.push('/language-settings'),
             ),
             ProfileMenuItem(
               icon: Icons.dark_mode_outlined,
@@ -225,17 +225,17 @@ class ProfileScreen extends StatelessWidget {
             ProfileMenuItem(
               icon: Icons.help_outline,
               title: AppLocalizations.of(context)!.helpCenter,
-              onTap: () => context.go('/help'),
+              onTap: () => context.push('/help'),
             ),
             ProfileMenuItem(
               icon: Icons.info_outline,
               title: AppLocalizations.of(context)!.aboutUs,
-              onTap: () => context.go('/about'),
+              onTap: () => context.push('/about'),
             ),
             ProfileMenuItem(
               icon: Icons.policy_outlined,
               title: AppLocalizations.of(context)!.privacyPolicy,
-              onTap: () => context.go('/privacy'),
+              onTap: () => context.push('/privacy'),
             ),
           ],
         ),
@@ -267,7 +267,7 @@ class ProfileScreen extends StatelessWidget {
 
                           // Navigate to home page instead of auth page
                           if (context.mounted) {
-                            context.go('/home');
+                            context.push('/home');
 
                             // Show confirmation to user
                             ScaffoldMessenger.of(context).showSnackBar(
