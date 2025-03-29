@@ -40,6 +40,10 @@ class ProductService {
           reviews: product['reviews'] ?? 0,
           imageUrl: imageUrl, // This must match the constructor parameter name
           color: _getColorFromHex(product['color_hex'] ?? '#6200EA'),
+          keyFeatures: product['key_features'] != null
+              ? List<String>.from((product['key_features'] as List)
+                  .map((e) => e.toString().replaceAll('\"', '')))
+              : [],
         );
       }).toList();
     } catch (e) {
@@ -60,7 +64,6 @@ class ProductService {
   Future<List<Map<String, dynamic>>> getProductsByCategory(
     String category, {
     String? excludeProductId,
-    int limit = 10,
   }) async {
     try {
       var query = _client.from('products').select('*').eq('category', category);

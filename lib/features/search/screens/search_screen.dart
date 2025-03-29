@@ -138,31 +138,106 @@ class _SearchScreenState extends State<SearchScreen>
     });
 
     try {
+      print(
+          'Performing ${isCategory ? "category" : "regular"} search for: $query');
+
       final results = isCategory
           ? await _productService.getProductsByCategory(query)
           : await _productService.searchProducts(query);
 
-      // Ensure each item is cast as Map<String, dynamic>
-      final List<dynamic> resList = results as List<dynamic>;
-      final products = resList.map((item) {
-        final Map<String, dynamic> productMap = item is Map<String, dynamic>
-            ? item
-            : Map<String, dynamic>.from(item);
-        return SearchProduct.fromJson(productMap);
-      }).toList();
+      print('Raw results type: ${results.runtimeType}');
+
+      List<SearchProduct> products = [];
+
+      if (isCategory) {
+        // Process category search results
+        for (var i = 0; i < results.length; i++) {
+          try {
+            final item = results[i];
+            print('Processing item $i, type: ${item.runtimeType}');
+
+            // Convert to Map<String, dynamic>
+            Map<String, dynamic> product;
+            if (item is Map<String, dynamic>) {
+              product = item;
+            } else if (item is Map) {
+              product = Map<String, dynamic>.from(item);
+            } else {
+              print('Skipping item $i: not a valid map structure');
+              continue;
+            }
+
+            // Extract the first image URL from the array
+            String imageUrl = '';
+            if (product.containsKey('image_urls') &&
+                product['image_urls'] != null) {
+              var imageUrls = product['image_urls'];
+              print('Image URLs before processing: $imageUrls');
+
+              if (imageUrls is List && imageUrls.isNotEmpty) {
+                imageUrl = imageUrls[0].toString();
+              } else if (imageUrls is String) {
+                imageUrl = imageUrls;
+              }
+            }
+
+            print('Product map: $product');
+
+            products.add(SearchProduct(
+              id: product['id']?.toString() ?? '',
+              name: product['name'] ?? '',
+              description: product['description'] ?? '',
+              price: (product['price'] is int)
+                  ? (product['price'] as int).toDouble()
+                  : (product['price'] ?? 0.0).toDouble(),
+              rating: (product['rating'] is int)
+                  ? (product['rating'] as int).toDouble()
+                  : (product['rating'] ?? 0.0).toDouble(),
+              reviews: product['reviews'] ?? 0,
+              imageUrl: imageUrl,
+              color: Colors.black87,
+              keyFeatures: product['key_features'] != null
+                  ? List<String>.from(product['key_features'])
+                  : [],
+            ));
+          } catch (e) {
+            print('Error processing item $i: $e');
+          }
+        }
+      } else {
+        // For regular search results
+        for (var i = 0; i < results.length; i++) {
+          try {
+            final item = results[i];
+
+            // If already a SearchProduct, add directly
+            if (item is SearchProduct) {
+              products.add(item);
+            }
+            // If a map, convert to SearchProduct
+            else if (item is Map) {
+              final product = Map<String, dynamic>.from(item);
+              products.add(SearchProduct.fromJson(product));
+            }
+          } catch (e) {
+            print('Error processing regular search item: $e');
+          }
+        }
+      }
 
       if (!mounted) return;
 
       setState(() {
         _searchResults = products;
+        _searchQuery = query;
         _isSearching = false;
-        if (query.isNotEmpty &&
-            !_recentSearches.contains(query) &&
-            products.isNotEmpty) {
+
+        if (!isCategory && !_recentSearches.contains(query)) {
           _recentSearches.insert(0, query);
-          if (_recentSearches.length > 5) {
+          if (_recentSearches.length > 10) {
             _recentSearches.removeLast();
           }
+          _saveRecentSearches();
         }
       });
 
@@ -174,10 +249,15 @@ class _SearchScreenState extends State<SearchScreen>
         _isSearching = false;
         _searchResults = [];
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Search failed: ${e.toString()}')),
-      );
+      print('Search error: $e');
     }
+  }
+
+// Add this missing method
+  void _saveRecentSearches() {
+    // You can implement persistence here if needed
+    // e.g., using SharedPreferences
+    print('Saving recent searches: $_recentSearches');
   }
 
   void _clearSearch() {

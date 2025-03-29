@@ -10,17 +10,18 @@ class SearchProduct {
   final int reviews;
   final String imageUrl;
   final Color color;
+  final List<String> keyFeatures;
 
-  const SearchProduct({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.price,
-    required this.rating,
-    required this.reviews,
-    required this.imageUrl,
-    required this.color,
-  });
+  const SearchProduct(
+      {required this.id,
+      required this.name,
+      required this.description,
+      required this.price,
+      required this.rating,
+      required this.reviews,
+      required this.imageUrl,
+      required this.color,
+      required this.keyFeatures});
 
   factory SearchProduct.fromMap(Map<String, dynamic> map) {
     // Retrieve the first image URL from the list
@@ -44,6 +45,10 @@ class SearchProduct {
       color: map['color'] != null
           ? Color(map['color'] as int)
           : const Color(0x00000000),
+      keyFeatures: map['key_features'] != null
+          ? List<String>.from((map['key_features'] as List)
+              .map((e) => e.toString().replaceAll('\"', '')))
+          : [],
     );
   }
 
