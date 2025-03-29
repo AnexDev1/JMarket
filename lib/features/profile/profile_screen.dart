@@ -9,11 +9,40 @@ import '../../providers/auth_provider.dart';
 import '../../providers/language_provider.dart';
 import '../../providers/theme_provider.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool isAdmin = false;
+  @override
+  void initState() {
+    super.initState();
+    _checkAdminStatus();
+  }
+
+  Future<void> _checkAdminStatus() async {
+    final currentUserEmail =
+        Provider.of<AuthProvider>(context, listen: false).user?.email;
+    setState(() {
+      isAdmin = currentUserEmail == "papi@gmail.com";
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
+    // if the user is signed out, navigate to the home route
+    if (authProvider.user == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.go('/');
+      });
+      return const SizedBox.shrink();
+    }
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
@@ -150,17 +179,18 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildProfileMenus(BuildContext context) {
     return Column(
       children: [
-        _buildMenuSection(
-          title: AppLocalizations.of(context)!.products,
-          icon: Icons.inventory_2_outlined,
-          items: [
-            ProfileMenuItem(
-              icon: Icons.add_circle_outline,
-              title: AppLocalizations.of(context)!.createProduct,
-              onTap: () => context.push('/create-product'),
-            ),
-          ],
-        ),
+        if (isAdmin)
+          _buildMenuSection(
+            title: AppLocalizations.of(context)!.products,
+            icon: Icons.inventory_2_outlined,
+            items: [
+              ProfileMenuItem(
+                icon: Icons.add_circle_outline,
+                title: AppLocalizations.of(context)!.createProduct,
+                onTap: () => context.push('/create-product'),
+              ),
+            ],
+          ),
         _buildMenuSection(
           title: AppLocalizations.of(context)!.account,
           icon: Icons.account_circle_outlined,
@@ -258,18 +288,13 @@ class ProfileScreen extends StatelessWidget {
                     TextButton(
                       onPressed: () async {
                         Navigator.pop(context); // Close dialog
-
                         try {
-                          // Use AuthProvider to sign out
                           final authProvider =
                               Provider.of<AuthProvider>(context, listen: false);
                           await authProvider.signOut(context);
-
-                          // Navigate to home page instead of auth page
                           if (context.mounted) {
-                            context.push('/home');
-
-                            // Show confirmation to user
+                            // Refresh the page and navigate to '/'
+                            context.go('/');
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('You have been signed out'),
@@ -289,7 +314,7 @@ class ProfileScreen extends StatelessWidget {
                         }
                       },
                       child: const Text('SIGN OUT'),
-                    ),
+                    )
                   ],
                 ),
               );

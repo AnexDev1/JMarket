@@ -69,13 +69,13 @@ class App extends StatelessWidget {
         elevation: 8,
         backgroundColor: Colors.white,
         indicatorColor: Colors.indigo.shade50,
-        labelTextStyle: MaterialStateProperty.all(
+        labelTextStyle: WidgetStateProperty.all(
           const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
         ),
-        iconTheme: MaterialStateProperty.all(
+        iconTheme: WidgetStateProperty.all(
           IconThemeData(
             size: 24,
             color: Colors.grey.shade600,
@@ -308,7 +308,7 @@ class _MainScreenState extends State<MainScreen>
           ];
 
           if (index < destinations.length) {
-            context.go(destinations[index]);
+            context.push(destinations[index]);
           }
         },
         destinations: [

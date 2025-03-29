@@ -1,5 +1,5 @@
-// lib/features/search/models/search_product.dart
-import 'package:flutter/material.dart';
+// dart
+import 'dart:ui';
 
 class SearchProduct {
   final String id;
@@ -23,15 +23,31 @@ class SearchProduct {
   });
 
   factory SearchProduct.fromMap(Map<String, dynamic> map) {
+    // Retrieve the first image URL from the list
+    String imageUrl = '';
+    if (map['imageUrls'] is List && (map['imageUrls'] as List).isNotEmpty) {
+      imageUrl = (map['imageUrls'] as List).first.toString();
+    }
+    // Use a placeholder URL if no valid image URL is found.
+    if (imageUrl.isEmpty) {
+      imageUrl = 'https://via.placeholder.com/150';
+    }
+
     return SearchProduct(
-      id: map['id'] ?? '',
-      name: map['name'] ?? '',
-      description: map['description'] ?? '',
-      price: (map['price'] as num).toDouble(),
-      rating: (map['rating'] as num).toDouble(),
-      reviews: map['reviews'] as int,
-      imageUrl: map['imageUrls'][0] ?? '',
-      color: map['color'] as Color,
+      id: map['id']?.toString() ?? '',
+      name: map['name']?.toString() ?? '',
+      description: map['description']?.toString() ?? '',
+      price: map['price'] is num ? (map['price'] as num).toDouble() : 0.0,
+      rating: map['rating'] is num ? (map['rating'] as num).toDouble() : 0.0,
+      reviews: map['reviews'] is num ? (map['reviews'] as num).toInt() : 0,
+      imageUrl: imageUrl,
+      color: map['color'] != null
+          ? Color(map['color'] as int)
+          : const Color(0x00000000),
     );
+  }
+
+  factory SearchProduct.fromJson(Map<String, dynamic> json) {
+    return SearchProduct.fromMap(json);
   }
 }

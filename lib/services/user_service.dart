@@ -27,6 +27,15 @@ class UserService {
     return UserModel.fromJson(response);
   }
 
+  Future<List<UserModel>> fetchAdminUsers() async {
+    final response =
+        await _supabase.from('users').select('*').eq('role', 'admin');
+    return (response as List).map((user) => UserModel.fromJson(user)).toList();
+  }
+
+  Future<void> deleteUser(String userId) async {
+    await _supabase.from('users').delete().eq('id', userId);
+  }
   // // Update an existing user.
   // Future<UserModel> updateUser(UserModel user) async {
   //   final response = await _supabase
@@ -37,9 +46,4 @@ class UserService {
   //       .single();
   //   return UserModel.fromJson(response);
   // }
-
-  // Delete a user by its ID.
-  Future<void> deleteUser(String userId) async {
-    await _supabase.from('users').delete().eq('id', userId);
-  }
 }

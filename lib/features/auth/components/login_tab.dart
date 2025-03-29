@@ -62,7 +62,7 @@ class _LoginTabState extends State<LoginTab> {
 
               // Navigate to the appropriate destination
               if (context.mounted) {
-                context.go(destination);
+                context.push(destination);
               }
             }
           }

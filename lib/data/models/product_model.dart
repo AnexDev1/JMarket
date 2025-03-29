@@ -11,6 +11,7 @@ class Product {
   final bool inStock;
   final double? discountPercentage;
   final double? rating;
+  final List<String>? keyFeatures;
 
   Product({
     required this.id,
@@ -23,6 +24,7 @@ class Product {
     this.inStock = true,
     this.discountPercentage,
     this.rating,
+    this.keyFeatures,
   });
 
   // Calculate discounted price if discount is available
@@ -69,6 +71,10 @@ class Product {
           : null,
       rating:
           json['rating'] != null ? (json['rating'] as num).toDouble() : null,
+      keyFeatures: json['key_features'] != null
+          ? List<String>.from((json['key_features'] as List)
+              .map((e) => e.toString().replaceAll('\"', '')))
+          : [],
     );
   }
   // Copy with method for immutability

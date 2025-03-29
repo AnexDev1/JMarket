@@ -28,7 +28,7 @@ class OrdersScreen extends StatelessWidget {
         titleSpacing: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, size: 18),
-          onPressed: () => context.go('/'),
+          onPressed: () => context.push('/'),
           color: Colors.black87,
         ),
         title: const Text(

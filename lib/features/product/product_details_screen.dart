@@ -90,7 +90,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       Navigator.pop(context);
       return Future.value(false);
     } else {
-      context.go('/');
+      context.push('/');
       return Future.value(false);
     }
   }
@@ -577,7 +577,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ),
                                   const SizedBox(height: 16),
                                   ProductFeaturesList(
-                                      features: product['features'] ?? []),
+                                      features: product['key_features'] ?? []),
                                 ],
                               ),
                             ),
@@ -685,7 +685,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             action: SnackBarAction(
                               label: localizations.viewCart,
                               onPressed: () {
-                                context.go('/cart');
+                                context.push('/cart');
                               },
                             ),
                           ),
@@ -752,7 +752,7 @@ class _ProductRatingWidgetState extends State<ProductRatingWidget> {
             const Icon(Icons.star_border, color: Colors.grey),
             const SizedBox(width: 8),
             TextButton(
-              onPressed: () => context.go('/login'),
+              onPressed: () => context.push('/login'),
               child: Text(localizations.loginToRate),
             ),
           ],

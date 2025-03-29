@@ -84,7 +84,7 @@ class _RegisterTabState extends State<RegisterTab> {
         } else {
           GoRouter.of(context).refresh();
           final destination = widget.redirectLocation ?? '/';
-          context.go(destination);
+          context.push(destination);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Registration successful. Welcome!'),

@@ -119,7 +119,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
         );
 
-        // Navigate back to the home page after a short delay.
         Future.delayed(const Duration(seconds: 2), () {
           context.go('/');
         });
@@ -159,12 +158,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            if (_currentStep > 0) {
-              _goToPreviousStep();
-            } else {
-              // Navigate to home instead of popping
-              context.go('/home');
-            }
+            // Navigate to home instead of popping
+            context.push('/');
           },
         ),
       ),

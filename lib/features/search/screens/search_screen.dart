@@ -123,7 +123,7 @@ class _SearchScreenState extends State<SearchScreen>
     });
   }
 
-  Future<void> _performSearch(String query) async {
+  Future<void> _performSearch(String query, {bool isCategory = false}) async {
     if (query.isEmpty) {
       setState(() {
         _isSearching = false;
@@ -138,18 +138,27 @@ class _SearchScreenState extends State<SearchScreen>
     });
 
     try {
-      // Get real data from Supabase using ProductService
-      final results = await _productService.searchProducts(query);
+      final results = isCategory
+          ? await _productService.getProductsByCategory(query)
+          : await _productService.searchProducts(query);
+
+      // Ensure each item is cast as Map<String, dynamic>
+      final List<dynamic> resList = results as List<dynamic>;
+      final products = resList.map((item) {
+        final Map<String, dynamic> productMap = item is Map<String, dynamic>
+            ? item
+            : Map<String, dynamic>.from(item);
+        return SearchProduct.fromJson(productMap);
+      }).toList();
 
       if (!mounted) return;
 
       setState(() {
-        _searchResults = results;
+        _searchResults = products;
         _isSearching = false;
-
         if (query.isNotEmpty &&
             !_recentSearches.contains(query) &&
-            results.isNotEmpty) {
+            products.isNotEmpty) {
           _recentSearches.insert(0, query);
           if (_recentSearches.length > 5) {
             _recentSearches.removeLast();
@@ -161,12 +170,10 @@ class _SearchScreenState extends State<SearchScreen>
       _animationController.forward();
     } catch (e) {
       if (!mounted) return;
-
       setState(() {
         _isSearching = false;
         _searchResults = [];
       });
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Search failed: ${e.toString()}')),
       );
@@ -272,7 +279,7 @@ class _SearchScreenState extends State<SearchScreen>
             categories: _popularCategories,
             onCategorySelected: (category) {
               _searchController.text = category;
-              _performSearch(category);
+              _performSearch(category, isCategory: true);
             },
           ),
           const SizedBox(height: 24),
