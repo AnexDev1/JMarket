@@ -82,8 +82,6 @@ class Assets {
       'lib/features/orders/orders_screen.dart';
   static const String productProductDetailsScreen =
       'lib/features/product/product_details_screen.dart';
-  static const String profileCreateProductScreen =
-      'lib/features/profile/create_product_screen.dart';
   static const String profileHelpCenterScreen =
       'lib/features/profile/help_center_screen.dart';
   static const String profileLanguageScreen =
@@ -152,6 +150,10 @@ class Assets {
       'lib/features/search/widgets/search_loading_indicator.dart';
   static const String widgetsSearchResultsGrid =
       'lib/features/search/widgets/search_results_grid.dart';
+  static const String widgetsSkeletonBanner =
+      'lib/widgets/skeleton_banner.dart';
+  static const String widgetsSkeletonProductCard =
+      'lib/widgets/skeleton_product_card.dart';
   static const String widgetsTrendingSearches =
       'lib/features/search/widgets/trending_searches.dart';
 }

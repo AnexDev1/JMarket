@@ -1,8 +1,12 @@
 // dart
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../../widgets/skeleton_banner.dart';
 
 class FeatureBannerCarousel extends StatefulWidget {
-  const FeatureBannerCarousel({super.key});
+  const FeatureBannerCarousel({Key? key}) : super(key: key);
 
   @override
   State<FeatureBannerCarousel> createState() => _FeatureBannerCarouselState();
@@ -11,34 +15,13 @@ class FeatureBannerCarousel extends StatefulWidget {
 class _FeatureBannerCarouselState extends State<FeatureBannerCarousel> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  final List<Map<String, dynamic>> _banners = [
-    {
-      // 'title': 'Summer Sale',
-      // 'subtitle': 'Up to 50% off on selected items',
-      // 'tag': 'LIMITED OFFER',
-      'image': 'assets/features.jpg',
-      'icon': Icons.shopping_bag_outlined,
-    },
-    {
-      // 'title': 'New Arrivals',
-      // 'subtitle': 'Check out our latest collection',
-      // 'tag': 'JUST IN',
-      'image': 'assets/features2.jpg',
-      'icon': Icons.local_shipping_outlined,
-    },
-    {
-      // 'title': 'Flash Deals',
-      // 'subtitle': '24-hour deals on top products',
-      // 'tag': 'TODAY ONLY',
-      'image': 'assets/features3.jpg',
-      'icon': Icons.flash_on_outlined,
-    },
-  ];
+  List<Map<String, dynamic>> _banners = [];
+  bool _isLoading = true; // Added loading state flag
 
   @override
   void initState() {
     super.initState();
-
+    _fetchBanners();
     Future.delayed(const Duration(milliseconds: 200), () {
       if (mounted) {
         _startAutoSlide();
@@ -46,9 +29,46 @@ class _FeatureBannerCarouselState extends State<FeatureBannerCarousel> {
     });
   }
 
+  Future<void> _fetchBanners() async {
+    try {
+      final storage = Supabase.instance.client.storage;
+      final files = await storage.from('jmarket').list(
+            path: 'features',
+          );
+
+      files.sort((a, b) {
+        final aCreated = a.createdAt ?? '';
+        final bCreated = b.createdAt ?? '';
+        return bCreated.compareTo(aCreated);
+      });
+
+      final latestFiles = files.take(3).toList();
+
+      final banners = latestFiles.map((file) {
+        final fileName = file.name;
+        final filePath = 'features/$fileName';
+        final imageUrl = storage.from('jmarket').getPublicUrl(filePath);
+        return {
+          'image_url': imageUrl,
+          'icon': Icons.shopping_bag_outlined,
+        };
+      }).toList();
+
+      setState(() {
+        _banners = banners;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      // Optionally log the error
+    }
+  }
+
   void _startAutoSlide() {
     Future.delayed(const Duration(seconds: 5), () {
-      if (mounted) {
+      if (mounted && _banners.isNotEmpty) {
         final nextPage = (_currentPage + 1) % _banners.length;
         _pageController.animateToPage(
           nextPage,
@@ -68,6 +88,28 @@ class _FeatureBannerCarouselState extends State<FeatureBannerCarousel> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      // Show a skeleton loader while waiting
+      return SizedBox(
+        height: 200,
+        child: const SkeletonBanner(height: 200),
+      );
+    } else if (_banners.isEmpty) {
+      // Display a custom empty state if no banners found
+      return SizedBox(
+        height: 200,
+        child: Center(
+          child: Text(
+            "No banners available",
+            style: TextStyle(
+              color: Colors.grey.shade600,
+              fontSize: 16,
+            ),
+          ),
+        ),
+      );
+    }
+
     return SizedBox(
       height: 200,
       child: Stack(
@@ -112,102 +154,49 @@ class _FeatureBannerCarouselState extends State<FeatureBannerCarousel> {
   }
 
   Widget _buildBanner(Map<String, dynamic> banner) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(banner['image']),
-          fit: BoxFit.cover,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: CachedNetworkImage(
+        imageUrl: banner['image_url'],
+        fit: BoxFit.cover,
+        width: double.infinity,
+        placeholder: (context, url) => const SkeletonBanner(height: 200),
+        errorWidget: (context, url, error) => Container(
+          color: Colors.grey[300],
+          child: Center(
+            child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+          ),
         ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Positioned(
-            right: -20,
-            bottom: -20,
-            child: Icon(
-              banner['icon'],
-              size: 140,
-              color: Colors.white.withOpacity(0.15),
+        imageBuilder: (context, imageProvider) => Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: imageProvider,
+              fit: BoxFit.cover,
             ),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
-          // Padding(
-          //   padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
-          //   child: Column(
-          //     crossAxisAlignment: CrossAxisAlignment.start,
-          //     mainAxisSize: MainAxisSize.min,
-          //     children: [
-          //       Container(
-          //         padding: const EdgeInsets.symmetric(
-          //           horizontal: 12,
-          //           vertical: 6,
-          //         ),
-          //         decoration: BoxDecoration(
-          //           color: Colors.white.withOpacity(0.2),
-          //           borderRadius: BorderRadius.circular(20),
-          //         ),
-          //         child: Text(
-          //           banner['tag'],
-          //           style: const TextStyle(
-          //             color: Colors.white,
-          //             fontWeight: FontWeight.bold,
-          //             fontSize: 12,
-          //           ),
-          //         ),
-          //       ),
-          //       // const SizedBox(height: 10),
-          //       // Text(
-          //       //   banner['title'],
-          //       //   style: const TextStyle(
-          //       //     color: Colors.white,
-          //       //     fontWeight: FontWeight.bold,
-          //       //     fontSize: 28,
-          //       //   ),
-          //       // ),
-          //       // const SizedBox(height: 6),
-          //       // Text(
-          //       //   banner['subtitle'],
-          //       //   style: TextStyle(
-          //       //     color: Colors.white.withOpacity(0.8),
-          //       //     fontSize: 16,
-          //       //   ),
-          //       // ),
-          //       // const SizedBox(height: 14),
-          //       // InkWell(
-          //       //   onTap: () {
-          //       //     // Shop now action
-          //       //   },
-          //       //   child: Container(
-          //       //     padding: const EdgeInsets.symmetric(
-          //       //       horizontal: 16,
-          //       //       vertical: 10,
-          //       //     ),
-          //       //     decoration: BoxDecoration(
-          //       //       color: Colors.white,
-          //       //       borderRadius: BorderRadius.circular(24),
-          //       //     ),
-          //       //     child: const Text(
-          //       //       'Shop Now',
-          //       //       style: TextStyle(
-          //       //         color: Colors.black,
-          //       //         fontWeight: FontWeight.bold,
-          //       //       ),
-          //       //     ),
-          //       //   ),
-          //       // ),
-          //     ],
-          //   ),
-          // ),
-        ],
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Positioned(
+                right: -20,
+                bottom: -20,
+                child: Icon(
+                  banner['icon'],
+                  size: 140,
+                  color: Colors.white.withOpacity(0.15),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

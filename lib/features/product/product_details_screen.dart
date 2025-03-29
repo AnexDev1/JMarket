@@ -622,12 +622,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ),
         ),
         // Floating Add to Cart Panel
+        // dart
         bottomNavigationBar: FutureBuilder<Map<String, dynamic>>(
           future: _futureProduct,
           builder: (context, snapshot) {
             if (!snapshot.hasData) return const SizedBox.shrink();
-
             final product = snapshot.data!;
+            final bool inStock = product['in_stock'] ?? true;
+
+            // Hide the add to cart panel if not in stock.
+            if (!inStock) return const SizedBox.shrink();
+
             return Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -656,17 +661,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       onPressed: () {
                         final cartProvider = context.read<CartProvider>();
                         cartProvider.addItem(
-                          product['id'].toString(), // productId
-                          product['name'], // productName
-                          double.parse(product['price'].toString()), // price
-                          _quantity, // quantity
+                          product['id'].toString(),
+                          product['name'],
+                          double.parse(product['price'].toString()),
+                          _quantity,
                           product['image_urls'] != null &&
                                   (product['image_urls'] as List).isNotEmpty
                               ? product['image_urls'][0]
-                              : '', // imageUrl
-                          _selectedSize, // size
+                              : '',
+                          _selectedSize,
                         );
-
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Row(

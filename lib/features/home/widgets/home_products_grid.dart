@@ -1,9 +1,11 @@
 // dart
+// File: lib/features/home/widgets/home_products_grid.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/cart_provider.dart';
+import '../../../widgets/skeleton_product_card.dart';
 import '../../product/product_details_screen.dart';
 
 class HomeProductsGrid extends StatefulWidget {
@@ -19,14 +21,11 @@ class HomeProductsGrid extends StatefulWidget {
 }
 
 class _HomeProductsGridState extends State<HomeProductsGrid> {
-  int visibleCount = 10; // initial number of products to display
-// dart
+  int visibleCount = 10;
+
   void _addToCart(Map<String, dynamic> product) {
-    // Retrieve the cart provider instance
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
-    // Add the product to the cart
     cartProvider.addProduct(product);
-    // Show a confirmation message
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('${product['name'] ?? 'Product'} added to cart'),
@@ -46,29 +45,19 @@ class _HomeProductsGridState extends State<HomeProductsGrid> {
         future: widget.futureProducts,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return SliverFillRemaining(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 3,
-                        valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      localizations.loadingProducts,
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
+            // Show a grid of skeleton product cards while loading
+            return SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.7,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  return const SkeletonProductCard();
+                },
+                childCount: 10,
               ),
             );
           } else if (snapshot.hasError) {
@@ -174,6 +163,7 @@ class _HomeProductsGridState extends State<HomeProductsGrid> {
       BuildContext context, Map<String, dynamic> product, Color primaryColor) {
     final bool hasDiscount =
         product['discount'] != null && product['discount'] > 0;
+    final bool inStock = product['in_stock'] ?? true;
     final localizations = AppLocalizations.of(context)!;
 
     return Hero(
@@ -207,7 +197,6 @@ class _HomeProductsGridState extends State<HomeProductsGrid> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Product image
                 Stack(
                   children: [
                     Container(
@@ -258,9 +247,29 @@ class _HomeProductsGridState extends State<HomeProductsGrid> {
                           ),
                         ),
                       ),
+                    if (!inStock)
+                      Positioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5),
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(16),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Out of Stock',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
-                // Product details
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(12),
@@ -318,21 +327,24 @@ class _HomeProductsGridState extends State<HomeProductsGrid> {
                               ),
                             ),
                             const Spacer(),
-                            GestureDetector(
-                              onTap: () => _addToCart(product),
-                              child: Container(
-                                padding: const EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: primaryColor.withOpacity(0.1),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.add_shopping_cart_rounded,
-                                  size: 18,
-                                  color: primaryColor,
+                            if (inStock)
+                              GestureDetector(
+                                onTap: () {
+                                  _addToCart(product);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: primaryColor.withOpacity(0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.add_shopping_cart_rounded,
+                                    size: 18,
+                                    color: primaryColor,
+                                  ),
                                 ),
                               ),
-                            ),
                           ],
                         ),
                       ],

@@ -11,7 +11,6 @@ import '../features/cart/checkout/checkout_screen.dart';
 import '../features/favorites/favorites_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/product/product_details_screen.dart';
-import '../features/profile/create_product_screen.dart';
 import '../features/profile/profile_screen.dart';
 import '../features/search/screens/search_screen.dart';
 import '../providers/auth_provider.dart';
@@ -104,10 +103,6 @@ final appRouter = GoRouter(
         ),
       ],
       navigatorKey: GlobalKey<NavigatorState>(),
-    ),
-    GoRoute(
-      path: AppRoutes.createProduct,
-      builder: (context, state) => const CreateProductScreen(),
     ),
     GoRoute(
       path: AppRoutes.orderDetails,

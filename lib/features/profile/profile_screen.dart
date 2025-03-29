@@ -21,15 +21,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _checkAdminStatus();
-  }
-
-  Future<void> _checkAdminStatus() async {
-    final currentUserEmail =
-        Provider.of<AuthProvider>(context, listen: false).user?.email;
-    setState(() {
-      isAdmin = currentUserEmail == "papi@gmail.com";
-    });
   }
 
   @override
@@ -179,18 +170,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildProfileMenus(BuildContext context) {
     return Column(
       children: [
-        if (isAdmin)
-          _buildMenuSection(
-            title: AppLocalizations.of(context)!.products,
-            icon: Icons.inventory_2_outlined,
-            items: [
-              ProfileMenuItem(
-                icon: Icons.add_circle_outline,
-                title: AppLocalizations.of(context)!.createProduct,
-                onTap: () => context.push('/create-product'),
-              ),
-            ],
-          ),
         _buildMenuSection(
           title: AppLocalizations.of(context)!.account,
           icon: Icons.account_circle_outlined,
