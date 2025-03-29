@@ -103,6 +103,7 @@ final appRouter = GoRouter(
           builder: (context, state) => const ProfileScreen(),
         ),
       ],
+      navigatorKey: GlobalKey<NavigatorState>(),
     ),
     GoRoute(
       path: AppRoutes.createProduct,

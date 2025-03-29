@@ -1,3 +1,4 @@
+import 'package:chapa_unofficial/chapa_unofficial.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -88,6 +89,81 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       return;
     }
 
+    // If payment method is Chapa, initiate Chapa payment flow
+    if (paymentMethod == 'chapa') {
+      // Calculate total amount
+      final subtotal = cartProvider.totalPrice;
+      final shipping = 5.99;
+      final tax = subtotal * 0.05;
+      final total = subtotal + shipping + tax;
+
+      // Generate a unique transaction reference
+      final txRef = TxRefRandomGenerator.generate(prefix: 'JMarket');
+
+      // Split name into first name and last name
+      List<String> nameParts = name.split(' ');
+      String firstName = nameParts.isNotEmpty ? nameParts[0] : 'Customer';
+      String lastName = nameParts.length > 1 ? nameParts.last : '';
+
+      try {
+        // Launch Chapa payment
+        await Chapa.getInstance.startPayment(
+          context: context,
+          amount: total.toStringAsFixed(2),
+          currency: 'ETB',
+          txRef: txRef,
+          email: user.email ?? 'customer@example.com',
+          firstName: firstName,
+          lastName: lastName,
+          title: 'Order Payment',
+          description: 'Payment for order #$txRef',
+          phoneNumber: phoneNumber,
+          onInAppPaymentSuccess: (successMsg) async {
+            print('Payment successful: $successMsg');
+            // Process order after successful payment
+            await _processOrderAfterPayment(user, cartProvider, localizations);
+            if (context.mounted) {
+              context.go('/');
+            }
+          },
+          onInAppPaymentError: (errorMsg) {
+            print('Payment error: $errorMsg');
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Payment failed: $errorMsg')),
+              );
+            }
+          },
+        );
+      } on ChapaException catch (e) {
+        String errorMessage = 'Payment error';
+        if (e is NetworkException) {
+          errorMessage = 'Network error';
+        } else if (e is ServerException) {
+          errorMessage = 'Server error';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$errorMessage: ${e.toString()}')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(localizations.errorWithMessage(e.toString()))),
+        );
+      }
+      return;
+    }
+
+    // For other payment methods (e.g., COD), proceed with normal order placement
+    await _processOrderAfterPayment(user, cartProvider, localizations);
+  }
+
+// Helper method to process the order after payment (or for COD)
+  Future<void> _processOrderAfterPayment(
+    User user,
+    CartProvider cartProvider,
+    AppLocalizations localizations,
+  ) async {
     final shippingAddress = address;
     final ordersPayload = cartProvider.items.map((item) {
       return {
@@ -104,14 +180,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     try {
       final response = await orderService.createOrders(ordersPayload);
       if (response.isNotEmpty) {
-        // Add the newly ordered items to myOrders in the profile.
-        // It is assumed that AuthProvider has a method to add orders.
-        // authProvider.addOrders(response);
-
-        // Clear the cart.
+        // Clear the cart
         cartProvider.clear();
 
-        // Show a professional success message.
+        // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(localizations.orderPlacedSuccessfully),

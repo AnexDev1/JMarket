@@ -1,3 +1,4 @@
+import 'package:chapa_unofficial/chapa_unofficial.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -106,7 +107,7 @@ Future<void> main() async {
   // Initialize Hive
   await Hive.initFlutter();
   await HiveConfig.registerAdapters();
-
+  Chapa.configure(privateKey: "CHASECK_TEST-nWN3C5MReCoHYIjZQjuvWsNbyv8s6XqE");
   // Initialize Supabase
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL'] ?? '',
