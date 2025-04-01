@@ -251,26 +251,26 @@ class _MainScreenState extends State<MainScreen>
     super.dispose();
   }
 
+// dart
   int _calculateSelectedIndex(bool isAuthenticated) {
     final currentLocation =
         GoRouter.of(context).routeInformationProvider.value.uri.path;
 
-    // First check for exact matches
-    if (currentLocation == AppRoutes.home || currentLocation == '/') return 0;
-    if (currentLocation == AppRoutes.search) return 1;
-    if (currentLocation == AppRoutes.cart) return 2;
-    if (currentLocation == AppRoutes.favorites) return 3;
-    if (currentLocation == AppRoutes.profile && isAuthenticated) return 4;
-
-    // Then fallback to startsWith for nested routes
-    if (currentLocation.startsWith(AppRoutes.home)) return 0;
-    if (currentLocation.startsWith(AppRoutes.search)) return 1;
-    if (currentLocation.startsWith(AppRoutes.cart)) return 2;
-    if (currentLocation.startsWith(AppRoutes.favorites)) return 3;
-    if (currentLocation.startsWith(AppRoutes.profile) && isAuthenticated)
+    if (isAuthenticated && currentLocation.contains(AppRoutes.profile)) {
       return 4;
-
-    return 0;
+    } else if (currentLocation.contains(AppRoutes.favorites)) {
+      return 3;
+    } else if (currentLocation.contains(AppRoutes.cart)) {
+      return 2;
+    } else if (currentLocation.contains(AppRoutes.search)) {
+      return 1;
+    } else {
+      // Home is the default (can match "/" or include AppRoutes.home)
+      return (currentLocation == '/' ||
+              currentLocation.contains(AppRoutes.home))
+          ? 0
+          : 0;
+    }
   }
 
   @override
