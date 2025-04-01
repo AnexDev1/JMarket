@@ -231,7 +231,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            context.push('/');
+            context.go('/cart');
           },
         ),
       ),

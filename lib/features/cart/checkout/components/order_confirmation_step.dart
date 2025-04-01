@@ -62,7 +62,7 @@ class OrderConfirmationStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    final formatter = NumberFormat.currency(symbol: '\$');
+    final formatter = NumberFormat.currency(symbol: 'ETB ', decimalDigits: 2);
     final total = subtotal + shipping + tax;
 
     return SingleChildScrollView(
@@ -372,7 +372,7 @@ class OrderConfirmationStep extends StatelessWidget {
             ),
           ),
           Text(
-            NumberFormat.currency(symbol: '\$').format(price),
+            NumberFormat.currency(symbol: 'ETB ').format(price),
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
