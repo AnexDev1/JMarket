@@ -69,13 +69,13 @@ class App extends StatelessWidget {
         elevation: 8,
         backgroundColor: Colors.white,
         indicatorColor: Colors.indigo.shade50,
-        labelTextStyle: WidgetStateProperty.all(
+        labelTextStyle: MaterialStateProperty.all(
           const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
         ),
-        iconTheme: WidgetStateProperty.all(
+        iconTheme: MaterialStateProperty.all(
           IconThemeData(
             size: 24,
             color: Colors.grey.shade600,
@@ -158,7 +158,7 @@ class App extends StatelessWidget {
         elevation: 8,
         backgroundColor: const Color(0xFF1E1E1E),
         indicatorColor: Colors.indigo.shade900,
-        labelTextStyle: WidgetStateProperty.all(
+        labelTextStyle: MaterialStateProperty.all(
           const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
@@ -251,7 +251,6 @@ class _MainScreenState extends State<MainScreen>
     super.dispose();
   }
 
-// dart
   int _calculateSelectedIndex(bool isAuthenticated) {
     final currentLocation =
         GoRouter.of(context).routeInformationProvider.value.uri.path;

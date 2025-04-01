@@ -4,7 +4,6 @@ import 'app_colors.dart';
 import 'text_styles.dart';
 
 class AppTheme {
-  // Light theme
   static ThemeData get lightTheme {
     return ThemeData(
       brightness: Brightness.light,
@@ -28,7 +27,7 @@ class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         indicatorColor: AppColors.gray200,
-        labelTextStyle: WidgetStateProperty.all(
+        labelTextStyle: MaterialStateProperty.all(
           TextStyles.caption.copyWith(color: AppColors.primaryBlack),
         ),
       ),
@@ -55,7 +54,6 @@ class AppTheme {
     );
   }
 
-  // Dark theme
   static ThemeData get darkTheme {
     return ThemeData(
       brightness: Brightness.dark,

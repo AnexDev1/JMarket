@@ -107,7 +107,7 @@ Future<void> main() async {
   // Initialize Hive
   await Hive.initFlutter();
   await HiveConfig.registerAdapters();
-  Chapa.configure(privateKey: "CHASECK_TEST-nWN3C5MReCoHYIjZQjuvWsNbyv8s6XqE");
+  Chapa.configure(privateKey: "CHAPA_SECRET_KEY");
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL'] ?? '',
     anonKey: dotenv.env['SUPABASE_KEY'] ?? '',

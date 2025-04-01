@@ -1,4 +1,3 @@
-// File: lib/features/profile/profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -8,7 +7,6 @@ import 'package:provider/provider.dart';
 import '../../data/models/user_model.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/language_provider.dart';
-import '../../providers/theme_provider.dart';
 import '../../services/user_service.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -173,11 +171,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: AppLocalizations.of(context)!.shippingAddresses,
               onTap: () => context.push('/addresses'),
             ),
-            ProfileMenuItem(
-              icon: Icons.credit_card_outlined,
-              title: AppLocalizations.of(context)!.paymentMethods,
-              onTap: () => context.push('/payment-methods'),
-            ),
           ],
         ),
         _buildMenuSection(
@@ -195,19 +188,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
               subtitle: Provider.of<LanguageProvider>(context).currentLanguage,
               onTap: () => context.push('/language-settings'),
             ),
-            ProfileMenuItem(
-              icon: Icons.dark_mode_outlined,
-              title: AppLocalizations.of(context)!.darkMode,
-              trailing: Switch(
-                value: Provider.of<ThemeProvider>(context).isDarkMode,
-                activeColor: Colors.indigo.shade700,
-                onChanged: (value) {
-                  HapticFeedback.lightImpact();
-                  Provider.of<ThemeProvider>(context, listen: false)
-                      .toggleTheme();
-                },
-              ),
-            ),
+
+            //NEEDS TO BE FIXED
+            // ProfileMenuItem(
+            //   icon: Icons.dark_mode_outlined,
+            //   title: AppLocalizations.of(context)!.darkMode,
+            //   trailing: Switch(
+            //     value: Provider.of<ThemeProvider>(context).isDarkMode,
+            //     activeColor: Colors.indigo.shade700,
+            //     onChanged: (value) {
+            //       HapticFeedback.lightImpact();
+            //       Provider.of<ThemeProvider>(context, listen: false)
+            //           .toggleTheme();
+            //     },
+            //   ),
+            // ),
           ],
         ),
         _buildMenuSection(
