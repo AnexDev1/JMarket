@@ -1,9 +1,9 @@
 // lib/features/auth/components/register_tab.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jmarket/services/user_service.dart';
 
 import '../../../core/utils/form_validators.dart';
-import '../../../data/datasources/remote/supabase_service.dart';
 import '../../../widgets/buttons/primary_button.dart';
 
 class RegisterTab extends StatefulWidget {
@@ -29,7 +29,7 @@ class _RegisterTabState extends State<RegisterTab> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _supabaseService = SupabaseService(); // Create an instance
+  final _userService = UserService(); // Create an instance
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
@@ -61,7 +61,7 @@ class _RegisterTabState extends State<RegisterTab> {
 
       try {
         // First create user in auth
-        final response = await _supabaseService.signUp(
+        final response = await _userService.signUp(
           email: _emailController.text,
           password: _passwordController.text,
           userData: {

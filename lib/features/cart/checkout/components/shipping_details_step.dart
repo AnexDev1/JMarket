@@ -1,3 +1,4 @@
+// dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -9,14 +10,20 @@ class ShippingDetailsStep extends StatelessWidget {
   final Function(String?) onZipCodeSaved;
   final Function(String?) onPhoneNumberSaved;
 
+  // New optional parameters for hint text
+  final String? fullNameHint;
+  final String? phoneHint;
+
   const ShippingDetailsStep({
-    super.key,
+    Key? key,
     required this.onNameSaved,
     required this.onAddressSaved,
     required this.onCitySaved,
     required this.onZipCodeSaved,
     required this.onPhoneNumberSaved,
-  });
+    this.fullNameHint,
+    this.phoneHint,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,12 +43,11 @@ class ShippingDetailsStep extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-
           // Name field
           _buildInputField(
             context: context,
             label: localizations.fullName,
-            hint: localizations.enterFullName,
+            hint: fullNameHint ?? localizations.enterFullName,
             prefixIcon: Icons.person_outline,
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -55,9 +61,7 @@ class ShippingDetailsStep extends StatelessWidget {
             onSaved: onNameSaved,
             textCapitalization: TextCapitalization.words,
           ),
-
           const SizedBox(height: 16),
-
           // Address field
           _buildInputField(
             context: context,
@@ -76,14 +80,12 @@ class ShippingDetailsStep extends StatelessWidget {
             onSaved: onAddressSaved,
             textCapitalization: TextCapitalization.words,
           ),
-
           const SizedBox(height: 16),
-
-          // Phone number field
+          // Phone number field with phone hint
           _buildInputField(
             context: context,
             label: localizations.phoneNumber,
-            hint: localizations.enterPhoneNumber,
+            hint: phoneHint ?? localizations.enterPhoneNumber,
             prefixIcon: Icons.phone_outlined,
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -102,9 +104,7 @@ class ShippingDetailsStep extends StatelessWidget {
               LengthLimitingTextInputFormatter(10),
             ],
           ),
-
           const SizedBox(height: 24),
-
           // Privacy note
           Container(
             padding: const EdgeInsets.all(12),

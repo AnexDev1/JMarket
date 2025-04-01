@@ -2,10 +2,10 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jmarket/services/user_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/utils/form_validators.dart';
-import '../../../data/datasources/remote/supabase_service.dart';
 import '../../../widgets/buttons/primary_button.dart';
 import 'forgot_password_screen.dart';
 
@@ -21,7 +21,7 @@ class _LoginTabState extends State<LoginTab> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _supabaseService = SupabaseService(); // Create an instance
+  final _userService = UserService(); // Create an instance
   bool _obscurePassword = true;
   bool _isLoading = false;
 
@@ -37,7 +37,7 @@ class _LoginTabState extends State<LoginTab> {
       setState(() => _isLoading = true);
 
       try {
-        final response = await _supabaseService.signIn(
+        final response = await _userService.signIn(
           email: _emailController.text,
           password: _passwordController.text,
         );
@@ -80,7 +80,7 @@ class _LoginTabState extends State<LoginTab> {
 
   Future<void> _handleGoogleSignIn() async {
     try {
-      await _supabaseService.client.auth.signInWithOAuth(
+      await _userService.client.auth.signInWithOAuth(
         OAuthProvider.google,
         redirectTo: kIsWeb ? null : 'io.supabase.yourappname://login-callback',
       );
@@ -95,7 +95,7 @@ class _LoginTabState extends State<LoginTab> {
 
   Future<void> _handleFacebookSignIn() async {
     try {
-      await _supabaseService.client.auth.signInWithOAuth(
+      await _userService.client.auth.signInWithOAuth(
         OAuthProvider.facebook,
         redirectTo: kIsWeb ? null : 'io.supabase.yourappname://login-callback',
       );

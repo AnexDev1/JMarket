@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../providers/auth_provider.dart';
+import '../../../services/search_product_service.dart';
 import '../models/search_category.dart';
 import '../models/search_product.dart';
 import '../models/trending_search.dart';
-import '../services/product_service.dart';
 import '../widgets/recent_searches_list.dart';
 import '../widgets/search_categories_grid.dart';
 import '../widgets/search_header.dart';
@@ -29,10 +32,10 @@ class _SearchScreenState extends State<SearchScreen>
   late Animation<double> _fadeAnimation;
 
   // Initialize product service
-  final ProductService _productService = ProductService();
+  final SearchProductService _productService = SearchProductService();
 
   // Recent searches
-  final List<String> _recentSearches = [
+  late List<String> _recentSearches = [
     'Wireless headphones',
     'Smart watch',
     'Phone case',
@@ -101,7 +104,43 @@ class _SearchScreenState extends State<SearchScreen>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _searchFocusNode.requestFocus();
+      _loadRecentSearches();
     });
+  }
+
+  Future<void> _loadRecentSearches() async {
+    final prefs = await SharedPreferences.getInstance();
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final userId = authProvider.user?.id;
+    if (userId != null) {
+      final storedSearches = prefs.getStringList('recent_searches_$userId');
+      setState(() {
+        _recentSearches = storedSearches ?? [];
+      });
+    }
+  }
+
+  Future<void> _saveRecentSearches() async {
+    final prefs = await SharedPreferences.getInstance();
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final userId = authProvider.user?.id;
+    if (userId != null) {
+      await prefs.setStringList('recent_searches_$userId', _recentSearches);
+    }
+  }
+
+  void _removeRecentSearch(String search) {
+    setState(() {
+      _recentSearches.remove(search);
+    });
+    _saveRecentSearches();
+  }
+
+  void _clearAllRecentSearches() {
+    setState(() {
+      _recentSearches.clear();
+    });
+    _saveRecentSearches();
   }
 
   @override
@@ -144,8 +183,6 @@ class _SearchScreenState extends State<SearchScreen>
       final results = isCategory
           ? await _productService.getProductsByCategory(query)
           : await _productService.searchProducts(query);
-
-      print('Raw results type: ${results.runtimeType}');
 
       List<SearchProduct> products = [];
 
@@ -240,7 +277,7 @@ class _SearchScreenState extends State<SearchScreen>
           _saveRecentSearches();
         }
       });
-
+      await _saveRecentSearches();
       _animationController.reset();
       _animationController.forward();
     } catch (e) {
@@ -253,13 +290,6 @@ class _SearchScreenState extends State<SearchScreen>
     }
   }
 
-// Add this missing method
-  void _saveRecentSearches() {
-    // You can implement persistence here if needed
-    // e.g., using SharedPreferences
-    print('Saving recent searches: $_recentSearches');
-  }
-
   void _clearSearch() {
     setState(() {
       _searchController.clear();
@@ -267,18 +297,6 @@ class _SearchScreenState extends State<SearchScreen>
       _isSearching = false;
       _searchResults.clear();
       _searchFocusNode.requestFocus();
-    });
-  }
-
-  void _removeRecentSearch(String search) {
-    setState(() {
-      _recentSearches.remove(search);
-    });
-  }
-
-  void _clearAllRecentSearches() {
-    setState(() {
-      _recentSearches.clear();
     });
   }
 

@@ -141,7 +141,7 @@ class CartItemCard extends StatelessWidget {
           const SizedBox(height: 6),
         ],
         Text(
-          '\$${item.price.toStringAsFixed(2)}',
+          '${item.price.toStringAsFixed(2)} ETB',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -199,7 +199,7 @@ class CartItemCard extends StatelessWidget {
         ),
         const Spacer(),
         Text(
-          '\$${(item.price * item.quantity).toStringAsFixed(2)}',
+          '${(item.price * item.quantity).toStringAsFixed(2)} ETB',
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,

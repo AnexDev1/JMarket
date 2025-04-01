@@ -1,3 +1,4 @@
+// dart
 import 'package:chapa_unofficial/chapa_unofficial.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/cart_provider.dart';
 import '../../../services/order_service.dart';
+import '../../../services/user_service.dart'; // Import user service
 import 'components/order_confirmation_step.dart';
 import 'components/payment_method_step.dart';
 import 'components/shipping_details_step.dart';
@@ -33,9 +35,29 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   String phoneNumber = '';
   String paymentMethod = 'cod'; // Default to Cash on Delivery
 
+  // User hint variables
+  String? fullNameHint;
+  String? phoneHint;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserHints();
+  }
+
+  UserService userService = UserService();
+
+  Future<void> _loadUserHints() async {
+    // Fetch user info from your user service function
+    final user = await userService.getUserById(userService.currentUser!.id);
+    setState(() {
+      fullNameHint = user.fullName;
+      phoneHint = user.phoneNumber;
+    });
+  }
+
   void _goToNextStep() {
     if (_currentStep == 0) {
-      // Validate shipping form before proceeding
       if (_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
         HapticFeedback.lightImpact();
@@ -47,7 +69,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         );
       }
     } else if (_currentStep == 1) {
-      // Payment method already selected, proceed to confirmation
       HapticFeedback.lightImpact();
       setState(() => _currentStep = 2);
       _pageController.animateToPage(
@@ -89,24 +110,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       return;
     }
 
-    // If payment method is Chapa, initiate Chapa payment flow
     if (paymentMethod == 'chapa') {
-      // Calculate total amount
       final subtotal = cartProvider.totalPrice;
       final shipping = 5.99;
       final tax = subtotal * 0.05;
       final total = subtotal + shipping + tax;
-
-      // Generate a unique transaction reference
       final txRef = TxRefRandomGenerator.generate(prefix: 'JMarket');
 
-      // Split name into first name and last name
       List<String> nameParts = name.split(' ');
       String firstName = nameParts.isNotEmpty ? nameParts[0] : 'Customer';
       String lastName = nameParts.length > 1 ? nameParts.last : '';
 
       try {
-        // Launch Chapa payment
         await Chapa.getInstance.startPayment(
           context: context,
           amount: total.toStringAsFixed(2),
@@ -119,20 +134,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           description: 'Payment for order #$txRef',
           phoneNumber: phoneNumber,
           onInAppPaymentSuccess: (successMsg) async {
-            print('Payment successful: $successMsg');
-            // Process order after successful payment
             await _processOrderAfterPayment(user, cartProvider, localizations);
             if (context.mounted) {
               context.go('/');
             }
           },
           onInAppPaymentError: (errorMsg) {
-            print('Payment error: $errorMsg');
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Payment failed: $errorMsg')),
-              );
-            }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Payment failed: $errorMsg')),
+            );
           },
         );
       } on ChapaException catch (e) {
@@ -142,7 +152,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         } else if (e is ServerException) {
           errorMessage = 'Server error';
         }
-
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('$errorMessage: ${e.toString()}')),
         );
@@ -154,11 +163,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       return;
     }
 
-    // For other payment methods (e.g., COD), proceed with normal order placement
     await _processOrderAfterPayment(user, cartProvider, localizations);
   }
 
-// Helper method to process the order after payment (or for COD)
   Future<void> _processOrderAfterPayment(
     User user,
     CartProvider cartProvider,
@@ -180,25 +187,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     try {
       final response = await orderService.createOrders(ordersPayload);
       if (response.isNotEmpty) {
-        // Clear the cart
         cartProvider.clear();
-
-        // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(localizations.orderPlacedSuccessfully),
             backgroundColor: Colors.green,
           ),
         );
-
         Future.delayed(const Duration(seconds: 2), () {
           context.go('/');
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(localizations.orderPlacementFailed),
-          ),
+          SnackBar(content: Text(localizations.orderPlacementFailed)),
         );
       }
     } catch (e) {
@@ -230,14 +231,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            // Navigate to home instead of popping
             context.push('/');
           },
         ),
       ),
       body: Column(
         children: [
-          // Checkout Progress Indicator
           Container(
             padding: const EdgeInsets.symmetric(vertical: 16),
             color: Colors.white,
@@ -272,10 +271,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ],
             ),
           ),
-
           const Divider(height: 1),
-
-          // Main content area with steps
           Expanded(
             child: Form(
               key: _formKey,
@@ -283,22 +279,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 controller: _pageController,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  // Step 1: Shipping Details
                   ShippingDetailsStep(
                     onNameSaved: (value) => name = value ?? '',
                     onAddressSaved: (value) => address = value ?? '',
                     onCitySaved: (value) => city = value ?? '',
                     onZipCodeSaved: (value) => zipCode = value ?? '',
                     onPhoneNumberSaved: (value) => phoneNumber = value ?? '',
+                    fullNameHint: fullNameHint,
+                    phoneHint: phoneHint,
                   ),
-
-                  // Step 2: Payment Method
                   PaymentMethodStep(
                     selectedMethod: paymentMethod,
                     onMethodSelected: _setPaymentMethod,
                   ),
-
-                  // Step 3: Order Confirmation
                   OrderConfirmationStep(
                     name: name,
                     address: address,
@@ -313,8 +306,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
             ),
           ),
-
-          // Bottom action area
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(

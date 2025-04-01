@@ -1,10 +1,10 @@
-// lib/features/search/services/product_service.dart
+// lib/features/search/services/search_product_service.dart
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../models/search_product.dart';
+import '../features/search/models/search_product.dart';
 
-class ProductService {
+class SearchProductService {
   final SupabaseClient _client = Supabase.instance.client;
 
   Future<List<SearchProduct>> searchProducts(String query) async {

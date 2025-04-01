@@ -14,7 +14,8 @@ class FavoritesScreen extends StatelessWidget {
     return Consumer<FavoritesProvider>(
       builder: (context, favoritesProvider, child) {
         final favoriteItems = favoritesProvider.favoriteItems;
-
+        final favoriteItemsAsMap =
+            favoriteItems.map((product) => product.toMap()).toList();
         return Scaffold(
           appBar: AppBar(
             title: Text(
@@ -38,7 +39,7 @@ class FavoritesScreen extends StatelessWidget {
           ),
           body: favoriteItems.isEmpty
               ? const EmptyFavorites()
-              : FavoritesGridView(favoriteItems: favoriteItems),
+              : FavoritesGridView(favoriteItems: favoriteItemsAsMap),
         );
       },
     );

@@ -1,23 +1,24 @@
 // lib/providers/favorites_provider.dart
 import 'package:flutter/foundation.dart';
+import 'package:jmarket/data/models/product_model.dart';
 
 class FavoritesProvider with ChangeNotifier {
   final Set<String> _favoriteIds = {};
-  final List<Map<String, dynamic>> _favoriteItems = [];
+  final List<Product> _favoriteItems = [];
 
-  List<Map<String, dynamic>> get favoriteItems => _favoriteItems;
+  List<Product> get favoriteItems => _favoriteItems;
   Set<String> get favoriteIds => _favoriteIds;
 
   bool isFavorite(String productId) {
     return _favoriteIds.contains(productId);
   }
 
-  void toggleFavorite(Map<String, dynamic> product) {
-    final productId = product['id'].toString();
+  void toggleFavorite(Product product) {
+    final productId = product.id.toString();
 
     if (_favoriteIds.contains(productId)) {
       _favoriteIds.remove(productId);
-      _favoriteItems.removeWhere((item) => item['id'].toString() == productId);
+      _favoriteItems.removeWhere((item) => item.id.toString() == productId);
     } else {
       _favoriteIds.add(productId);
       _favoriteItems.add(product);
@@ -32,7 +33,7 @@ class FavoritesProvider with ChangeNotifier {
 
   void removeFavorite(String productId) {
     _favoriteIds.remove(productId);
-    _favoriteItems.removeWhere((item) => item['id'].toString() == productId);
+    _favoriteItems.removeWhere((item) => item.id.toString() == productId);
     notifyListeners();
   }
 }

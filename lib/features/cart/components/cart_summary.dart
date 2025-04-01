@@ -112,7 +112,7 @@ class CartSummary extends StatelessWidget {
         Text(
           amount == 0
               ? AppLocalizations.of(context)!.free
-              : '\$${amount.toStringAsFixed(2)}',
+              : '${amount.toStringAsFixed(2)} ETB',
           style: TextStyle(
             fontSize: isTotal ? 18 : 14,
             fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,

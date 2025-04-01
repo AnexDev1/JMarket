@@ -1,3 +1,4 @@
+// dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -39,33 +40,33 @@ class PaymentMethodStep extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          // Cash on Delivery option
-          _buildPaymentOption(
-            context: context,
-            isSelected: selectedMethod == 'cod',
-            title: localizations.cashOnDelivery,
-            subtitle: localizations.payOnDeliveryDescription,
-            icon: Icons.money,
-            iconColor: Colors.green.shade700,
-            onTap: () {
-              HapticFeedback.selectionClick();
-              onMethodSelected('cod');
-            },
-          ),
-
-          const SizedBox(height: 16),
-
-          // Pay with Chapa option
+          // Pay with Chapa option (moved up and use green color)
           _buildPaymentOption(
             context: context,
             isSelected: selectedMethod == 'chapa',
             title: localizations.payWithChapa,
             subtitle: localizations.chapaPaymentDescription,
             icon: Icons.payment,
-            iconColor: Colors.indigo.shade700,
+            iconColor: Colors.green.shade700,
             onTap: () {
               HapticFeedback.selectionClick();
               onMethodSelected('chapa');
+            },
+          ),
+
+          const SizedBox(height: 16),
+
+          // Cash on Delivery option (moved to bottom now with indigo color)
+          _buildPaymentOption(
+            context: context,
+            isSelected: selectedMethod == 'cod',
+            title: localizations.cashOnDelivery,
+            subtitle: localizations.payOnDeliveryDescription,
+            icon: Icons.money,
+            iconColor: Colors.indigo.shade700,
+            onTap: () {
+              HapticFeedback.selectionClick();
+              onMethodSelected('cod');
             },
           ),
 

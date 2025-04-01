@@ -1,7 +1,6 @@
 // lib/providers/search_provider.dart
 import 'package:flutter/foundation.dart';
-
-import '../data/datasources/remote/supabase_service.dart';
+import 'package:jmarket/services/product_service.dart';
 
 class SearchProvider with ChangeNotifier {
   String _searchQuery = '';
@@ -38,7 +37,7 @@ class SearchProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final results = await SupabaseService().searchProducts(query);
+      final results = await ProductService().searchProducts(query);
       _searchResults = results;
     } catch (e) {
       print('Error searching products: $e');

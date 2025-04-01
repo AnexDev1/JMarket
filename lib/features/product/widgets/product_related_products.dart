@@ -137,7 +137,7 @@ class _ProductRelatedProductsState extends State<ProductRelatedProducts> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '\$${product['price'] ?? 0}',
+                    '${product['price'] ?? 0} ETB',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: primaryColor,

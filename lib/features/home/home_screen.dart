@@ -7,8 +7,8 @@ import 'package:jmarket/features/home/widgets/home_products_grid.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/text_styles.dart';
-import '../../data/datasources/remote/supabase_service.dart';
 import '../../providers/search_provider.dart';
+import '../../services/product_service.dart';
 import '../category/categories_screen.dart';
 import '../product/product_details_screen.dart';
 import 'widgets/home_search_bar.dart';
@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Future<List<Map<String, dynamic>>> _fetchProducts(String category) async {
-    final products = await SupabaseService().fetchProducts(category: category);
+    final products = await ProductService().fetchProducts(category: category);
     if (category.toLowerCase() == 'all') {
       products.shuffle();
     }

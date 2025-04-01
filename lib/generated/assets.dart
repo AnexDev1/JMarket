@@ -62,8 +62,6 @@ class Assets {
   static const String l10nIntlAm = 'lib/l10n/intl_am.arb';
   static const String l10nIntlOm = 'lib/l10n/intl_om.arb';
   static const String libMain = 'lib/main.dart';
-  static const String libServicesProductService =
-      'lib/services/product_service.dart';
   static const String localHiveBoxes =
       'lib/data/datasources/local/hive_boxes.dart';
   static const String localHiveService =
@@ -100,8 +98,6 @@ class Assets {
       'lib/providers/search_provider.dart';
   static const String providersThemeProvider =
       'lib/providers/theme_provider.dart';
-  static const String remoteSupabaseService =
-      'lib/data/datasources/remote/supabase_service.dart';
   static const String screensSearchScreen =
       'lib/features/search/screens/search_screen.dart';
   static const String servicesAuthService = 'lib/services/auth_service.dart';
@@ -109,7 +105,9 @@ class Assets {
       'lib/services/database_service.dart';
   static const String servicesOrderService = 'lib/services/order_service.dart';
   static const String servicesProductService =
-      'lib/features/search/services/product_service.dart';
+      'lib/services/product_service.dart';
+  static const String servicesSearchProductService =
+      'lib/services/search_product_service.dart';
   static const String servicesStorageService =
       'lib/services/storage_service.dart';
   static const String servicesUserService = 'lib/services/user_service.dart';

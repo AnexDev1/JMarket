@@ -1,9 +1,9 @@
 // lib/features/auth/components/forgot_password_screen.dart
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:jmarket/services/user_service.dart';
 
 import '../../../core/utils/form_validators.dart';
-import '../../../data/datasources/remote/supabase_service.dart';
 import '../../../widgets/buttons/primary_button.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -16,7 +16,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _supabaseService = SupabaseService(); // Create an instance
+  final _userService = UserService(); // Create an instance
   bool _isLoading = false;
   bool _resetSent = false;
 
@@ -31,7 +31,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       setState(() => _isLoading = true);
 
       try {
-        await _supabaseService.client.auth.resetPasswordForEmail(
+        await _userService.client.auth.resetPasswordForEmail(
           _emailController.text,
           redirectTo:
               kIsWeb ? null : 'io.supabase.yourappname://reset-callback',

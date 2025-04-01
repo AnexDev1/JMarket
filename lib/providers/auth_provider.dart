@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../data/datasources/remote/supabase_service.dart';
 import '../data/models/user_model.dart';
 import '../services/user_service.dart';
 
 class AuthProvider extends ChangeNotifier {
-  final SupabaseService _supabaseService = SupabaseService();
   final UserService _userService = UserService();
   User? _user;
   UserModel? _extendedUser;
@@ -25,7 +23,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> _initialize() async {
     _isLoading = true;
-    _user = _supabaseService.currentUser;
+    _user = _userService.currentUser;
     if (_user != null) {
       await loadUserDetails(_user!.id);
     }
@@ -33,7 +31,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     // Listen for auth state changes.
-    _supabaseService.authStateChanges.listen((event) async {
+    _userService.authStateChanges.listen((event) async {
       _user = event.session?.user;
       if (_user != null) {
         await loadUserDetails(_user!.id);
@@ -56,7 +54,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> signOut(BuildContext context) async {
-    await _supabaseService.client.auth.signOut();
+    await _userService.client.auth.signOut();
     _user = null;
     _extendedUser = null;
     notifyListeners();
@@ -69,7 +67,7 @@ class AuthProvider extends ChangeNotifier {
 
   // Sign in method
   Future<AuthResponse> signIn(String email, String password) async {
-    final response = await _supabaseService.signIn(
+    final response = await _userService.signIn(
       email: email,
       password: password,
     );
@@ -81,7 +79,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<AuthResponse> signUp(
       String email, String password, Map<String, dynamic> userData) async {
-    final response = await _supabaseService.signUp(
+    final response = await _userService.signUp(
       email: email,
       password: password,
       userData: userData,
@@ -93,7 +91,7 @@ class AuthProvider extends ChangeNotifier {
         id: _user!.id,
         email: email,
         fullName: userData['full_name'],
-        phone: userData['phone'],
+        phoneNumber: userData['phone'],
       ));
       await loadUserDetails(_user!.id);
     }
@@ -102,6 +100,6 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> resetPassword(String email) async {
-    await _supabaseService.resetPassword(email);
+    await _userService.resetPassword(email);
   }
 }

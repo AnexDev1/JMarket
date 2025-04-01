@@ -1,10 +1,11 @@
-// lib/features/favorites/components/favorite_item_card.dart
+// dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../providers/cart_provider.dart';
 import '../../../providers/favorites_provider.dart';
 
 class FavoriteItemCard extends StatelessWidget {
@@ -48,7 +49,6 @@ class FavoriteItemCard extends StatelessWidget {
   Widget _buildProductImage() {
     return Builder(builder: (context) {
       final localizations = AppLocalizations.of(context)!;
-
       return Stack(
         children: [
           Container(
@@ -76,7 +76,6 @@ class FavoriteItemCard extends StatelessWidget {
   Widget _getProductImage() {
     final hasImages =
         item['image_urls'] != null && (item['image_urls'] as List).isNotEmpty;
-
     if (hasImages) {
       return Image.network(
         item['image_urls'][0],
@@ -86,7 +85,6 @@ class FavoriteItemCard extends StatelessWidget {
         errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
       );
     }
-
     return _buildPlaceholder();
   }
 
@@ -104,7 +102,6 @@ class FavoriteItemCard extends StatelessWidget {
   Widget _buildFavoriteButton() {
     return Builder(builder: (context) {
       final localizations = AppLocalizations.of(context)!;
-
       return Material(
         elevation: 2,
         color: Colors.white,
@@ -115,9 +112,7 @@ class FavoriteItemCard extends StatelessWidget {
             HapticFeedback.lightImpact();
             final favoritesProvider =
                 Provider.of<FavoritesProvider>(context, listen: false);
-
             favoritesProvider.removeFavorite(item['id'].toString());
-
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
@@ -160,7 +155,6 @@ class FavoriteItemCard extends StatelessWidget {
 
   Widget _buildProductDetails(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -170,7 +164,7 @@ class FavoriteItemCard extends StatelessWidget {
           children: [
             Text(
               item['name'] ?? localizations.unknownProduct,
-              style: TextStyle(
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
               ),
@@ -182,37 +176,55 @@ class FavoriteItemCard extends StatelessWidget {
             const SizedBox(height: 4),
             _buildRating(),
             const Spacer(),
-            _buildAddToCartButton(context, localizations),
+            _buildAddToCartText(context, localizations),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAddToCartButton(
+// dart
+  Widget _buildAddToCartText(
       BuildContext context, AppLocalizations localizations) {
-    return SizedBox(
-      width: double.infinity,
-      height: 36,
-      child: ElevatedButton(
-        onPressed: () {
-          // Implementation...
-        },
-        style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.white,
-          backgroundColor: Colors.indigo.shade700,
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          elevation: 0,
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor:
+            Colors.indigo, // Use the same primary color as details page
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
         ),
-        child: Text(
-          localizations.addToCart,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 13,
+      ),
+      onPressed: () {
+        final cartProvider = Provider.of<CartProvider>(context, listen: false);
+        final price = item['price'] is int
+            ? (item['price'] as int).toDouble()
+            : item['price'] is double
+                ? item['price']
+                : double.parse(item['price'].toString());
+        cartProvider.addItem(
+          item['id'].toString(),
+          item['name'] ?? 'No name',
+          price,
+          item['quantity'] ?? 1,
+          item['image_urls'] != null && (item['image_urls'] as List).isNotEmpty
+              ? item['image_urls'][0]
+              : '',
+          '',
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${item['name']} added to cart'),
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 2),
           ),
+        );
+      },
+      child: Text(
+        localizations.addToCart,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -221,15 +233,13 @@ class FavoriteItemCard extends StatelessWidget {
   Widget _buildPriceRow() {
     final hasDiscount = item['discount'] != null && item['discount'] > 0;
     final price = double.parse(item['price'].toString());
-
     if (hasDiscount) {
       final discount = double.parse(item['discount'].toString()) / 100;
       final originalPrice = price / (1 - discount);
-
       return Row(
         children: [
           Text(
-            '\$${price.toStringAsFixed(2)}',
+            '${price.toStringAsFixed(2)} ETB',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -238,7 +248,7 @@ class FavoriteItemCard extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           Text(
-            '\$${originalPrice.toStringAsFixed(2)}',
+            '${originalPrice.toStringAsFixed(2)} ETB',
             style: TextStyle(
               decoration: TextDecoration.lineThrough,
               color: Colors.grey.shade600,
@@ -248,9 +258,8 @@ class FavoriteItemCard extends StatelessWidget {
         ],
       );
     }
-
     return Text(
-      '\$${price.toStringAsFixed(2)}',
+      '${price.toStringAsFixed(2)} ETB',
       style: TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 16,
@@ -262,7 +271,6 @@ class FavoriteItemCard extends StatelessWidget {
   Widget _buildRating() {
     final hasRating = item['rating'] != null;
     if (!hasRating) return const SizedBox.shrink();
-
     return Row(
       children: [
         const Icon(
@@ -273,8 +281,8 @@ class FavoriteItemCard extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           item['rating'].toString(),
-          style: TextStyle(
-            color: Colors.grey.shade700,
+          style: const TextStyle(
+            color: Colors.grey,
             fontSize: 13,
           ),
         ),

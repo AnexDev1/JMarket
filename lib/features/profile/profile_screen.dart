@@ -1,13 +1,15 @@
-// lib/features/profile/profile_screen.dart
+// File: lib/features/profile/profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../data/models/user_model.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/language_provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../services/user_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -17,7 +19,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool isAdmin = false;
   @override
   void initState() {
     super.initState();
@@ -27,7 +28,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
 
-    // if the user is signed out, navigate to the home route
     if (authProvider.user == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.go('/');
@@ -39,7 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.profile,
-          style: TextStyle(
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
@@ -62,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
-            _buildProfileHeader(),
+            _buildProfileHeader(authProvider.user!.id),
             const SizedBox(height: 16),
             _buildProfileMenus(context),
           ],
@@ -71,11 +71,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileHeader() {
-    return Consumer<AuthProvider>(
-      builder: (context, authProvider, _) {
-        final extendedUser = authProvider.extendedUser;
-
+  // Updated _buildProfileHeader uses FutureBuilder to fetch user's full_name and email.
+  Widget _buildProfileHeader(String userId) {
+    return FutureBuilder<UserModel>(
+      future: UserService().getUserById(userId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+            padding: const EdgeInsets.all(24),
+            margin: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: const Center(child: CircularProgressIndicator()),
+          );
+        } else if (snapshot.hasError || !snapshot.hasData) {
+          return Container(
+            padding: const EdgeInsets.all(24),
+            margin: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: const Center(child: Text('Error loading profile')),
+          );
+        }
+        // final user = snapshot.data!;
         return Container(
           padding: const EdgeInsets.all(24),
           margin: const EdgeInsets.all(16),
@@ -92,74 +128,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           child: Column(
             children: [
-              // Profile Picture with edit button
-              Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.indigo.shade400,
-                          Colors.indigo.shade700
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 4),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.person,
-                        size: 50,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: Colors.indigo.shade700,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
-                    ),
-                    child: const Icon(
-                      Icons.camera_alt,
-                      size: 14,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // User Name - using extended user's fullName
               Text(
-                extendedUser?.fullName ?? 'User',
+                snapshot.data?.fullName ?? 'User',
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 4),
-              // User Email - using basic auth user's email if necessary
               Text(
-                authProvider.user?.email ?? '',
+                snapshot.data?.email ?? '',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey.shade600,
                 ),
               ),
-              // ... rest of your widget code
             ],
           ),
         );
@@ -248,7 +231,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
-
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
           child: ElevatedButton(
@@ -266,13 +248,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     TextButton(
                       onPressed: () async {
-                        Navigator.pop(context); // Close dialog
+                        Navigator.pop(context);
                         try {
                           final authProvider =
                               Provider.of<AuthProvider>(context, listen: false);
                           await authProvider.signOut(context);
                           if (context.mounted) {
-                            // Refresh the page and navigate to '/'
                             context.go('/');
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -317,8 +298,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ),
-
-        // App version
         Padding(
           padding: const EdgeInsets.only(bottom: 24.0),
           child: Text(

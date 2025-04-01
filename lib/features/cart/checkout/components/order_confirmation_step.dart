@@ -231,7 +231,7 @@ class OrderConfirmationStep extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${DateFormat('EEEE, MMMM d').format(DateTime.now().add(const Duration(days: 3)))} - ${DateFormat('EEEE, MMMM d').format(DateTime.now().add(const Duration(days: 5)))}',
+                        '${DateFormat('EEEE, MMMM d, h:mm a').format(DateTime.now().add(const Duration(minutes: 10)))} - ${DateFormat(' h:mm a').format(DateTime.now().add(const Duration(minutes: 15)))}',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.green.shade700,
@@ -242,7 +242,7 @@ class OrderConfirmationStep extends StatelessWidget {
                 ),
               ],
             ),
-          ),
+          )
         ],
       ),
     );

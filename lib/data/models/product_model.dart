@@ -60,8 +60,9 @@ class Product {
       price: (json['price'] as num).toDouble(),
       description: json['description'] ?? '',
       category: json['category'] ?? '',
-      imageUrls:
-          json['imageUrls'] != null ? List<String>.from(json['imageUrls']) : [],
+      imageUrls: json['image_urls'] != null
+          ? List<String>.from(json['image_urls'])
+          : [],
       availableSizes: json['availableSizes'] != null
           ? List<String>.from(json['availableSizes'])
           : null,
@@ -77,6 +78,22 @@ class Product {
           : [],
     );
   }
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'price': price,
+      'discountedPrice': discountedPrice,
+      'imageUrls': imageUrls,
+      // 'brand': brand,
+      'rating': rating,
+      'category': category,
+      'description': description,
+      'key_features': keyFeatures,
+      'inStock': inStock,
+    };
+  }
+
   // Copy with method for immutability
   Product copyWith({
     String? id,
