@@ -33,8 +33,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       try {
         await _userService.client.auth.resetPasswordForEmail(
           _emailController.text,
-          redirectTo:
-              kIsWeb ? null : 'io.supabase.yourappname://reset-callback',
+          redirectTo: kIsWeb
+              ? null
+              : 'io.supabase.jmarket://reset-callback', // Use your actual package name
         );
 
         if (mounted) {

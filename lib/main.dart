@@ -1,4 +1,5 @@
 import 'package:chapa_unofficial/chapa_unofficial.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -9,6 +10,7 @@ import 'package:jmarket/providers/cart_provider.dart';
 import 'package:jmarket/providers/favorites_provider.dart';
 import 'package:jmarket/providers/language_provider.dart';
 import 'package:jmarket/providers/search_provider.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -99,11 +101,20 @@ class AppWithBackButtonHandling extends StatelessWidget {
   }
 }
 
+// First, add this at the top of your main.dart file
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await dotenv.load(fileName: ".env");
+//Remove this method to stop OneSignal Debugging
+  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
 
+  OneSignal.initialize("f05e49c4-6b44-45a8-a3e5-14f6a57cd1d5");
+
+// The promptForPushNotificationsWithUserResponse function will show the iOS or Android push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
+  OneSignal.Notifications.requestPermission(true);
+  await Firebase.initializeApp();
   // Initialize Hive
   await Hive.initFlutter();
   await HiveConfig.registerAdapters();
@@ -124,7 +135,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => LanguageProvider())
         // Add more providers here
       ],
-      child: const App(),
+      child: App(), // Pass the navigatorKey to the App widget
     ),
   );
 }

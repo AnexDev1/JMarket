@@ -14,6 +14,51 @@
   "@search": {
     "description": "Navigation label for search screen"
   },
+
+  "deleteAccount": "Delete Account",
+  "@deleteAccount": {
+    "description": "Label for the delete account button"
+  },
+  "confirmDelete": "Delete Account",
+  "@confirmDelete": {
+    "description": "Label for the confirm delete button"
+  },
+  "warningLabel": "WARNING",
+  "@warningLabel": {
+    "description": "Warning label text"
+  },
+  "deleteAccountWarning": "This action cannot be undone. Once your account is deleted, all your data will be permanently erased.",
+  "@deleteAccountWarning": {
+    "description": "Warning message about account deletion"
+  },
+  "confirmWithPassword": "Confirm with Password",
+  "@confirmWithPassword": {
+    "description": "Title for password confirmation dialog"
+  },
+  "enterPasswordToDelete": "Please enter your password to confirm account deletion:",
+  "@enterPasswordToDelete": {
+    "description": "Instruction to enter password for account deletion"
+  },
+  "password": "Password",
+  "@password": {
+    "description": "Label for password field"
+  },
+  "passwordRequired": "Password is required",
+  "@passwordRequired": {
+    "description": "Error message when password is not provided"
+  },
+  "accountDeleted": "Your account has been successfully deleted",
+  "@accountDeleted": {
+    "description": "Success message after account deletion"
+  },
+  "deleteFailed": "Delete account failed",
+  "@deleteFailed": {
+    "description": "Error message when account deletion fails"
+  },
+  "deleteAccountConfirmation": "Are you sure you want to delete your account?",
+  "@deleteAccountConfirmation": {
+    "description": "confirm message when account deletion "
+  },
   "cart": "Cart",
   "@cart": {
     "description": "Navigation label for shopping cart"
@@ -411,7 +456,7 @@
   "@shipping": {
     "description": "Label for shipping cost"
   },
-  "freeShippingOver": "Free shipping on orders over $100",
+  "freeShippingOver": "Free shipping on orders over 100 ETB",
   "@freeShippingOver": {
     "description": "Text explaining free shipping policy"
   },

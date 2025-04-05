@@ -80,12 +80,20 @@ class Assets {
       'lib/features/orders/orders_screen.dart';
   static const String productProductDetailsScreen =
       'lib/features/product/product_details_screen.dart';
+  static const String profileAboutUsScreen =
+      'lib/features/profile/about_us_screen.dart';
+  static const String profileAccountDeletionScreen =
+      'lib/features/profile/account_deletion_screen.dart';
   static const String profileHelpCenterScreen =
       'lib/features/profile/help_center_screen.dart';
   static const String profileLanguageScreen =
       'lib/features/profile/language_screen.dart';
+  static const String profilePrivacyPolicyScreen =
+      'lib/features/profile/privacy_policy_screen.dart';
   static const String profileProfileScreen =
       'lib/features/profile/profile_screen.dart';
+  static const String profileResetPasswordScreen =
+      'lib/features/profile/reset_password_screen.dart';
   static const String providersAuthProvider =
       'lib/providers/auth_provider.dart';
   static const String providersCartProvider =

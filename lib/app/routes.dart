@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jmarket/features/orders/orders_screen.dart';
+import 'package:jmarket/features/profile/about_us_screen.dart';
+import 'package:jmarket/features/profile/account_deletion_screen.dart';
 import 'package:jmarket/features/profile/help_center_screen.dart';
 import 'package:jmarket/features/profile/language_screen.dart';
+import 'package:jmarket/features/profile/privacy_policy_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../features/auth/auth_screen.dart';
@@ -12,6 +15,7 @@ import '../features/favorites/favorites_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/product/product_details_screen.dart';
 import '../features/profile/profile_screen.dart';
+import '../features/profile/reset_password_screen.dart';
 import '../features/search/screens/search_screen.dart';
 import '../providers/auth_provider.dart';
 import 'app.dart';
@@ -22,12 +26,15 @@ class AppRoutes {
   static const String cart = '/cart';
   static const String favorites = '/favorites';
   static const String profile = '/profile';
+  static const String privacyPolicy = '/privacy';
+  static const String aboutUs = '/about';
   static const String languageSettings = '/language-settings';
   static const String createProduct = '/create-product';
 
   static const String login = '/login';
   static const String register = '/register';
   static const String auth = '/auth';
+  static const String deleteAccount = '/delete-account';
 
   static const String productDetails = '/product-details';
   static const String checkout = '/checkout';
@@ -113,6 +120,18 @@ final appRouter = GoRouter(
       builder: (context, state) => LanguageScreen(),
     ),
     GoRoute(
+      path: AppRoutes.deleteAccount,
+      builder: (context, state) => AccountDeletionScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.privacyPolicy,
+      builder: (context, state) => PrivacyPolicyScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.aboutUs,
+      builder: (context, state) => AboutUsScreen(),
+    ),
+    GoRoute(
       path: '${AppRoutes.productDetails}/:id',
       builder: (context, state) {
         final productId = state.pathParameters['id']!;
@@ -122,6 +141,12 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.checkout,
       builder: (context, state) => const CheckoutScreen(),
+    ),
+    GoRoute(
+      path: '/reset-password',
+      builder: (context, state) => ResetPasswordScreen(
+        params: state.extra as Map<String, dynamic>,
+      ),
     ),
     GoRoute(
       path: AppRoutes.auth,

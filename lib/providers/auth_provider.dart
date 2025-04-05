@@ -99,6 +99,31 @@ class AuthProvider extends ChangeNotifier {
     return response;
   }
 
+  Future<void> verifyPassword(String password) async {
+    try {
+      // Verify the user's password before performing sensitive operations
+      final response = await _userService.client.auth.signInWithPassword(
+        email: user!.email!,
+        password: password,
+      );
+
+      if (response.user == null) {
+        throw Exception('Invalid password');
+      }
+    } catch (e) {
+      throw Exception('Password verification failed');
+    }
+  }
+
+  Future<void> deleteAccount(BuildContext context) async {
+    try {
+      await _userService.client.auth.admin.deleteUser(user!.id);
+      await signOut(context);
+    } catch (e) {
+      throw Exception('Failed to delete account: ${e.toString()}');
+    }
+  }
+
   Future<void> resetPassword(String email) async {
     await _userService.resetPassword(email);
   }

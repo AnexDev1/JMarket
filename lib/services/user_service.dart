@@ -18,8 +18,14 @@ class UserService {
     return (response as List).map((user) => UserModel.fromJson(user)).toList();
   }
 
-  // Get a single user by its ID.
-  // File: lib/services/user_service.dart
+  Future<void> deleteUser(String userId) async {
+    try {
+      await client.from('users').delete().eq('id', userId);
+    } catch (e) {
+      throw Exception('Failed to delete user data: ${e.toString()}');
+    }
+  }
+
   Future<UserModel> getUserById(String userId) async {
     final response = await client
         .from('users')
@@ -98,8 +104,18 @@ class UserService {
     }
   }
 
-  Future<void> deleteUser(String userId) async {
-    await client.from('users').delete().eq('id', userId);
+  Future<void> deleteUserData(String userId) async {
+    try {
+      // Delete user profile data first
+      await client.from('users').delete().eq('id', userId);
+
+      // Delete related data (adapt these to your actual database tables)
+      await client.from('orders').delete().eq('user_id', userId);
+      await client.from('cart_items').delete().eq('user_id', userId);
+      // Add other tables as needed
+    } catch (e) {
+      throw Exception('Failed to delete user data: ${e.toString()}');
+    }
   }
 
   Future<void> resetPassword(String email) async {
