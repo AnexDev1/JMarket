@@ -16,6 +16,7 @@ import '../features/home/home_screen.dart';
 import '../features/product/product_details_screen.dart';
 import '../features/profile/profile_screen.dart';
 import '../features/profile/reset_password_screen.dart';
+import '../features/profile/terms_of_service_screen.dart';
 import '../features/search/screens/search_screen.dart';
 import '../providers/auth_provider.dart';
 import 'app.dart';
@@ -147,6 +148,10 @@ final appRouter = GoRouter(
       builder: (context, state) => ResetPasswordScreen(
         params: state.extra as Map<String, dynamic>,
       ),
+    ),
+    GoRoute(
+      path: '/terms',
+      builder: (context, state) => const TermsOfServiceScreen(),
     ),
     GoRoute(
       path: AppRoutes.auth,

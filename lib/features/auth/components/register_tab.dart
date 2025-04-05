@@ -194,19 +194,31 @@ class _RegisterTabState extends State<RegisterTab> {
                       text: 'I agree to the ',
                       style: TextStyle(color: Colors.grey.shade700),
                       children: [
-                        TextSpan(
-                          text: 'Terms of Service',
-                          style: TextStyle(
-                            color: Colors.indigo.shade700,
-                            fontWeight: FontWeight.bold,
+                        WidgetSpan(
+                          child: GestureDetector(
+                            onTap: () => context.push('/terms'),
+                            child: Text(
+                              'Terms of Service',
+                              style: TextStyle(
+                                color: Colors.indigo.shade700,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
                           ),
                         ),
-                        const TextSpan(text: ' and '),
-                        TextSpan(
-                          text: 'Privacy Policy',
-                          style: TextStyle(
-                            color: Colors.indigo.shade700,
-                            fontWeight: FontWeight.bold,
+                        TextSpan(text: ' and '),
+                        WidgetSpan(
+                          child: GestureDetector(
+                            onTap: () => context.push('/privacy'),
+                            child: Text(
+                              'Privacy Policy',
+                              style: TextStyle(
+                                color: Colors.indigo.shade700,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
                           ),
                         ),
                       ],

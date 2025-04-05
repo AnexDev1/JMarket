@@ -94,6 +94,8 @@ class Assets {
       'lib/features/profile/profile_screen.dart';
   static const String profileResetPasswordScreen =
       'lib/features/profile/reset_password_screen.dart';
+  static const String profileTermsOfServiceScreen =
+      'lib/features/profile/terms_of_service_screen.dart';
   static const String providersAuthProvider =
       'lib/providers/auth_provider.dart';
   static const String providersCartProvider =
