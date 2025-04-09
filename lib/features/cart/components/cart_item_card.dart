@@ -108,6 +108,7 @@ class CartItemCard extends StatelessWidget {
     );
   }
 
+// dart
   Widget _buildProductInfo() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,69 +142,65 @@ class CartItemCard extends StatelessWidget {
           const SizedBox(height: 6),
         ],
         Text(
-          '${item.price.toStringAsFixed(2)} ETB',
-          style: TextStyle(
+          '${(item.price * item.quantity).toStringAsFixed(2)} ETB',
+          style: const TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.indigo.shade700,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ],
     );
   }
 
+// dart
   Widget _buildQuantityControls(BuildContext context) {
     return Row(
       children: [
-        QuantityButton(
-          icon: Icons.remove,
-          onPressed: item.quantity > 1
-              ? () {
-                  HapticFeedback.lightImpact();
-                  cartProvider.updateItemQuantity(
-                    item.productId,
-                    item.size,
-                    item.quantity - 1,
-                  );
-                }
-              : null,
-        ),
-        Container(
-          width: 40,
-          height: 32,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Text(
-            '${item.quantity}',
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
+        Row(
+          children: [
+            QuantityButton(
+              icon: Icons.remove,
+              onPressed: item.quantity > 1
+                  ? () {
+                      HapticFeedback.lightImpact();
+                      cartProvider.updateItemQuantity(
+                        item.productId,
+                        item.size,
+                        item.quantity - 1,
+                      );
+                    }
+                  : null,
             ),
-          ),
-        ),
-        QuantityButton(
-          icon: Icons.add,
-          onPressed: item.quantity < 10
-              ? () {
-                  HapticFeedback.lightImpact();
-                  cartProvider.updateItemQuantity(
-                    item.productId,
-                    item.size,
-                    item.quantity + 1,
-                  );
-                }
-              : null,
-        ),
-        const Spacer(),
-        Text(
-          '${(item.price * item.quantity).toStringAsFixed(2)} ETB',
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+            Container(
+              width: 40,
+              height: 32,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                '${item.quantity}',
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            QuantityButton(
+              icon: Icons.add,
+              onPressed: item.quantity < 10
+                  ? () {
+                      HapticFeedback.lightImpact();
+                      cartProvider.updateItemQuantity(
+                        item.productId,
+                        item.size,
+                        item.quantity + 1,
+                      );
+                    }
+                  : null,
+            ),
+          ],
         ),
       ],
     );

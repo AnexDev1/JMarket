@@ -1,3 +1,4 @@
+// dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -18,8 +19,7 @@ class CartSummary extends StatelessWidget {
     final localizations = AppLocalizations.of(context)!;
     final double subtotal = cartProvider.totalPrice;
     final double shipping = subtotal > 100 ? 0.0 : 10.0;
-    final double tax = subtotal * 0.08;
-    final double total = subtotal + tax + shipping;
+    final double total = subtotal + shipping;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -44,10 +44,12 @@ class CartSummary extends StatelessWidget {
           const SizedBox(height: 20),
           _buildSummaryRow(context, localizations.subtotal, subtotal),
           const SizedBox(height: 12),
-          _buildSummaryRow(context, localizations.shipping, shipping,
-              note: shipping == 0 ? localizations.freeShippingOver : null),
-          const SizedBox(height: 12),
-          _buildSummaryRow(context, localizations.tax, tax),
+          _buildSummaryRow(
+            context,
+            localizations.shipping,
+            shipping,
+            note: shipping == 0 ? localizations.freeShippingOver : null,
+          ),
           _buildDivider(),
           _buildSummaryRow(context, localizations.total, total, isTotal: true),
           const SizedBox(height: 24),
