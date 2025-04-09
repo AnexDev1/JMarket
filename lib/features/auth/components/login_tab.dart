@@ -1,9 +1,7 @@
 // lib/features/auth/components/login_tab.dart
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jmarket/services/user_service.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/utils/form_validators.dart';
 import '../../../widgets/buttons/primary_button.dart';
@@ -78,35 +76,35 @@ class _LoginTabState extends State<LoginTab> {
     }
   }
 
-  Future<void> _handleGoogleSignIn() async {
-    try {
-      await _userService.client.auth.signInWithOAuth(
-        OAuthProvider.google,
-        redirectTo: kIsWeb ? null : 'io.supabase.yourappname://login-callback',
-      );
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Google sign-in failed: ${e.toString()}')),
-        );
-      }
-    }
-  }
-
-  Future<void> _handleFacebookSignIn() async {
-    try {
-      await _userService.client.auth.signInWithOAuth(
-        OAuthProvider.facebook,
-        redirectTo: kIsWeb ? null : 'io.supabase.yourappname://login-callback',
-      );
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Facebook sign-in failed: ${e.toString()}')),
-        );
-      }
-    }
-  }
+  // Future<void> _handleGoogleSignIn() async {
+  //   try {
+  //     await _userService.client.auth.signInWithOAuth(
+  //       OAuthProvider.google,
+  //       redirectTo: kIsWeb ? null : 'io.supabase.yourappname://login-callback',
+  //     );
+  //   } catch (e) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Google sign-in failed: ${e.toString()}')),
+  //       );
+  //     }
+  //   }
+  // }
+  //
+  // Future<void> _handleFacebookSignIn() async {
+  //   try {
+  //     await _userService.client.auth.signInWithOAuth(
+  //       OAuthProvider.facebook,
+  //       redirectTo: kIsWeb ? null : 'io.supabase.yourappname://login-callback',
+  //     );
+  //   } catch (e) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Facebook sign-in failed: ${e.toString()}')),
+  //       );
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -171,22 +169,22 @@ class _LoginTabState extends State<LoginTab> {
               isLoading: _isLoading,
               onPressed: _handleLogin,
             ),
-            const SizedBox(height: 30),
-            _buildDivider(),
-            const SizedBox(height: 30),
-            _buildSocialLoginButton(
-              icon: Icons.g_mobiledata,
-              text: 'Continue with Google',
-              color: Colors.red.shade400,
-              onPressed: _handleGoogleSignIn,
-            ),
-            const SizedBox(height: 16),
-            _buildSocialLoginButton(
-              icon: Icons.facebook,
-              text: 'Continue with Facebook',
-              color: Colors.blue.shade700,
-              onPressed: _handleFacebookSignIn,
-            ),
+            // const SizedBox(height: 30),
+            // _buildDivider(),
+            // const SizedBox(height: 30),
+            // _buildSocialLoginButton(
+            //   icon: Icons.g_mobiledata,
+            //   text: 'Continue with Google',
+            //   color: Colors.red.shade400,
+            //   onPressed: _handleGoogleSignIn,
+            // ),
+            // const SizedBox(height: 16),
+            // _buildSocialLoginButton(
+            //   icon: Icons.facebook,
+            //   text: 'Continue with Facebook',
+            //   color: Colors.blue.shade700,
+            //   onPressed: _handleFacebookSignIn,
+            // ),
           ],
         ),
       ),

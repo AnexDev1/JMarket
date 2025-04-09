@@ -1,4 +1,4 @@
-// lib/features/legal/terms_of_service_screen.dart
+// dart
 import 'package:flutter/material.dart';
 
 class TermsOfServiceScreen extends StatelessWidget {
@@ -71,6 +71,11 @@ class TermsOfServiceScreen extends StatelessWidget {
               title: '8. Changes to Terms',
               content:
                   'JMarket reserves the right to update or modify these Terms at any time without prior notice. Your continued use of the service following any changes indicates your acceptance of such changes.',
+            ),
+            _buildSection(
+              title: '9. Refund Policy',
+              content:
+                  'Refunds are eligible only if the product is not damaged. Requests must be made within one hour after the product is received, and only items priced above 500 birr are refundable. Refund eligibility depends on the specific item purchased and some items may not be eligible for a refund.',
             ),
           ],
         ),
