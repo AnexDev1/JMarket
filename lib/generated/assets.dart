@@ -114,6 +114,8 @@ class Assets {
   static const String servicesDatabaseService =
       'lib/services/database_service.dart';
   static const String servicesOrderService = 'lib/services/order_service.dart';
+  static const String servicesPaymentService =
+      'lib/services/payment_service.dart';
   static const String servicesProductService =
       'lib/services/product_service.dart';
   static const String servicesSearchProductService =

@@ -1,7 +1,10 @@
-// dart
-import 'package:chapa_unofficial/chapa_unofficial.dart';
+// File: lib/features/cart/checkout/checkout_screen.dart
+import 'dart:math';
+
+import 'package:chapasdk/chapasdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -9,15 +12,24 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../providers/auth_provider.dart';
 import '../../../providers/cart_provider.dart';
-import '../../../services/order_service.dart';
-import '../../../services/user_service.dart'; // Import user service
+import '../../../services/payment_service.dart';
+import '../../../services/user_service.dart';
 import 'components/order_confirmation_step.dart';
 import 'components/payment_method_step.dart';
 import 'components/shipping_details_step.dart';
 
+class TxRefRandomGenerator {
+  static String generate({required String prefix, int length = 8}) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    final rand = Random();
+    final randomPart =
+        List.generate(length, (_) => chars[rand.nextInt(chars.length)]).join();
+    return '$prefix$randomPart';
+  }
+}
+
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
-
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
 }
@@ -33,9 +45,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   String city = '';
   String zipCode = '';
   String phoneNumber = '';
-  String paymentMethod = 'cod'; // Default to Cash on Delivery
+  // default payment method initially can be empty or a default value
+  String paymentMethod = 'cod';
 
-  // User hint variables
+  // User hints
   String? fullNameHint;
   String? phoneHint;
 
@@ -45,10 +58,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     _loadUserHints();
   }
 
-  UserService userService = UserService();
+  final UserService userService = UserService();
 
   Future<void> _loadUserHints() async {
-    // Fetch user info from your user service function
     final user = await userService.getUserById(userService.currentUser!.id);
     setState(() {
       fullNameHint = user.fullName;
@@ -92,7 +104,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   void _setPaymentMethod(String method) {
-    setState(() => paymentMethod = method);
+    setState(() {
+      paymentMethod = method;
+    });
   }
 
   Future<void> _placeOrder() async {
@@ -110,9 +124,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       return;
     }
 
-    if (paymentMethod == 'chapa') {
+    // If the selected payment method is not cod, then proceed with Chapa payment.
+    if (paymentMethod != 'cod') {
       final subtotal = cartProvider.totalPrice;
-      final shipping = 5.99;
+      const shipping = 5.99;
       final tax = subtotal * 0.05;
       final total = subtotal + shipping + tax;
       final txRef = TxRefRandomGenerator.generate(prefix: 'JMarket');
@@ -122,38 +137,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       String lastName = nameParts.length > 1 ? nameParts.last : '';
 
       try {
-        await Chapa.getInstance.startPayment(
+        Chapa.paymentParameters(
           context: context,
-          amount: total.toStringAsFixed(2),
+          publicKey: dotenv.env['CHAPA_PUBLIC_KEY'] ?? '',
           currency: 'ETB',
-          txRef: txRef,
+          amount: total.toStringAsFixed(2),
           email: user.email ?? 'customer@example.com',
+          phone: phoneNumber,
           firstName: firstName,
           lastName: lastName,
+          txRef: txRef,
           title: 'Order Payment',
-          description: 'Payment for order #$txRef',
-          phoneNumber: phoneNumber,
-          onInAppPaymentSuccess: (successMsg) async {
-            await _processOrderAfterPayment(user, cartProvider, localizations);
-            if (context.mounted) {
-              context.go('/');
-            }
-          },
-          onInAppPaymentError: (errorMsg) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Payment failed: $errorMsg')),
-            );
-          },
-        );
-      } on ChapaException catch (e) {
-        String errorMessage = 'Payment error';
-        if (e is NetworkException) {
-          errorMessage = 'Network error';
-        } else if (e is ServerException) {
-          errorMessage = 'Server error';
-        }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$errorMessage: ${e.toString()}')),
+          desc: 'Payment for order #$txRef',
+          nativeCheckout: true,
+          namedRouteFallBack: '/',
+          availablePaymentMethods: [paymentMethod],
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -163,56 +161,75 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       return;
     }
 
-    await _processOrderAfterPayment(user, cartProvider, localizations);
-  }
-
-  Future<void> _processOrderAfterPayment(
-    User user,
-    CartProvider cartProvider,
-    AppLocalizations localizations,
-  ) async {
-    final shippingAddress = address;
-    final ordersPayload = cartProvider.items.map((item) {
-      return {
-        'user_id': user.id,
-        'order_id': item.productId,
-        'shipping_address': shippingAddress,
-        'order_status': 'pending',
-        'quantity': item.quantity,
-        'created_at': DateTime.now().toIso8601String(),
-      };
-    }).toList();
-
-    final orderService = OrderService();
-    try {
-      final response = await orderService.createOrders(ordersPayload);
-      if (response.isNotEmpty) {
-        cartProvider.clear();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(localizations.orderPlacedSuccessfully),
-            backgroundColor: Colors.green,
-          ),
-        );
-        Future.delayed(const Duration(seconds: 2), () {
-          context.go('/');
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(localizations.orderPlacementFailed)),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(localizations.errorWithMessage(e.toString()))),
-      );
-    }
+    await PaymentService().processPayment(
+      user: user,
+      cartProvider: cartProvider,
+      shippingAddress: address,
+      localizations: localizations,
+    );
   }
 
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  Widget _buildStepIndicator({
+    required bool isActive,
+    required bool isDone,
+    required String title,
+    required int step,
+  }) {
+    return Column(
+      children: [
+        Container(
+          width: 35,
+          height: 35,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isDone
+                ? Colors.indigo.shade700
+                : isActive
+                    ? Colors.indigo.shade100
+                    : Colors.grey.shade200,
+            border: isDone || isActive
+                ? Border.all(color: Colors.indigo.shade700, width: 2)
+                : null,
+          ),
+          child: Center(
+            child: isDone
+                ? const Icon(Icons.check, color: Colors.white, size: 18)
+                : Text(
+                    '$step',
+                    style: TextStyle(
+                      color: isActive
+                          ? Colors.indigo.shade700
+                          : Colors.grey.shade500,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+            color: isActive ? Colors.indigo.shade700 : Colors.grey.shade600,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStepConnector(bool isActive) {
+    return Container(
+      width: 30,
+      height: 2,
+      color: isActive ? Colors.indigo.shade700 : Colors.grey.shade300,
+    );
   }
 
   @override
@@ -230,9 +247,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            context.go('/cart');
-          },
+          onPressed: () => context.go('/cart'),
         ),
       ),
       body: Column(
@@ -326,8 +341,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     icon: const Icon(Icons.arrow_back),
                     label: Text(localizations.back),
                     style: TextButton.styleFrom(
-                      foregroundColor: Colors.grey.shade700,
-                    ),
+                        foregroundColor: Colors.grey.shade700),
                   ),
                 const Spacer(),
                 if (_currentStep < 2)
@@ -336,13 +350,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.indigo.shade700,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
+                          horizontal: 24, vertical: 12),
                     ),
-                    child: Text(_currentStep == 0
-                        ? localizations.continue_
-                        : localizations.reviewOrder),
+                    child: Text(
+                      _currentStep == 0
+                          ? localizations.continue_
+                          : localizations.reviewOrder,
+                    ),
                   )
                 else
                   ElevatedButton(
@@ -350,9 +364,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.indigo.shade700,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
+                          horizontal: 24, vertical: 12),
                     ),
                     child: Text(localizations.placeOrder),
                   ),
@@ -361,67 +373,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildStepIndicator({
-    required bool isActive,
-    required bool isDone,
-    required String title,
-    required int step,
-  }) {
-    return Column(
-      children: [
-        Container(
-          width: 35,
-          height: 35,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isDone
-                ? Colors.indigo.shade700
-                : isActive
-                    ? Colors.indigo.shade100
-                    : Colors.grey.shade200,
-            border: isDone || isActive
-                ? Border.all(color: Colors.indigo.shade700, width: 2)
-                : null,
-          ),
-          child: Center(
-            child: isDone
-                ? const Icon(
-                    Icons.check,
-                    color: Colors.white,
-                    size: 18,
-                  )
-                : Text(
-                    '$step',
-                    style: TextStyle(
-                      color: isActive
-                          ? Colors.indigo.shade700
-                          : Colors.grey.shade500,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-            color: isActive ? Colors.indigo.shade700 : Colors.grey.shade600,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStepConnector(bool isActive) {
-    return Container(
-      width: 30,
-      height: 2,
-      color: isActive ? Colors.indigo.shade700 : Colors.grey.shade300,
     );
   }
 }

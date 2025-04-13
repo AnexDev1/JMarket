@@ -1,3 +1,4 @@
+// dart
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
@@ -30,6 +31,14 @@ class OrderConfirmationStep extends StatelessWidget {
     switch (paymentMethod) {
       case 'cod':
         return localizations.cashOnDelivery;
+      case 'telebirr':
+        return 'Telebirr';
+      case 'cbebirr':
+        return 'Cbebirr';
+      case 'mpesa':
+        return 'M-Pesa';
+      case 'ebirr':
+        return 'eBirr';
       case 'chapa':
         return localizations.payWithChapa;
       default:
@@ -41,6 +50,11 @@ class OrderConfirmationStep extends StatelessWidget {
     switch (paymentMethod) {
       case 'cod':
         return Icons.money;
+      case 'telebirr':
+      case 'cbebirr':
+      case 'mpesa':
+      case 'ebirr':
+        return Icons.account_balance_wallet;
       case 'chapa':
         return Icons.payment;
       default:
@@ -52,6 +66,11 @@ class OrderConfirmationStep extends StatelessWidget {
     switch (paymentMethod) {
       case 'cod':
         return Colors.green.shade700;
+      case 'telebirr':
+      case 'cbebirr':
+      case 'mpesa':
+      case 'ebirr':
+        return Colors.indigo.shade700;
       case 'chapa':
         return Colors.indigo.shade700;
       default:
@@ -79,8 +98,6 @@ class OrderConfirmationStep extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-
-          // Shipping information section
           _buildSectionCard(
             context: context,
             title: localizations.shippingInformation,
@@ -115,10 +132,7 @@ class OrderConfirmationStep extends StatelessWidget {
               ],
             ),
           ),
-
           const SizedBox(height: 16),
-
-          // Payment method section
           _buildSectionCard(
             context: context,
             title: localizations.paymentMethod,
@@ -149,10 +163,7 @@ class OrderConfirmationStep extends StatelessWidget {
               ],
             ),
           ),
-
           const SizedBox(height: 16),
-
-          // Order items section
           _buildSectionCard(
             context: context,
             title: localizations.orderItems(cartItems.length),
@@ -166,10 +177,7 @@ class OrderConfirmationStep extends StatelessWidget {
               ],
             ),
           ),
-
           const SizedBox(height: 16),
-
-          // Price summary section
           _buildSectionCard(
             context: context,
             title: localizations.priceDetails,
@@ -190,18 +198,12 @@ class OrderConfirmationStep extends StatelessWidget {
                   child: Divider(),
                 ),
                 _buildPriceRow(
-                  context,
-                  localizations.total,
-                  formatter.format(total),
-                  isTotal: true,
-                ),
+                    context, localizations.total, formatter.format(total),
+                    isTotal: true),
               ],
             ),
           ),
-
           const SizedBox(height: 16),
-
-          // Estimated delivery
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -303,7 +305,6 @@ class OrderConfirmationStep extends StatelessWidget {
   Widget _buildOrderItem(BuildContext context, CartItem item) {
     final localizations = AppLocalizations.of(context)!;
     final price = item.price * item.quantity;
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(

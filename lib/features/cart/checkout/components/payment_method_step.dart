@@ -38,25 +38,60 @@ class PaymentMethodStep extends StatelessWidget {
               color: Colors.grey.shade600,
             ),
           ),
-          const SizedBox(height: 24),
-
-          // Pay with Chapa option (moved up and use green color)
+          const SizedBox(height: 16),
+          // Telebirr button
           _buildPaymentOption(
             context: context,
-            isSelected: selectedMethod == 'chapa',
-            title: localizations.payWithChapa,
-            subtitle: localizations.chapaPaymentDescription,
-            icon: Icons.payment,
-            iconColor: Colors.green.shade700,
+            isSelected: selectedMethod == 'telebirr',
+            title: 'Pay With Telebirr',
+            subtitle: '',
+            icon: Icons.account_balance_wallet,
+            iconColor: Colors.indigo.shade700,
             onTap: () {
               HapticFeedback.selectionClick();
-              onMethodSelected('chapa');
+              onMethodSelected('telebirr');
             },
           ),
-
-          const SizedBox(height: 16),
-
-          // Cash on Delivery option (moved to bottom now with indigo color)
+          // Cbebirr button
+          _buildPaymentOption(
+            context: context,
+            isSelected: selectedMethod == 'cbebirr',
+            title: 'Pay with cbebirr',
+            subtitle: '',
+            icon: Icons.account_balance_wallet,
+            iconColor: Colors.indigo.shade700,
+            onTap: () {
+              HapticFeedback.selectionClick();
+              onMethodSelected('cbebirr');
+            },
+          ),
+          // M\-Pesa button
+          _buildPaymentOption(
+            context: context,
+            isSelected: selectedMethod == 'mpesa',
+            title: 'Pay with M\-Pesa',
+            subtitle: '',
+            icon: Icons.account_balance_wallet,
+            iconColor: Colors.indigo.shade700,
+            onTap: () {
+              HapticFeedback.selectionClick();
+              onMethodSelected('mpesa');
+            },
+          ),
+          // Ebirr button
+          _buildPaymentOption(
+            context: context,
+            isSelected: selectedMethod == 'ebirr',
+            title: 'Pay With Ebirr',
+            subtitle: '',
+            icon: Icons.account_balance_wallet,
+            iconColor: Colors.indigo.shade700,
+            onTap: () {
+              HapticFeedback.selectionClick();
+              onMethodSelected('ebirr');
+            },
+          ),
+          // Cash on Delivery button
           _buildPaymentOption(
             context: context,
             isSelected: selectedMethod == 'cod',
@@ -69,9 +104,7 @@ class PaymentMethodStep extends StatelessWidget {
               onMethodSelected('cod');
             },
           ),
-
           const SizedBox(height: 24),
-
           // Secure payment note
           Container(
             padding: const EdgeInsets.all(12),
@@ -154,14 +187,16 @@ class PaymentMethodStep extends StatelessWidget {
                       color: Colors.grey.shade800,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey.shade600,
+                  if (subtitle.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),

@@ -1,15 +1,8 @@
-import 'package:chapa_unofficial/chapa_unofficial.dart';
+// File: lib/main.dart
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:jmarket/providers/auth_provider.dart';
-import 'package:jmarket/providers/cart_provider.dart';
-import 'package:jmarket/providers/favorites_provider.dart';
-import 'package:jmarket/providers/language_provider.dart';
-import 'package:jmarket/providers/search_provider.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -17,108 +10,29 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 // Local imports
 import 'app/app.dart';
 import 'core/config/hive_config.dart';
+import 'providers/auth_provider.dart';
+import 'providers/cart_provider.dart';
+import 'providers/favorites_provider.dart';
+import 'providers/language_provider.dart';
+import 'providers/search_provider.dart'; // Add this import for SearchProvider
 import 'providers/theme_provider.dart';
 
-// BackButtonInterceptor widget
-class BackButtonInterceptor extends StatelessWidget {
-  final Widget child;
-  final GoRouter router;
-
-  const BackButtonInterceptor({
-    Key? key,
-    required this.child,
-    required this.router,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (didPop) async {
-        if (didPop) return;
-
-        final canPop = router.canPop();
-
-        if (canPop) {
-          // Navigate back within the app
-          router.pop();
-        } else {
-          // At the root route - show exit confirmation
-          final shouldExit = await _showExitConfirmation(context);
-          if (shouldExit && context.mounted) {
-            SystemNavigator.pop();
-          }
-        }
-      },
-      child: child,
-    );
-  }
-
-  Future<bool> _showExitConfirmation(BuildContext context) async {
-    return await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Exit App'),
-            content: const Text('Are you sure you want to exit?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('CANCEL'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('EXIT'),
-              ),
-            ],
-          ),
-        ) ??
-        false;
-  }
-}
-
-// Modified App class that uses the BackButtonInterceptor
-class AppWithBackButtonHandling extends StatelessWidget {
-  final GoRouter router;
-
-  const AppWithBackButtonHandling({
-    Key? key,
-    required this.router,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: router,
-      debugShowCheckedModeBanner: false,
-      // theme: Provider.of<ThemeProvider>(context).themeData,
-      builder: (context, child) {
-        return BackButtonInterceptor(
-          child: child ?? const SizedBox.shrink(),
-          router: router,
-        );
-      },
-    );
-  }
-}
-
-// First, add this at the top of your main.dart file
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await dotenv.load(fileName: ".env");
-//Remove this method to stop OneSignal Debugging
   OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-
-  OneSignal.initialize("f05e49c4-6b44-45a8-a3e5-14f6a57cd1d5");
-
-// The promptForPushNotificationsWithUserResponse function will show the iOS or Android push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
+  OneSignal.initialize(dotenv.env['APP_ID'] ?? '');
   OneSignal.Notifications.requestPermission(true);
+
   await Firebase.initializeApp();
+
   // Initialize Hive
   await Hive.initFlutter();
   await HiveConfig.registerAdapters();
-  Chapa.configure(privateKey: "CHAPA_SECRET_KEY");
+
+  // Configure Chapa, Supabase, etc.
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL'] ?? '',
     anonKey: dotenv.env['SUPABASE_KEY'] ?? '',
@@ -130,12 +44,12 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => FavoritesProvider()),
-        ChangeNotifierProvider(create: (_) => SearchProvider()),
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => LanguageProvider())
-        // Add more providers here
+        ChangeNotifierProvider(
+            create: (_) => SearchProvider()), // Added provider
       ],
-      child: App(), // Pass the navigatorKey to the App widget
+      child: App(),
     ),
   );
 }
