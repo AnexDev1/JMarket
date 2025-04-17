@@ -18,7 +18,7 @@ class CartSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
     final double subtotal = cartProvider.totalPrice;
-    final double shipping = subtotal > 100 ? 0.0 : 10.0;
+    final double shipping = subtotal > 100 ? 0.0 : 0.0;
     final double total = subtotal + shipping;
 
     return Container(

@@ -28,23 +28,27 @@ class PaymentService {
     try {
       final orderService = OrderService();
       final response = await orderService.createOrders(ordersPayload);
+
       if (response.isNotEmpty) {
-        // Clear cart upon successful order creation.
+        // Clear cart upon successful order creation
         cartProvider.clear();
-        ScaffoldMessenger.of(
-          navigatorKey.currentContext!,
-        ).showSnackBar(
+
+        // Show success message
+        ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
           SnackBar(
             content: Text(localizations.orderPlacedSuccessfully),
             backgroundColor: Colors.green,
           ),
         );
+
+        // Add this navigation to go to orders screen
+        // Navigator.pushNamedAndRemoveUntil(
+        //   navigatorKey.currentContext!,
+        //   '/orders',
+        //   (route) => false,
+        // );
       } else {
-        ScaffoldMessenger.of(
-          navigatorKey.currentContext!,
-        ).showSnackBar(
-          SnackBar(content: Text(localizations.orderPlacementFailed)),
-        );
+        // Your existing error handling
       }
     } catch (e) {
       ScaffoldMessenger.of(

@@ -1,3 +1,4 @@
+// dart
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jmarket/features/orders/orders_screen.dart';
@@ -80,6 +81,12 @@ final appRouter = GoRouter(
     return null;
   },
   routes: [
+    // Named orders route to support fallback navigation
+    GoRoute(
+      name: 'orders',
+      path: AppRoutes.orderDetails,
+      builder: (context, state) => OrdersScreen(),
+    ),
     ShellRoute(
       builder: (context, state, child) {
         return MainScreen(child: child);
@@ -111,10 +118,6 @@ final appRouter = GoRouter(
         ),
       ],
       navigatorKey: GlobalKey<NavigatorState>(),
-    ),
-    GoRoute(
-      path: AppRoutes.orderDetails,
-      builder: (context, state) => OrdersScreen(),
     ),
     GoRoute(
       path: AppRoutes.languageSettings,

@@ -127,8 +127,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     // If the selected payment method is not cod, then proceed with Chapa payment.
     if (paymentMethod != 'cod') {
       final subtotal = cartProvider.totalPrice;
-      const shipping = 5.99;
-      final tax = subtotal * 0.05;
+      const shipping = 0;
+      final tax = 0;
       final total = subtotal + shipping + tax;
       final txRef = TxRefRandomGenerator.generate(prefix: 'JMarket');
 
@@ -150,7 +150,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           title: 'Order Payment',
           desc: 'Payment for order #$txRef',
           nativeCheckout: true,
-          namedRouteFallBack: '/',
+          namedRouteFallBack: '/orders',
+          showPaymentMethodsOnGridView: false,
           availablePaymentMethods: [paymentMethod],
         );
       } catch (e) {
@@ -314,8 +315,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     paymentMethod: paymentMethod,
                     cartItems: cartProvider.items,
                     subtotal: cartProvider.totalPrice,
-                    shipping: 5.99,
-                    tax: cartProvider.totalPrice * 0.05,
+                    shipping: 0,
+                    tax: 0,
                   ),
                 ],
               ),
