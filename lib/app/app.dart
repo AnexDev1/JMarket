@@ -1,12 +1,11 @@
 // lib/app/app.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jmarket/providers/language_provider.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
 import 'routes.dart';
@@ -69,13 +68,13 @@ class App extends StatelessWidget {
         elevation: 8,
         backgroundColor: Colors.white,
         indicatorColor: Colors.indigo.shade50,
-        labelTextStyle: MaterialStateProperty.all(
+        labelTextStyle: WidgetStateProperty.all(
           const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
         ),
-        iconTheme: MaterialStateProperty.all(
+        iconTheme: WidgetStateProperty.all(
           IconThemeData(
             size: 24,
             color: Colors.grey.shade600,

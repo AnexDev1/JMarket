@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:jmarket/services/user_service.dart';
+import 'package:jmarket/services/auth_service.dart';
 
 import '../../../core/utils/form_validators.dart';
 import '../../../widgets/buttons/primary_button.dart';
@@ -28,7 +28,7 @@ class _RegisterTabState extends State<RegisterTab> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _userService = UserService(); // Create an instance
+  final _authService = AuthService(); // Create an instance
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
@@ -60,7 +60,7 @@ class _RegisterTabState extends State<RegisterTab> {
 
       try {
         // First create user in auth
-        final response = await _userService.signUp(
+        final response = await _authService.signUp(
           email: _emailController.text,
           password: _passwordController.text,
           userData: {

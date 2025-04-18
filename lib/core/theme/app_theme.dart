@@ -27,7 +27,7 @@ class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         indicatorColor: AppColors.gray200,
-        labelTextStyle: MaterialStateProperty.all(
+        labelTextStyle: WidgetStateProperty.all(
           TextStyles.caption.copyWith(color: AppColors.primaryBlack),
         ),
       ),
@@ -81,7 +81,7 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.gray900,
         indicatorColor: AppColors.gray800,
-        labelTextStyle: MaterialStateProperty.all(
+        labelTextStyle: WidgetStateProperty.all(
           TextStyles.caption.copyWith(color: AppColors.primaryWhite),
         ),
       ),

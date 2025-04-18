@@ -1,12 +1,14 @@
 // lib/providers/auth_provider.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jmarket/services/auth_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/models/user_model.dart';
 import '../services/user_service.dart';
 
 class AuthProvider extends ChangeNotifier {
+  final AuthService _authService = AuthService();
   final UserService _userService = UserService();
   User? _user;
   UserModel? _extendedUser;
@@ -23,7 +25,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> _initialize() async {
     _isLoading = true;
-    _user = _userService.currentUser;
+    _user = _authService.currentUser;
     if (_user != null) {
       await loadUserDetails(_user!.id);
     }
@@ -31,7 +33,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     // Listen for auth state changes.
-    _userService.authStateChanges.listen((event) async {
+    _authService.authStateChanges.listen((event) async {
       _user = event.session?.user;
       if (_user != null) {
         await loadUserDetails(_user!.id);
@@ -54,7 +56,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> signOut(BuildContext context) async {
-    await _userService.client.auth.signOut();
+    await _authService.client.auth.signOut();
     _user = null;
     _extendedUser = null;
     notifyListeners();
@@ -67,7 +69,7 @@ class AuthProvider extends ChangeNotifier {
 
   // Sign in method
   Future<AuthResponse> signIn(String email, String password) async {
-    final response = await _userService.signIn(
+    final response = await _authService.signIn(
       email: email,
       password: password,
     );
@@ -79,7 +81,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<AuthResponse> signUp(
       String email, String password, Map<String, dynamic> userData) async {
-    final response = await _userService.signUp(
+    final response = await _authService.signUp(
       email: email,
       password: password,
       userData: userData,
@@ -102,7 +104,7 @@ class AuthProvider extends ChangeNotifier {
   Future<void> verifyPassword(String password) async {
     try {
       // Verify the user's password before performing sensitive operations
-      final response = await _userService.client.auth.signInWithPassword(
+      final response = await _authService.client.auth.signInWithPassword(
         email: user!.email!,
         password: password,
       );
@@ -117,7 +119,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> deleteAccount(BuildContext context) async {
     try {
-      await _userService.client.auth.admin.deleteUser(user!.id);
+      await _authService.client.auth.admin.deleteUser(user!.id);
       await signOut(context);
     } catch (e) {
       throw Exception('Failed to delete account: ${e.toString()}');
@@ -125,6 +127,6 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> resetPassword(String email) async {
-    await _userService.resetPassword(email);
+    await _authService.resetPassword(email);
   }
 }

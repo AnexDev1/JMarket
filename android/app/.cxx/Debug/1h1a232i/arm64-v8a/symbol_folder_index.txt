@@ -1,0 +1,1 @@
+/home/k/StudioProjects/JMarket/build/app/intermediates/cxx/Debug/1h1a232i/obj/arm64-v8a
