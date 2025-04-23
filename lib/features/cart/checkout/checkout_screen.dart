@@ -1,7 +1,6 @@
 // File: lib/features/cart/checkout/checkout_screen.dart
 import 'dart:math';
 
-import 'package:chapasdk/chapasdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -10,7 +9,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../providers/auth_provider.dart';
 import '../../../providers/cart_provider.dart';
 import '../../../services/payment_service.dart';
 import '../../../services/user_service.dart';
@@ -45,7 +43,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   String city = '';
   String zipCode = '';
   String phoneNumber = '';
-  // default payment method initially can be empty or a default value
   String paymentMethod = 'cod';
 
   // User hints
@@ -109,60 +106,41 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     });
   }
 
-  Future<void> _placeOrder() async {
-    final localizations = AppLocalizations.of(context)!;
-    HapticFeedback.mediumImpact();
-    final supabase = Supabase.instance.client;
-    final cartProvider = Provider.of<CartProvider>(context, listen: false);
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final user = supabase.auth.currentUser;
+  // Separates the payment process with added logging.
+  Future<void> _processPayment(
+      double total, String firstName, String lastName) async {
+    print('Starting payment process...');
+    await PaymentService().processPayment(
+      context: context,
+      publicKey: dotenv.env['CHAPA_PUBLIC_KEY'] ?? '',
+      currency: 'ETB',
+      amount: total.toStringAsFixed(2),
+      email: Supabase.instance.client.auth.currentUser!.email ??
+          'customer@example.com',
+      phone: phoneNumber,
+      firstName: firstName,
+      lastName: lastName,
+      txRef: TxRefRandomGenerator.generate(prefix: 'JMarket'),
+      title: 'Order Payment',
+      desc: 'Payment for order',
+      availablePaymentMethods: [paymentMethod],
+      fallbackRoute: '/orders',
+    );
+    print('Payment processed successfully.');
+  }
 
+  // Separates the order creation process.
+  Future<void> _createOrder() async {
+    final localizations = AppLocalizations.of(context)!;
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    final user = Supabase.instance.client.auth.currentUser;
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(localizations.userNotAuthenticated)),
       );
       return;
     }
-
-    // If the selected payment method is not cod, then proceed with Chapa payment.
-    if (paymentMethod != 'cod') {
-      final subtotal = cartProvider.totalPrice;
-      const shipping = 0;
-      final tax = 0;
-      final total = subtotal + shipping + tax;
-      final txRef = TxRefRandomGenerator.generate(prefix: 'JMarket');
-
-      List<String> nameParts = name.split(' ');
-      String firstName = nameParts.isNotEmpty ? nameParts[0] : 'Customer';
-      String lastName = nameParts.length > 1 ? nameParts.last : '';
-
-      try {
-        Chapa.paymentParameters(
-          context: context,
-          publicKey: dotenv.env['CHAPA_PUBLIC_KEY'] ?? '',
-          currency: 'ETB',
-          amount: total.toStringAsFixed(2),
-          email: user.email ?? 'customer@example.com',
-          phone: phoneNumber,
-          firstName: firstName,
-          lastName: lastName,
-          txRef: txRef,
-          title: 'Order Payment',
-          desc: 'Payment for order #$txRef',
-          nativeCheckout: true,
-          namedRouteFallBack: '/orders',
-          showPaymentMethodsOnGridView: false,
-          availablePaymentMethods: [paymentMethod],
-        );
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(localizations.errorWithMessage(e.toString()))),
-        );
-      }
-      return;
-    }
-
-    await PaymentService().processPayment(
+    await PaymentService().createOrder(
       user: user,
       cartProvider: cartProvider,
       shippingAddress: address,
@@ -170,10 +148,37 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
+  Future<void> _placeOrder() async {
+    HapticFeedback.mediumImpact();
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    final supabase = Supabase.instance.client;
+    final localizations = AppLocalizations.of(context)!;
+    final user = supabase.auth.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(localizations.userNotAuthenticated)),
+      );
+      return;
+    }
+    if (paymentMethod != 'cod') {
+      final subtotal = cartProvider.totalPrice;
+      const shipping = 0;
+      final tax = 0;
+      final total = subtotal + shipping + tax;
+      List<String> nameParts = name.split(' ');
+      String firstName = nameParts.isNotEmpty ? nameParts[0] : 'Customer';
+      String lastName = nameParts.length > 1 ? nameParts.last : '';
+      try {
+        await _processPayment(total, firstName, lastName);
+        await _createOrder();
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(localizations.errorWithMessage(e.toString()))),
+        );
+      }
+    } else {
+      await _createOrder();
+    }
   }
 
   Widget _buildStepIndicator({
@@ -237,7 +242,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
     final localizations = AppLocalizations.of(context)!;
-
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
@@ -375,5 +379,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 }

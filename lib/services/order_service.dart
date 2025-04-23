@@ -23,12 +23,11 @@ class OrderService {
     return Order.fromJson(response);
   }
 
-  // Create new order(s) with corrected payload and response handling.
-  Future<PostgrestList> createOrders(
+  Future<List<Order>> createOrders(
       List<Map<String, dynamic>> ordersPayload) async {
     final response =
         await _supabase.from('orders').insert(ordersPayload).select();
-    return response;
+    return (response as List).map((order) => Order.fromJson(order)).toList();
   }
 
   // Update an existing order.
