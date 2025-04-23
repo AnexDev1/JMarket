@@ -1,0 +1,2 @@
+/home/k/StudioProjects/JMarket/android/app/.cxx/Debug/1h1a232i/x86/CMakeFiles/edit_cache.dir
+/home/k/StudioProjects/JMarket/android/app/.cxx/Debug/1h1a232i/x86/CMakeFiles/rebuild_cache.dir

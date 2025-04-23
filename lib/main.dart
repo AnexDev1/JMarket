@@ -14,7 +14,7 @@ import 'providers/auth_provider.dart';
 import 'providers/cart_provider.dart';
 import 'providers/favorites_provider.dart';
 import 'providers/language_provider.dart';
-import 'providers/search_provider.dart'; // Add this import for SearchProvider
+import 'providers/search_provider.dart'; 
 import 'providers/theme_provider.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -32,7 +32,7 @@ void main() async {
   await Hive.initFlutter();
   await HiveConfig.registerAdapters();
 
-  // Configure Chapa, Supabase, etc.
+ 
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL'] ?? '',
     anonKey: dotenv.env['SUPABASE_KEY'] ?? '',
@@ -47,7 +47,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(
-            create: (_) => SearchProvider()), // Added provider
+            create: (_) => SearchProvider()), 
       ],
       child: App(),
     ),

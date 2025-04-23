@@ -1,7 +1,7 @@
 // lib/features/auth/components/login_tab.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:jmarket/services/user_service.dart';
+import 'package:jmarket/services/auth_service.dart';
 
 import '../../../core/utils/form_validators.dart';
 import '../../../widgets/buttons/primary_button.dart';
@@ -19,7 +19,7 @@ class _LoginTabState extends State<LoginTab> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _userService = UserService(); // Create an instance
+  final _authService = AuthService(); 
   bool _obscurePassword = true;
   bool _isLoading = false;
 
@@ -35,7 +35,7 @@ class _LoginTabState extends State<LoginTab> {
       setState(() => _isLoading = true);
 
       try {
-        final response = await _userService.signIn(
+        final response = await _authService.signIn(
           email: _emailController.text,
           password: _passwordController.text,
         );
@@ -75,36 +75,6 @@ class _LoginTabState extends State<LoginTab> {
       }
     }
   }
-
-  // Future<void> _handleGoogleSignIn() async {
-  //   try {
-  //     await _userService.client.auth.signInWithOAuth(
-  //       OAuthProvider.google,
-  //       redirectTo: kIsWeb ? null : 'io.supabase.yourappname://login-callback',
-  //     );
-  //   } catch (e) {
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text('Google sign-in failed: ${e.toString()}')),
-  //       );
-  //     }
-  //   }
-  // }
-  //
-  // Future<void> _handleFacebookSignIn() async {
-  //   try {
-  //     await _userService.client.auth.signInWithOAuth(
-  //       OAuthProvider.facebook,
-  //       redirectTo: kIsWeb ? null : 'io.supabase.yourappname://login-callback',
-  //     );
-  //   } catch (e) {
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text('Facebook sign-in failed: ${e.toString()}')),
-  //       );
-  //     }
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -169,22 +139,7 @@ class _LoginTabState extends State<LoginTab> {
               isLoading: _isLoading,
               onPressed: _handleLogin,
             ),
-            // const SizedBox(height: 30),
-            // _buildDivider(),
-            // const SizedBox(height: 30),
-            // _buildSocialLoginButton(
-            //   icon: Icons.g_mobiledata,
-            //   text: 'Continue with Google',
-            //   color: Colors.red.shade400,
-            //   onPressed: _handleGoogleSignIn,
-            // ),
-            // const SizedBox(height: 16),
-            // _buildSocialLoginButton(
-            //   icon: Icons.facebook,
-            //   text: 'Continue with Facebook',
-            //   color: Colors.blue.shade700,
-            //   onPressed: _handleFacebookSignIn,
-            // ),
+
           ],
         ),
       ),
@@ -259,61 +214,4 @@ class _LoginTabState extends State<LoginTab> {
     );
   }
 
-  Widget _buildDivider() {
-    return Row(
-      children: [
-        Expanded(
-          child: Divider(
-            color: Colors.grey.shade300,
-            thickness: 1,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'OR',
-            style: TextStyle(
-              color: Colors.grey.shade600,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-        Expanded(
-          child: Divider(
-            color: Colors.grey.shade300,
-            thickness: 1,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSocialLoginButton({
-    required IconData icon,
-    required String text,
-    required Color color,
-    required VoidCallback onPressed,
-  }) {
-    return ElevatedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon, color: color, size: 24),
-      label: Text(
-        text,
-        style: TextStyle(
-          color: Colors.grey.shade800,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.grey.shade800,
-        elevation: 0,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: Colors.grey.shade300),
-        ),
-      ),
-    );
-  }
 }

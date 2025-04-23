@@ -344,7 +344,7 @@ class OrderConfirmationStep extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  item.name ?? localizations.unknownProduct,
+                  item.name,
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
