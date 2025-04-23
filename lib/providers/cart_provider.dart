@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import '../data/models/cart_model.dart';
 
 class CartProvider with ChangeNotifier {
-  final List<CartItem> _items = [];
+  List<CartItem> _items = [];
 
   // Maximum allowed quantity per item
   static const int maxQuantity = 10;
@@ -38,7 +38,6 @@ class CartProvider with ChangeNotifier {
     }
   }
 
-  // dart
   void addProduct(Map<String, dynamic> product) {
     final String productId = product['id'].toString();
     final String productName = product['name'] ?? 'Unknown';
@@ -74,11 +73,13 @@ class CartProvider with ChangeNotifier {
       final existingItem = _items[existingItemIndex];
       final newQuantity = existingItem.quantity + quantity;
 
-      // Enforce maximum quantity
+      // Enforce maximum quantity using copyWith
       if (newQuantity <= maxQuantity) {
-        _items[existingItemIndex].quantity = newQuantity;
+        _items[existingItemIndex] =
+            existingItem.copyWith(quantity: newQuantity);
       } else {
-        _items[existingItemIndex].quantity = maxQuantity;
+        _items[existingItemIndex] =
+            existingItem.copyWith(quantity: maxQuantity);
       }
     } else {
       // Add new item
@@ -112,7 +113,9 @@ class CartProvider with ChangeNotifier {
     );
 
     if (index >= 0 && _items[index].quantity < maxQuantity) {
-      _items[index].quantity++;
+      // Use copyWith to create a new instance with increased quantity
+      _items[index] =
+          _items[index].copyWith(quantity: _items[index].quantity + 1);
       notifyListeners();
     }
   }
@@ -125,7 +128,9 @@ class CartProvider with ChangeNotifier {
 
     if (index >= 0) {
       if (_items[index].quantity > 1) {
-        _items[index].quantity--;
+        // Use copyWith to create a new instance with decreased quantity
+        _items[index] =
+            _items[index].copyWith(quantity: _items[index].quantity - 1);
       } else {
         // Remove item if quantity becomes zero
         _items.removeAt(index);
@@ -146,14 +151,16 @@ class CartProvider with ChangeNotifier {
     );
 
     if (index >= 0) {
-      _items[index].quantity = quantity.clamp(1, maxQuantity);
+      // Use copyWith to update quantity
+      _items[index] =
+          _items[index].copyWith(quantity: quantity.clamp(1, maxQuantity));
       notifyListeners();
     }
   }
 
   // Clear cart
   void clear() {
-    _items.clear();
+    _items = [];
     notifyListeners();
   }
 

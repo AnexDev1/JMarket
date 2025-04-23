@@ -59,11 +59,11 @@ class PaymentService {
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
-        SnackBar(
-          content: Text(localizations.errorWithMessage(e.toString())),
-        ),
-      );
+      // ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
+      //   SnackBar(
+      //     content: Text(localizations.errorWithMessage(e.toString())),
+      //   ),
+      // );
     }
   }
 

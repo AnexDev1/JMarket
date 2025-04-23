@@ -104,10 +104,16 @@ class Assets {
       'lib/providers/favorites_provider.dart';
   static const String providersLanguageProvider =
       'lib/providers/language_provider.dart';
+  static const String providersOrderProvider =
+      'lib/providers/order_provider.dart';
+  static const String providersProductsProvider =
+      'lib/providers/products_provider.dart';
   static const String providersSearchProvider =
       'lib/providers/search_provider.dart';
   static const String providersThemeProvider =
       'lib/providers/theme_provider.dart';
+  static const String providersUserProvider =
+      'lib/providers/user_provider.dart';
   static const String screensSearchScreen =
       'lib/features/search/screens/search_screen.dart';
   static const String servicesAuthService = 'lib/services/auth_service.dart';

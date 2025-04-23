@@ -7,8 +7,8 @@ import 'package:jmarket/features/home/widgets/home_products_grid.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/text_styles.dart';
+import '../../providers/products_provider.dart';
 import '../../providers/search_provider.dart';
-import '../../services/product_service.dart';
 import '../category/categories_screen.dart';
 import '../product/product_details_screen.dart';
 import 'widgets/home_search_bar.dart';
@@ -37,28 +37,28 @@ class _HomeScreenState extends State<HomeScreen>
     'Books'
   ];
 
+  String _currentCategory = 'All';
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: _categories.length, vsync: this);
-    _futureProducts = _fetchProducts(_categories[0]);
+    _futureProducts = _loadProducts(_categories[0]);
+
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
         setState(() {
-          _futureProducts = _fetchProducts(_categories[_tabController.index]);
+          _currentCategory = _categories[_tabController.index];
+          _futureProducts = _loadProducts(_currentCategory);
         });
       }
     });
   }
 
-  Future<List<Map<String, dynamic>>> _fetchProducts(String category) async {
-    final products = await ProductService().fetchProducts(category: category);
-    if (category.toLowerCase() == 'all') {
-      products.shuffle();
-    }
-    return products;
+  Future<List<Map<String, dynamic>>> _loadProducts(String category) {
+    return Provider.of<ProductsProvider>(context, listen: false)
+        .getProducts(category);
   }
 
   @override
@@ -79,170 +79,180 @@ class _HomeScreenState extends State<HomeScreen>
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         child: SafeArea(
-          child: CustomScrollView(
-            controller: _scrollController,
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              // Elevated Search Bar
-              SliverPersistentHeader(
-                // floating: true,
-                delegate: _SliverAppBarDelegate(
-                  child: Container(
-                    color: Colors.grey[50],
-                    padding:
-                        const EdgeInsets.only(left: 26, right: 26, top: 12),
-                    child: const HomeSearchBar(),
-                  ),
-                ),
-              ),
-
-              // Show either search results or regular content
-              if (hasSearchQuery) ...[
-                // Search Results Header
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-                    child: Text(
-                      localizations
-                          .searchResultsFor(searchProvider.searchQuery),
-                      style: TextStyles.heading5
-                          .copyWith(fontWeight: FontWeight.w600),
+          child: RefreshIndicator(
+            onRefresh: () async {
+              setState(() {
+                _futureProducts =
+                    Provider.of<ProductsProvider>(context, listen: false)
+                        .refreshProducts(_currentCategory);
+              });
+            },
+            child: CustomScrollView(
+              controller: _scrollController,
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                // Elevated Search Bar
+                SliverPersistentHeader(
+                  delegate: _SliverAppBarDelegate(
+                    child: Container(
+                      color: Colors.grey[50],
+                      padding:
+                          const EdgeInsets.only(left: 26, right: 26, top: 12),
+                      child: const HomeSearchBar(),
                     ),
                   ),
                 ),
 
-                // Search Results
-                searchProvider.isLoading
-                    ? const SliverFillRemaining(
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 3,
-                          ),
-                        ),
-                      )
-                    : searchProvider.searchResults.isEmpty
-                        ? SliverFillRemaining(
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.search_off,
-                                      size: 74, color: Colors.grey.shade400),
-                                  const SizedBox(height: 16),
-                                  Text(localizations.noProductsFound,
-                                      style: TextStyles.body1.copyWith(
-                                        color: Colors.grey.shade600,
-                                      )),
-                                  const SizedBox(height: 8),
-                                  Text(localizations.tryDifferentSearchTerm,
-                                      style: TextStyles.caption.copyWith(
-                                        color: Colors.grey.shade500,
-                                      )),
-                                ],
-                              ),
-                            ),
-                          )
-                        : SliverPadding(
-                            padding: const EdgeInsets.all(16.0),
-                            sliver: SliverGrid(
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 0.7,
-                                mainAxisSpacing: 16,
-                                crossAxisSpacing: 16,
-                              ),
-                              delegate: SliverChildBuilderDelegate(
-                                (context, index) {
-                                  final product =
-                                      searchProvider.searchResults[index];
-                                  return _buildProductCard(context, product);
-                                },
-                                childCount: searchProvider.searchResults.length,
-                              ),
-                            ),
-                          ),
-              ] else ...[
-                // Featured Banner
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                    child: FeatureBannerCarousel(),
-                  ),
-                ),
-
-                // Categories Header
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          localizations.categories,
-                          style: TextStyles.heading5.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            final selectedCategory = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const CategoriesScreen(),
-                              ),
-                            );
-
-                            if (selectedCategory != null && mounted) {
-                              final index =
-                                  _categories.indexOf(selectedCategory);
-                              if (index != -1) {
-                                _tabController.animateTo(index);
-                              }
-                            }
-                          },
-                          style: TextButton.styleFrom(
-                            foregroundColor: primaryColor,
-                            visualDensity: VisualDensity.compact,
-                          ),
-                          child: Row(
-                            children: [
-                              Text(localizations.viewAll),
-                              const SizedBox(width: 4),
-                              const Icon(Icons.arrow_forward, size: 16),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Enhanced Categories Tab
-                SliverToBoxAdapter(
-                  child: HomeCategoriesTab(
-                    tabController: _tabController,
-                    categories: _categories,
-                  ),
-                ),
-
-                // Products Header
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 8.0),
-                    child: Text(
-                      localizations.popularProducts,
-                      style: TextStyles.heading5.copyWith(
-                        fontWeight: FontWeight.w600,
+                // Show either search results or regular content
+                if (hasSearchQuery) ...[
+                  // Search Results Header
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+                      child: Text(
+                        localizations
+                            .searchResultsFor(searchProvider.searchQuery),
+                        style: TextStyles.heading5
+                            .copyWith(fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
-                ),
 
-                // Products Grid
-                HomeProductsGrid(futureProducts: _futureProducts),
+                  // Search Results
+                  searchProvider.isLoading
+                      ? const SliverFillRemaining(
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                            ),
+                          ),
+                        )
+                      : searchProvider.searchResults.isEmpty
+                          ? SliverFillRemaining(
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.search_off,
+                                        size: 74, color: Colors.grey.shade400),
+                                    const SizedBox(height: 16),
+                                    Text(localizations.noProductsFound,
+                                        style: TextStyles.body1.copyWith(
+                                          color: Colors.grey.shade600,
+                                        )),
+                                    const SizedBox(height: 8),
+                                    Text(localizations.tryDifferentSearchTerm,
+                                        style: TextStyles.caption.copyWith(
+                                          color: Colors.grey.shade500,
+                                        )),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : SliverPadding(
+                              padding: const EdgeInsets.all(16.0),
+                              sliver: SliverGrid(
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 0.7,
+                                  mainAxisSpacing: 16,
+                                  crossAxisSpacing: 16,
+                                ),
+                                delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                                    final product =
+                                        searchProvider.searchResults[index];
+                                    return _buildProductCard(context, product);
+                                  },
+                                  childCount:
+                                      searchProvider.searchResults.length,
+                                ),
+                              ),
+                            ),
+                ] else ...[
+                  // Featured Banner
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                      child: FeatureBannerCarousel(),
+                    ),
+                  ),
+
+                  // Categories Header
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            localizations.categories,
+                            style: TextStyles.heading5.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              final selectedCategory = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const CategoriesScreen(),
+                                ),
+                              );
+
+                              if (selectedCategory != null && mounted) {
+                                final index =
+                                    _categories.indexOf(selectedCategory);
+                                if (index != -1) {
+                                  _tabController.animateTo(index);
+                                }
+                              }
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: primaryColor,
+                              visualDensity: VisualDensity.compact,
+                            ),
+                            child: Row(
+                              children: [
+                                Text(localizations.viewAll),
+                                const SizedBox(width: 4),
+                                const Icon(Icons.arrow_forward, size: 16),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Enhanced Categories Tab
+                  SliverToBoxAdapter(
+                    child: HomeCategoriesTab(
+                      tabController: _tabController,
+                      categories: _categories,
+                    ),
+                  ),
+
+                  // Products Header
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 8.0),
+                      child: Text(
+                        localizations.popularProducts,
+                        style: TextStyles.heading5.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Products Grid - Now uses cached data
+                  HomeProductsGrid(futureProducts: _futureProducts),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),

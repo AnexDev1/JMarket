@@ -1,12 +1,13 @@
+// lib/features/profile/profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/models/user_model.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/language_provider.dart';
+import '../../providers/user_provider.dart';
 import '../../services/user_service.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -17,6 +18,19 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch user data after the first build frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      if (authProvider.user != null) {
+        Provider.of<UserProvider>(context, listen: false)
+            .fetchUserData(authProvider.user!.id);
+      }
+    });
+  }
+
   void _showDeleteAccountConfirmation(BuildContext context) {
     showDialog(
       context: context,
@@ -205,17 +219,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       // Delete other related data
       // Add other service calls here to delete user-related data from other tables
-      // e.g., await OrderService().deleteUserOrders(userId);
-      //      await AddressService().deleteUserAddresses(userId);
     } catch (e) {
       print('Error deleting user data: $e');
       throw Exception('Failed to delete user data');
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   @override
@@ -228,6 +235,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
       return const SizedBox.shrink();
     }
+
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
@@ -247,7 +255,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: const Icon(Icons.edit_outlined),
             onPressed: () {
               HapticFeedback.lightImpact();
-              context.push('/edit-profile');
+              context.push('/edit-profile').then((_) {
+                // Invalidate cache and fetch fresh data when returning
+                final userProvider =
+                    Provider.of<UserProvider>(context, listen: false);
+                userProvider.invalidateCache();
+                userProvider.fetchUserData(authProvider.user!.id);
+              });
             },
           ),
         ],
@@ -256,7 +270,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
-            _buildProfileHeader(authProvider.user!.id),
+            _buildProfileHeader(),
             const SizedBox(height: 16),
             _buildProfileMenus(context),
           ],
@@ -265,82 +279,242 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // Updated _buildProfileHeader uses FutureBuilder to fetch user's full_name and email.
-  Widget _buildProfileHeader(String userId) {
-    return FutureBuilder<UserModel>(
-      future: UserService().getUserById(userId),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container(
-            padding: const EdgeInsets.all(24),
-            margin: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: const Center(child: CircularProgressIndicator()),
-          );
-        } else if (snapshot.hasError || !snapshot.hasData) {
-          return Container(
-            padding: const EdgeInsets.all(24),
-            margin: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: const Center(child: Text('Error loading profile')),
-          );
-        }
-        // final user = snapshot.data!;
-        return Container(
-          padding: const EdgeInsets.all(24),
-          margin: const EdgeInsets.all(16),
+  Widget _buildProfileHeader() {
+    final userProvider = Provider.of<UserProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    return Container(
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.07),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.white, Colors.indigo.shade50],
+        ),
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 30),
+          _buildProfileAvatar(),
+          const SizedBox(height: 16),
+          _buildProfileInfo(userProvider),
+          const SizedBox(height: 24),
+          _buildProfileActions(),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileAvatar() {
+    return Stack(
+      alignment: Alignment.bottomRight,
+      children: [
+        Container(
+          width: 100,
+          height: 100,
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            shape: BoxShape.circle,
+            color: Colors.indigo.shade100,
+            border: Border.all(color: Colors.white, width: 4),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
-          child: Column(
-            children: [
-              Text(
-                snapshot.data?.fullName ?? 'User',
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+          child: ClipOval(
+            child: Center(
+              child: Icon(
+                Icons.person,
+                size: 60,
+                color: Colors.indigo.shade300,
               ),
-              const SizedBox(height: 4),
+            ),
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            HapticFeedback.mediumImpact();
+            // Add photo change functionality here
+          },
+          child: Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: Colors.indigo.shade700,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2),
+            ),
+            child: const Icon(
+              Icons.camera_alt_rounded,
+              size: 15,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProfileInfo(UserProvider provider) {
+    if (provider.isLoading) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 24),
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    if (provider.error != null || provider.user == null) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        child: Column(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.red, size: 30),
+            const SizedBox(height: 8),
+            Text(
+              provider.error ?? 'Could not load profile',
+              textAlign: TextAlign.center,
+            ),
+            TextButton(
+              onPressed: () {
+                final authProvider =
+                    Provider.of<AuthProvider>(context, listen: false);
+                provider.invalidateCache();
+                provider.fetchUserData(authProvider.user!.id);
+              },
+              child: const Text("Retry"),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final user = provider.user!;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        children: [
+          Text(
+            user.fullName ?? 'User',
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.email_outlined, size: 16, color: Colors.grey),
+              const SizedBox(width: 6),
               Text(
-                snapshot.data?.email ?? '',
+                user.email ?? '',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey.shade600,
+                  color: Colors.grey.shade700,
                 ),
               ),
             ],
           ),
-        );
-      },
+          if (user.phoneNumber != null) ...[
+            const SizedBox(height: 4),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.phone_outlined, size: 16, color: Colors.grey),
+                const SizedBox(width: 6),
+                Text(
+                  user.phoneNumber!,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileActions() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // _buildActionButton(
+        //   icon: Icons.edit_outlined,
+        //   label: AppLocalizations.of(context)!.editProfile,
+        //   onPressed: () {
+        //     HapticFeedback.lightImpact();
+        //     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        //     context.push('/edit-profile').then((_) {
+        //       // Invalidate cache and fetch fresh data when returning
+        //       final userProvider = Provider.of<UserProvider>(context, listen: false);
+        //       userProvider.invalidateCache();
+        //       userProvider.fetchUserData(authProvider.user!.id);
+        //     });
+        //   },
+        // ),
+        // const SizedBox(width: 16),
+        // _buildActionButton(
+        //   icon: Icons.favorite_outline,
+        //   label: AppLocalizations.of(context)!.wishlist,
+        //   onPressed: () {
+        //     HapticFeedback.lightImpact();
+        //     context.push('/favorites');
+        //   },
+        // ),
+      ],
+    );
+  }
+
+  Widget _buildActionButton(
+      {required IconData icon,
+      required String label,
+      required VoidCallback onPressed}) {
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.indigo.shade100),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 16, color: Colors.indigo.shade700),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Colors.indigo.shade700,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -384,21 +558,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               subtitle: Provider.of<LanguageProvider>(context).currentLanguage,
               onTap: () => context.push('/language-settings'),
             ),
-
-            //NEEDS TO BE FIXED
-            // ProfileMenuItem(
-            //   icon: Icons.dark_mode_outlined,
-            //   title: AppLocalizations.of(context)!.darkMode,
-            //   trailing: Switch(
-            //     value: Provider.of<ThemeProvider>(context).isDarkMode,
-            //     activeColor: Colors.indigo.shade700,
-            //     onChanged: (value) {
-            //       HapticFeedback.lightImpact();
-            //       Provider.of<ThemeProvider>(context, listen: false)
-            //           .toggleTheme();
-            //     },
-            //   ),
-            // ),
           ],
         ),
         _buildMenuSection(
@@ -423,11 +582,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ProfileMenuItem(
               icon: Icons.delete_forever_outlined,
               title: AppLocalizations.of(context)!.deleteAccount,
-              // textColor: Colors.red.shade700,
-              // iconColor: Colors.red.shade700,
               onTap: () {
                 HapticFeedback.mediumImpact();
-                context.push('/delete-account');
+                _showDeleteAccountConfirmation(context);
               },
             ),
           ],
@@ -440,12 +597,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: const Text('Sign Out'),
-                  content: const Text('Are you sure you want to sign out?'),
+                  title: Text(AppLocalizations.of(context)!.signOut),
+                  content:
+                      Text(AppLocalizations.of(context)!.signOutConfirmation),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('CANCEL'),
+                      child: Text(AppLocalizations.of(context)!.cancel),
                     ),
                     TextButton(
                       onPressed: () async {
@@ -457,9 +615,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           if (context.mounted) {
                             context.go('/');
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('You have been signed out'),
-                                duration: Duration(seconds: 2),
+                              SnackBar(
+                                content: Text('Signed Out'),
+                                duration: const Duration(seconds: 2),
                               ),
                             );
                           }
@@ -467,14 +625,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content:
-                                    Text('Sign out failed: ${e.toString()}'),
+                                content: Text(
+                                    '${'Signed Out Failed'}: ${e.toString()}'),
                               ),
                             );
                           }
                         }
                       },
-                      child: const Text('SIGN OUT'),
+                      child: Text(AppLocalizations.of(context)!.signOut),
                     )
                   ],
                 ),
@@ -490,9 +648,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               minimumSize: const Size(double.infinity, 0),
             ),
-            child: const Text(
-              'SIGN OUT',
-              style: TextStyle(
+            child: Text(
+              AppLocalizations.of(context)!.signOut.toUpperCase(),
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),

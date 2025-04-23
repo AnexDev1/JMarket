@@ -6,14 +6,30 @@ import 'package:provider/provider.dart';
 import '../../data/models/order_model.dart';
 import '../../data/models/product_model.dart';
 import '../../providers/auth_provider.dart';
-import '../../services/order_service.dart';
+import '../../providers/order_provider.dart';
 import '../../services/product_service.dart';
 
-class OrdersScreen extends StatelessWidget {
-  final OrderService _orderService = OrderService();
+class OrdersScreen extends StatefulWidget {
+  const OrdersScreen({super.key});
+
+  @override
+  State<OrdersScreen> createState() => _OrdersScreenState();
+}
+
+class _OrdersScreenState extends State<OrdersScreen> {
   final ProductService _productService = ProductService();
 
-  OrdersScreen({super.key});
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      if (authProvider.user != null) {
+        Provider.of<OrdersProvider>(context, listen: false)
+            .loadOrders(authProvider.user!.id.toString());
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,60 +58,59 @@ class OrdersScreen extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-        child: Consumer<AuthProvider>(
-          builder: (context, authProvider, _) {
+        child: Consumer2<AuthProvider, OrdersProvider>(
+          builder: (context, authProvider, ordersProvider, _) {
             final user = authProvider.user;
             if (user == null) {
               return _buildSignInScreen(context);
             }
 
-            return FutureBuilder<List<Order>>(
-              future: _orderService.getUserOrders(user.id.toString()),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.black54,
+            if (ordersProvider.isLoading && !ordersProvider.hasOrders) {
+              return const Center(
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.black54,
+                  ),
+                ),
+              );
+            }
+
+            if (ordersProvider?.error != null && !ordersProvider.hasOrders) {
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.error_outline,
+                        size: 48, color: Colors.black38),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Could not load your orders',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: Colors.black87,
                       ),
                     ),
-                  );
-                }
-
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.error_outline,
-                            size: 48, color: Colors.black38),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Could not load your orders',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: Colors.black87,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text('Try again'),
-                        ),
-                      ],
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: () =>
+                          ordersProvider.refreshOrders(user.id.toString()),
+                      child: const Text('Try again'),
                     ),
-                  );
-                }
+                  ],
+                ),
+              );
+            }
 
-                final orders = snapshot.data ?? [];
-                if (orders.isEmpty) {
-                  return _buildEmptyOrdersScreen(context);
-                }
+            final orders = ordersProvider.orders;
+            if (orders.isEmpty) {
+              return _buildEmptyOrdersScreen(context);
+            }
 
-                return _buildOrdersList(context, orders);
-              },
+            return RefreshIndicator(
+              onRefresh: () => ordersProvider.refreshOrders(user.id.toString()),
+              child: _buildOrdersList(context, orders),
             );
           },
         ),
