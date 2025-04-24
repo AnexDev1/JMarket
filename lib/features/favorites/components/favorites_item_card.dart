@@ -73,16 +73,19 @@ class FavoriteItemCard extends StatelessWidget {
     });
   }
 
+// dart
   Widget _getProductImage() {
     final hasImages =
         item['image_urls'] != null && (item['image_urls'] as List).isNotEmpty;
     if (hasImages) {
+      String imageUrl = item['image_urls'][0];
+      debugPrint('Product image URL: $imageUrl');
       return Image.network(
-        item['image_urls'][0],
+        imageUrl,
         fit: BoxFit.cover,
         width: double.infinity,
         height: double.infinity,
-        errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
+        // errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
       );
     }
     return _buildPlaceholder();

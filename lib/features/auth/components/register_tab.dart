@@ -4,6 +4,7 @@ import 'package:jmarket/services/auth_service.dart';
 
 import '../../../core/utils/form_validators.dart';
 import '../../../widgets/buttons/primary_button.dart';
+import '../../../widgets/custom_snackbar.dart';
 
 class RegisterTab extends StatefulWidget {
   final TabController? tabController;
@@ -72,11 +73,9 @@ class _RegisterTabState extends State<RegisterTab> {
         setState(() => _isLoading = false);
 
         if (response.session == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Please check your email to confirm your account'),
-            ),
-          );
+          CustomSnackbar.showAwesomeMaterialBanner(context, 'Check',
+              'Please check your email to confirm your account');
+
           if (widget.tabController != null) {
             widget.tabController!.animateTo(0);
           }
@@ -84,17 +83,15 @@ class _RegisterTabState extends State<RegisterTab> {
           GoRouter.of(context).refresh();
           final destination = widget.redirectLocation ?? '/';
           context.push(destination);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Registration successful. Welcome!'),
-            ),
-          );
+
+          CustomSnackbar.showSuccessSnackBar(
+              context, 'Success', 'Registration successful. Welcome!');
         }
       } catch (e) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registration failed: ${e.toString()}')),
-        );
+
+        CustomSnackbar.showFailureSnackBar(
+            context, 'Registration failed', '${e.toString()}');
       }
     }
   }

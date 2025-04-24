@@ -136,6 +136,8 @@ class Assets {
   static const String utilsFormValidators =
       'lib/core/utils/form_validators.dart';
   static const String utilsHelpers = 'lib/core/utils/helpers.dart';
+  static const String widgetsCustomSnackbar =
+      'lib/widgets/custom_snackbar.dart';
   static const String widgetsFeatureBannerCarousel =
       'lib/features/home/widgets/feature_banner_carousel.dart';
   static const String widgetsHomeCategoriesTab =

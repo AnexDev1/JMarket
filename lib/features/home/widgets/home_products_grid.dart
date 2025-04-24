@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/cart_provider.dart';
+import '../../../widgets/custom_snackbar.dart';
 import '../../../widgets/skeleton_product_card.dart';
 import '../../product/product_details_screen.dart';
 
@@ -26,11 +27,10 @@ class _HomeProductsGridState extends State<HomeProductsGrid> {
   void _addToCart(Map<String, dynamic> product) {
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
     cartProvider.addProduct(product);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${product['name'] ?? 'Product'} added to cart'),
-        duration: const Duration(seconds: 2),
-      ),
+    CustomSnackbar.showSuccessSnackBar(
+      context,
+      'Added to Cart',
+      '${product['name'] ?? 'Product'} added to cart',
     );
   }
 

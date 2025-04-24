@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../../providers/cart_provider.dart';
 import '../../providers/favorites_provider.dart';
+import '../../widgets/custom_snackbar.dart';
 import 'widgets/product_features_list.dart';
 import 'widgets/product_image_carousel.dart';
 import 'widgets/product_quantity_selector.dart';
@@ -59,27 +60,27 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     });
   }
 
-  Future<void> _submitRating(double rating) async {
-    try {
-      await ProductService().submitProductRating(widget.productId, rating);
-      setState(() {
-        _futureProduct = ProductService().getProductById(widget.productId);
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.ratingSubmitted),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.errorSubmittingRating),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
+  // Future<void> _submitRating(double rating) async {
+  //   try {
+  //     await ProductService().submitProductRating(widget.productId, rating);
+  //     setState(() {
+  //       _futureProduct = ProductService().getProductById(widget.productId);
+  //     });
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text(AppLocalizations.of(context)!.ratingSubmitted),
+  //         backgroundColor: Colors.green,
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text(AppLocalizations.of(context)!.errorSubmittingRating),
+  //         backgroundColor: Colors.red,
+  //       ),
+  //     );
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -278,6 +279,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ),
 
                                   // Favorite Button
+                                  // dart
                                   Positioned(
                                     right: 16,
                                     top: 16,
@@ -289,21 +291,19 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 listen: false);
                                         favoritesProvider
                                             .toggleFavorite(product);
+                                        // Call setState to update the UI after toggling
+                                        setState(() {});
                                         final updatedIsFavorite =
                                             favoritesProvider.isFavorite(
                                                 product.id.toString());
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(updatedIsFavorite
-                                                ? localizations.addedToFavorites
-                                                : localizations
-                                                    .removedFromFavorites),
-                                            behavior: SnackBarBehavior.floating,
-                                            width: 200,
-                                            duration:
-                                                const Duration(seconds: 1),
-                                          ),
+
+                                        CustomSnackbar.showSuccessSnackBar(
+                                          context,
+                                          updatedIsFavorite
+                                              ? localizations.addedToFavorites
+                                              : localizations
+                                                  .removedFromFavorites,
+                                          '',
                                         );
                                       },
                                       child: Container(
@@ -652,28 +652,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               : '',
                           _selectedSize,
                         );
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Row(
-                              children: [
-                                const Icon(Icons.check_circle,
-                                    color: Colors.white),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                      localizations.addedToCart(product.name)),
-                                ),
-                              ],
-                            ),
-                            behavior: SnackBarBehavior.floating,
-                            duration: const Duration(seconds: 2),
-                            action: SnackBarAction(
-                              label: localizations.viewCart,
-                              onPressed: () {
-                                context.push('/cart');
-                              },
-                            ),
-                          ),
+                        CustomSnackbar.showSuccessSnackBar(
+                          context,
+                          'Added to Cart',
+                          localizations.addedToCart(product.name),
                         );
                       },
                       style: ElevatedButton.styleFrom(

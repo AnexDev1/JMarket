@@ -250,21 +250,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.grey.shade800,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit_outlined),
-            onPressed: () {
-              HapticFeedback.lightImpact();
-              context.push('/edit-profile').then((_) {
-                // Invalidate cache and fetch fresh data when returning
-                final userProvider =
-                    Provider.of<UserProvider>(context, listen: false);
-                userProvider.invalidateCache();
-                userProvider.fetchUserData(authProvider.user!.id);
-              });
-            },
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -535,11 +520,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: AppLocalizations.of(context)!.myRewards,
               badge: '3',
               onTap: () => context.push('/rewards'),
-            ),
-            ProfileMenuItem(
-              icon: Icons.location_on_outlined,
-              title: AppLocalizations.of(context)!.shippingAddresses,
-              onTap: () => context.push('/addresses'),
             ),
           ],
         ),

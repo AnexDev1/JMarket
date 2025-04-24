@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jmarket/widgets/custom_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -135,9 +136,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(localizations.userNotAuthenticated)),
-      );
+      CustomSnackbar.showFailureSnackBar(context, 'Not Authenticated ',
+          '${localizations.userNotAuthenticated}');
       return;
     }
     await PaymentService().createOrder(
@@ -155,9 +155,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final localizations = AppLocalizations.of(context)!;
     final user = supabase.auth.currentUser;
     if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(localizations.userNotAuthenticated)),
-      );
+      CustomSnackbar.showFailureSnackBar(context, 'Not Authenticated ',
+          '${localizations.userNotAuthenticated}');
       return;
     }
     if (paymentMethod != 'cod') {
@@ -172,9 +171,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         await _processPayment(total, firstName, lastName);
         await _createOrder();
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(localizations.errorWithMessage(e.toString()))),
-        );
+        CustomSnackbar.showFailureSnackBar(context, 'Payment Failed ',
+            '${localizations.errorWithMessage(e.toString())}');
       }
     } else {
       await _createOrder();

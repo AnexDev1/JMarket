@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jmarket/services/auth_service.dart';
+import 'package:jmarket/widgets/custom_snackbar.dart';
 
 import '../../../core/utils/form_validators.dart';
 import '../../../widgets/buttons/primary_button.dart';
@@ -19,7 +20,7 @@ class _LoginTabState extends State<LoginTab> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authService = AuthService(); 
+  final _authService = AuthService();
   bool _obscurePassword = true;
   bool _isLoading = false;
 
@@ -44,10 +45,8 @@ class _LoginTabState extends State<LoginTab> {
           setState(() => _isLoading = false);
 
           if (response.session != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Login successful!')),
-            );
-
+            CustomSnackbar.showSuccessSnackBar(
+                context, 'Success', 'Login Successful');
             // Wait briefly for auth state to update
             await Future.delayed(const Duration(milliseconds: 300));
 
@@ -68,9 +67,9 @@ class _LoginTabState extends State<LoginTab> {
       } catch (e) {
         if (mounted) {
           setState(() => _isLoading = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Login failed: ${e.toString()}')),
-          );
+
+          CustomSnackbar.showFailureSnackBar(
+              context, 'Login failed', '${e.toString()}');
         }
       }
     }
@@ -139,7 +138,6 @@ class _LoginTabState extends State<LoginTab> {
               isLoading: _isLoading,
               onPressed: _handleLogin,
             ),
-
           ],
         ),
       ),
@@ -213,5 +211,4 @@ class _LoginTabState extends State<LoginTab> {
       ],
     );
   }
-
 }
