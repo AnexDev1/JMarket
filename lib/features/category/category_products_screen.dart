@@ -1,6 +1,8 @@
+// dart
 import 'package:flutter/material.dart';
 
 import '../../services/product_service.dart';
+import '../product/product_details_screen.dart';
 
 class CategoryProductsScreen extends StatefulWidget {
   final Map<String, dynamic>? category;
@@ -17,29 +19,45 @@ class CategoryProductsScreen extends StatefulWidget {
 class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
   final ProductService _productService = ProductService();
   bool _isLoading = true;
-  List<Map<String, dynamic>> _products = [];
-  final _scrollController = ScrollController();
+  List<Map<String, dynamic>> _allProducts = [];
+  List<Map<String, dynamic>> _displayedProducts = [];
+  int _currentPage = 1;
+  final int _pageSize = 10;
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
   String _sortBy = 'popular';
 
-  // Store category properties with defaults
+  // Category defaults and properties
   late String _categoryName;
   late Color _categoryColor;
   late IconData _categoryIcon;
+
+  // Search state
+  bool _isSearching = false;
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _initializeCategoryData();
     _loadProducts();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 100 &&
+          _hasMore &&
+          !_isLoadingMore) {
+        _loadMoreProducts();
+      }
+    });
   }
 
   void _initializeCategoryData() {
-    // Set defaults first
     _categoryName = 'Category';
     _categoryColor = Colors.blue;
     _categoryIcon = Icons.category;
-
-    // Try to get from widget.category if available
     if (widget.category != null) {
       _categoryName = widget.category!['name'] ?? _categoryName;
       _categoryColor = widget.category!['color'] ?? _categoryColor;
@@ -49,22 +67,44 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
 
   Future<void> _loadProducts() async {
     setState(() => _isLoading = true);
-
     try {
       final products =
           await _productService.getProductsByCategory(_categoryName);
 
-      setState(() {
-        _products = products;
-        _isLoading = false;
-      });
+      // Sort products based on _sortBy option
+      switch (_sortBy) {
+        case 'newest':
+          products.sort((a, b) {
+            final aDate =
+                DateTime.tryParse(a['created_at'] ?? '') ?? DateTime(1970);
+            final bDate =
+                DateTime.tryParse(b['created_at'] ?? '') ?? DateTime(1970);
+            return bDate.compareTo(aDate);
+          });
+          break;
+        case 'price_low':
+          products
+              .sort((a, b) => (a['price'] as num).compareTo(b['price'] as num));
+          break;
+        case 'price_high':
+          products
+              .sort((a, b) => (b['price'] as num).compareTo(a['price'] as num));
+          break;
+        case 'popular':
+        default:
+          break;
+      }
+
+      _allProducts = products;
+      _applyFilterAndPagination();
+      setState(() => _isLoading = false);
     } catch (e) {
       print('Error loading products: $e');
       setState(() {
-        _products = [];
+        _allProducts = [];
+        _displayedProducts = [];
         _isLoading = false;
       });
-
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error loading products: ${e.toString()}')),
@@ -73,83 +113,73 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     }
   }
 
+  void _applyFilterAndPagination() {
+    // Reset pagination and apply search filter on _allProducts
+    _currentPage = 1;
+    List<Map<String, dynamic>> filtered =
+        _filterProducts(_allProducts, _searchQuery);
+    _displayedProducts = filtered.take(_pageSize).toList();
+    _hasMore = filtered.length > _pageSize;
+  }
+
+  List<Map<String, dynamic>> _filterProducts(
+      List<Map<String, dynamic>> products, String query) {
+    if (query.isEmpty) return products;
+    return products
+        .where((product) => product['name']
+            .toString()
+            .toLowerCase()
+            .contains(query.toLowerCase()))
+        .toList();
+  }
+
+  void _loadMoreProducts() {
+    if (!_hasMore || _isLoadingMore) return;
+    setState(() {
+      _isLoadingMore = true;
+    });
+    List<Map<String, dynamic>> filtered =
+        _filterProducts(_allProducts, _searchQuery);
+    _currentPage++;
+    final nextItems =
+        filtered.skip((_currentPage - 1) * _pageSize).take(_pageSize).toList();
+    setState(() {
+      _displayedProducts.addAll(nextItems);
+      _isLoadingMore = false;
+      if (_displayedProducts.length >= filtered.length) {
+        _hasMore = false;
+      }
+    });
+  }
+
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          _buildAppBar(),
-          _isLoading ? SliverToBoxAdapter() : _buildFilterBar(),
-          _isLoading
-              ? SliverFillRemaining(
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: _categoryColor,
-                    ),
-                  ),
-                )
-              : _products.isEmpty
-                  ? SliverFillRemaining(
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.inventory_2_outlined,
-                              size: 80,
-                              color: Colors.grey[400],
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No products in this category',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Check back later for new arrivals',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[500],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  : SliverPadding(
-                      padding: const EdgeInsets.all(16.0),
-                      sliver: SliverGrid(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.63,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                        ),
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) =>
-                              _buildProductCard(_products[index]),
-                          childCount: _products.length,
-                        ),
-                      ),
-                    ),
-        ],
-      ),
-    );
+  void dispose() {
+    _scrollController.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 
   Widget _buildAppBar() {
     return SliverAppBar(
       expandedHeight: 180.0,
       pinned: true,
-      title: Text(_categoryName), // Add direct title as fallback
+      title: _isSearching
+          ? TextField(
+              autofocus: true,
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search products',
+                border: InputBorder.none,
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                  _applyFilterAndPagination();
+                });
+              },
+            )
+          : Text(_categoryName),
       flexibleSpace: FlexibleSpaceBar(
-        // Remove title from FlexibleSpaceBar
         background: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -175,21 +205,28 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
             ],
           ),
         ),
-        // Remove collapseMode to use default
       ),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.search),
-          onPressed: () {
-            // Show search
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.filter_list),
-          onPressed: () {
-            // Show filters
-          },
-        ),
+        _isSearching
+            ? IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                  setState(() {
+                    _isSearching = false;
+                    _searchQuery = '';
+                    _searchController.clear();
+                    _applyFilterAndPagination();
+                  });
+                },
+              )
+            : IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  setState(() {
+                    _isSearching = true;
+                  });
+                },
+              ),
       ],
     );
   }
@@ -201,30 +238,25 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
         minHeight: 50.0,
         maxHeight: 50.0,
         child: Container(
-          // Option 1: Change background color
           color: Colors.grey[100],
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             children: [
               Text(
-                '${_products.length} products',
+                '${_filterProducts(_allProducts, _searchQuery).length} products',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const Spacer(),
-              // Make this text darker too
               Text('Sort by:', style: TextStyle(color: Colors.grey[800])),
               const SizedBox(width: 8),
-              // Option 2: Theme to control dropdown appearance
               Theme(
                 data: Theme.of(context).copyWith(
-                  canvasColor:
-                      Colors.white, // Background of dropdown menu items
+                  canvasColor: Colors.white,
                 ),
                 child: DropdownButton<String>(
                   value: _sortBy,
                   isDense: true,
                   underline: const SizedBox(),
-                  // Option 3: Explicit text styling
                   style: const TextStyle(color: Colors.black87, fontSize: 14),
                   iconEnabledColor: Colors.grey[700],
                   items: const [
@@ -237,7 +269,9 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                   ],
                   onChanged: (value) {
                     if (value != null) {
-                      setState(() => _sortBy = value);
+                      setState(() {
+                        _sortBy = value;
+                      });
                       _loadProducts();
                     }
                   },
@@ -250,14 +284,13 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     );
   }
 
+// dart
   Widget _buildProductCard(Map<String, dynamic> product) {
-    // Safe access for product data
-    final id = product['id'] ?? '';
+    final String id = product['id'].toString();
     final name = product['name'] ?? 'Unknown Product';
     final price = product['price'] ?? 0;
     final rating = product['rating'] ?? 0;
 
-    // Safe handling of image urls
     String imageUrl = 'https://via.placeholder.com/150';
     if (product['image_urls'] is List &&
         (product['image_urls'] as List).isNotEmpty) {
@@ -269,7 +302,12 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
       child: Material(
         child: InkWell(
           onTap: () {
-            // Navigate to product details
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProductDetailsScreen(productId: id),
+              ),
+            );
           },
           borderRadius: BorderRadius.circular(12),
           child: Container(
@@ -339,6 +377,87 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+          _buildAppBar(),
+          if (!_isLoading) _buildFilterBar(),
+          _isLoading
+              ? SliverFillRemaining(
+                  child: Center(
+                    child: CircularProgressIndicator(color: _categoryColor),
+                  ),
+                )
+              : _displayedProducts.isEmpty
+                  ? SliverFillRemaining(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.inventory_2_outlined,
+                              size: 80,
+                              color: Colors.grey[400],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'No products in this category',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Check back later for new arrivals',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[500],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : SliverPadding(
+                      padding: const EdgeInsets.all(16.0),
+                      sliver: SliverGrid(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.63,
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                        ),
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            if (index < _displayedProducts.length) {
+                              return _buildProductCard(
+                                  _displayedProducts[index]);
+                            } else {
+                              return Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: CircularProgressIndicator(
+                                      color: _categoryColor),
+                                ),
+                              );
+                            }
+                          },
+                          childCount: _displayedProducts.length +
+                              (_isLoadingMore ? 1 : 0),
+                        ),
+                      ),
+                    ),
+        ],
       ),
     );
   }

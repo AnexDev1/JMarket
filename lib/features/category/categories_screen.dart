@@ -64,12 +64,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       },
       {'name': 'Beauty', 'icon': Icons.face, 'count': 63, 'color': Colors.pink},
       {'name': 'Toys', 'icon': Icons.toys, 'count': 38, 'color': Colors.green},
-      {
-        'name': 'Kitchen',
-        'icon': Icons.kitchen,
-        'count': 45,
-        'color': Colors.cyan
-      },
+
       {
         'name': 'Automotive',
         'icon': Icons.car_rental,
