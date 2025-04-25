@@ -37,6 +37,28 @@ class CustomSnackbar {
       ..showSnackBar(snackBar);
   }
 
+  static void showInfoSnackBar(
+    BuildContext context,
+    String title,
+    String message, {
+    SnackBarAction? action,
+  }) {
+    final snackBar = SnackBar(
+      elevation: 0,
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      content: AwesomeSnackbarContent(
+        title: title,
+        message: message,
+        contentType: ContentType.success,
+      ),
+      action: action,
+    );
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(snackBar);
+  }
+
   static void showAwesomeMaterialBanner(
       BuildContext context, String title, String message) {
     final materialBanner = MaterialBanner(

@@ -5,8 +5,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../data/models/product_model.dart';
 import '../../../providers/cart_provider.dart';
 import '../../../providers/favorites_provider.dart';
+import '../../../widgets/custom_snackbar.dart';
 
 class FavoriteItemCard extends StatelessWidget {
   final Map<String, dynamic> item;
@@ -37,7 +39,7 @@ class FavoriteItemCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildProductImage(),
+              _buildProductImage(context),
               _buildProductDetails(context),
             ],
           ),
@@ -46,46 +48,61 @@ class FavoriteItemCard extends StatelessWidget {
     );
   }
 
-  Widget _buildProductImage() {
-    return Builder(builder: (context) {
-      final localizations = AppLocalizations.of(context)!;
-      return Stack(
-        children: [
-          Container(
-            height: 150,
-            width: double.infinity,
-            color: Colors.grey.shade100,
-            child: _getProductImage(),
-          ),
+  Widget _buildProductImage(BuildContext context) {
+    return Stack(
+      children: [
+        Container(
+          height: 150,
+          width: double.infinity,
+          color: Colors.grey.shade100,
+          child: _getProductImage(context),
+        ),
+        Positioned(
+          top: 8,
+          right: 8,
+          child: _buildFavoriteButton(),
+        ),
+        if (item['discount'] != null && item['discount'] > 0)
           Positioned(
             top: 8,
-            right: 8,
-            child: _buildFavoriteButton(),
+            left: 8,
+            child: _buildDiscountBadge(AppLocalizations.of(context)!),
           ),
-          if (item['discount'] != null && item['discount'] > 0)
-            Positioned(
-              top: 8,
-              left: 8,
-              child: _buildDiscountBadge(localizations),
-            ),
-        ],
-      );
-    });
+      ],
+    );
   }
 
 // dart
-  Widget _getProductImage() {
-    final hasImages =
-        item['image_urls'] != null && (item['image_urls'] as List).isNotEmpty;
-    if (hasImages) {
-      String imageUrl = item['image_urls'][0];
+  Widget _getProductImage(BuildContext context) {
+    String? imageUrl;
+    if (item['image_urls'] != null && (item['image_urls'] as List).isNotEmpty) {
+      imageUrl = item['image_urls'][0];
+    } else {
+      final favoritesProvider =
+          Provider.of<FavoritesProvider>(context, listen: false);
+      final favoriteProducts = favoritesProvider.favoriteItems;
+
+      Product? product;
+      try {
+        product = favoriteProducts.firstWhere(
+          (element) => element.id.toString() == item['id'].toString(),
+        );
+      } catch (e) {
+        product = null;
+      }
+
+      if (product != null && product.imageUrls.isNotEmpty) {
+        imageUrl = product.imageUrls[0];
+      }
+    }
+
+    if (imageUrl != null && imageUrl.isNotEmpty) {
       debugPrint('Product image URL: $imageUrl');
       return Image.network(
         imageUrl,
         fit: BoxFit.cover,
         width: double.infinity,
         height: double.infinity,
-        // errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
       );
     }
     return _buildPlaceholder();
@@ -116,13 +133,11 @@ class FavoriteItemCard extends StatelessWidget {
             final favoritesProvider =
                 Provider.of<FavoritesProvider>(context, listen: false);
             favoritesProvider.removeFavorite(item['id'].toString());
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                    '${item['name']} ${localizations.removedFromFavorites}'),
-                behavior: SnackBarBehavior.floating,
-                duration: const Duration(seconds: 2),
-              ),
+
+            CustomSnackbar.showSuccessSnackBar(
+              context,
+              item['name'],
+              localizations.removedFromFavorites,
             );
           },
           child: Padding(

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 
 import '../../../data/models/cart_model.dart';
 import '../../../providers/cart_provider.dart';
+import '../../../widgets/custom_snackbar.dart';
 import 'quantity_button.dart';
 
 class CartItemCard extends StatelessWidget {
@@ -37,8 +38,7 @@ class CartItemCard extends StatelessWidget {
       onDismissed: (_) {
         HapticFeedback.mediumImpact();
         cartProvider.removeItem(item.productId, item.size);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(_buildRemovedSnackBar(context));
+        _showRemovedCustomSnackbar(context);
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
@@ -206,19 +206,12 @@ class CartItemCard extends StatelessWidget {
     );
   }
 
-  SnackBar _buildRemovedSnackBar(BuildContext context) {
-    return SnackBar(
-      content: Row(
-        children: [
-          const Icon(Icons.remove_shopping_cart, color: Colors.white, size: 16),
-          const SizedBox(width: 12),
-          Text('${item.productName} removed from cart'),
-        ],
-      ),
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      backgroundColor: Colors.grey.shade800,
-      duration: const Duration(seconds: 2),
+// dart
+  void _showRemovedCustomSnackbar(BuildContext context) {
+    CustomSnackbar.showInfoSnackBar(
+      context,
+      item.productName,
+      ' removed from cart',
       action: SnackBarAction(
         label: 'UNDO',
         textColor: Colors.indigo.shade200,
