@@ -2,13 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthService {
-  final SupabaseClient client= Supabase.instance.client;
+  final SupabaseClient client = Supabase.instance.client;
 
   // Auth methods
   User? get currentUser => client.auth.currentUser;
 
   Stream<AuthState> get authStateChanges => client.auth.onAuthStateChange;
-
 
   Future<void> resetPassword(String email) async {
     await client.auth.resetPasswordForEmail(
@@ -30,7 +29,8 @@ class AuthService {
       redirectTo: kIsWeb ? null : 'io.supabase.yourappname://login-callback',
     );
   }
-    Future<AuthResponse> signUp({
+
+  Future<AuthResponse> signUp({
     required String email,
     required String password,
     required Map<String, dynamic> userData,
@@ -46,7 +46,7 @@ class AuthService {
 
     // If the user is successfully created in auth.
     if (response.user != null) {
-      final upsertResponse = await client.from('users').upsert({
+      await client.from('users').upsert({
         'id': response.user!.id, // primary key.
         'email': email,
         'full_name': userData['full_name'],

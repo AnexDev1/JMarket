@@ -32,7 +32,7 @@ class ProductsProvider with ChangeNotifier {
       schema: 'public',
       table: 'products',
       callback: (payload) {
-        final newProduct = payload.newRecord as Map<String, dynamic>;
+        final newProduct = payload.newRecord;
 
         // Update all relevant cached categories
         _productsCache.forEach((category, products) {
@@ -53,7 +53,7 @@ class ProductsProvider with ChangeNotifier {
       schema: 'public',
       table: 'products',
       callback: (payload) {
-        final updatedProduct = payload.newRecord as Map<String, dynamic>;
+        final updatedProduct = payload.newRecord;
 
         // Update in all categories
         _productsCache.forEach((category, products) {

@@ -34,6 +34,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   int _quantity = 1;
   bool isFavorite = false;
   String _selectedSize = 'M';
+  // ignore: unused_field
   bool _isAuthenticated = false;
   final Color primaryColor = Colors.indigo.shade700;
 
@@ -193,7 +194,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
+                                color: Colors.black.withValues(alpha: .1),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -225,7 +226,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black.withValues(alpha: .1),
                                   blurRadius: 8,
                                   offset: const Offset(0, 2),
                                 ),
@@ -260,7 +261,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 color: Colors.white,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
+                                    color: Colors.black.withValues(alpha: .05),
                                     blurRadius: 10,
                                     offset: const Offset(0, 5),
                                   ),
@@ -313,8 +314,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           shape: BoxShape.circle,
                                           boxShadow: [
                                             BoxShadow(
-                                              color:
-                                                  Colors.black.withOpacity(0.1),
+                                              color: Colors.black
+                                                  .withValues(alpha: .1),
                                               blurRadius: 8,
                                               offset: const Offset(0, 2),
                                             ),
@@ -380,7 +381,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               color: index == _currentImageIndex
                                                   ? primaryColor
                                                   : Colors.grey
-                                                      .withOpacity(0.5),
+                                                      .withValues(alpha: .5),
                                             ),
                                           ),
                                         ),
@@ -398,7 +399,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               color: Colors.white,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.03),
+                                  color: Colors.black.withValues(alpha: .03),
                                   blurRadius: 10,
                                   offset: const Offset(0, 2),
                                 ),
@@ -610,7 +611,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           builder: (context, snapshot) {
             if (!snapshot.hasData) return const SizedBox.shrink();
             final product = snapshot.data!;
-            final bool inStock = product.inStock ?? true;
+            final bool inStock = product.inStock;
 
             // Hide the add to cart panel if not in stock.
             if (!inStock) return const SizedBox.shrink();
@@ -621,7 +622,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: .05),
                     blurRadius: 10,
                     offset: const Offset(0, -5),
                   ),

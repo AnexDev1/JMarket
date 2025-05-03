@@ -45,6 +45,8 @@ class PaymentMethodStep extends StatelessWidget {
             isSelected: selectedMethod == 'telebirr',
             title: 'Pay With Telebirr',
             subtitle: '',
+            useImage: true,
+            imagePath: 'assets/telebirr.png',
             icon: Icons.account_balance_wallet,
             iconColor: Colors.indigo.shade700,
             onTap: () {
@@ -56,8 +58,10 @@ class PaymentMethodStep extends StatelessWidget {
           _buildPaymentOption(
             context: context,
             isSelected: selectedMethod == 'cbebirr',
-            title: 'Pay with cbebirr',
+            title: 'Pay with CBEbirr',
             subtitle: '',
+            useImage: true,
+            imagePath: 'assets/cbebirr.png',
             icon: Icons.account_balance_wallet,
             iconColor: Colors.indigo.shade700,
             onTap: () {
@@ -65,38 +69,15 @@ class PaymentMethodStep extends StatelessWidget {
               onMethodSelected('cbebirr');
             },
           ),
-          // M\-Pesa button
-          _buildPaymentOption(
-            context: context,
-            isSelected: selectedMethod == 'mpesa',
-            title: 'Pay with M\-Pesa',
-            subtitle: '',
-            icon: Icons.account_balance_wallet,
-            iconColor: Colors.indigo.shade700,
-            onTap: () {
-              HapticFeedback.selectionClick();
-              onMethodSelected('mpesa');
-            },
-          ),
-          // Ebirr button
-          _buildPaymentOption(
-            context: context,
-            isSelected: selectedMethod == 'ebirr',
-            title: 'Pay With Ebirr',
-            subtitle: '',
-            icon: Icons.account_balance_wallet,
-            iconColor: Colors.indigo.shade700,
-            onTap: () {
-              HapticFeedback.selectionClick();
-              onMethodSelected('ebirr');
-            },
-          ),
+          // M-Pesa button
+
           // Cash on Delivery button
           _buildPaymentOption(
             context: context,
             isSelected: selectedMethod == 'cod',
             title: localizations.cashOnDelivery,
             subtitle: localizations.payOnDeliveryDescription,
+            useImage: false,
             icon: Icons.money,
             iconColor: Colors.indigo.shade700,
             onTap: () {
@@ -146,11 +127,14 @@ class PaymentMethodStep extends StatelessWidget {
     required IconData icon,
     required Color iconColor,
     required VoidCallback onTap,
+    bool useImage = false,
+    String imagePath = '',
   }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isSelected ? Colors.indigo.shade50 : Colors.white,
@@ -163,16 +147,23 @@ class PaymentMethodStep extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              width: 44,
+              height: 44,
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: iconColor.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                color: iconColor,
-                size: 24,
-              ),
+              child: useImage
+                  ? Image.asset(
+                      imagePath,
+                      fit: BoxFit.contain,
+                    )
+                  : Icon(
+                      icon,
+                      color: iconColor,
+                      size: 24,
+                    ),
             ),
             const SizedBox(width: 16),
             Expanded(

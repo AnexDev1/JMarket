@@ -78,7 +78,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
               );
             }
 
-            if (ordersProvider?.error != null && !ordersProvider.hasOrders) {
+            if (ordersProvider.error != null && !ordersProvider.hasOrders) {
               return Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -265,7 +265,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: .04),
             offset: const Offset(0, 2),
             blurRadius: 8,
           ),
@@ -506,7 +506,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: .08),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(

@@ -44,7 +44,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   String city = '';
   String zipCode = '';
   String phoneNumber = '';
-  String paymentMethod = 'cod';
+  String paymentMethod = 'telebirr';
 
   // User hints
   String? fullNameHint;

@@ -35,10 +35,7 @@ class OrderConfirmationStep extends StatelessWidget {
         return 'Telebirr';
       case 'cbebirr':
         return 'Cbebirr';
-      case 'mpesa':
-        return 'M-Pesa';
-      case 'ebirr':
-        return 'eBirr';
+
       case 'chapa':
         return localizations.payWithChapa;
       default:
@@ -52,9 +49,6 @@ class OrderConfirmationStep extends StatelessWidget {
         return Icons.money;
       case 'telebirr':
       case 'cbebirr':
-      case 'mpesa':
-      case 'ebirr':
-        return Icons.account_balance_wallet;
       case 'chapa':
         return Icons.payment;
       default:
@@ -68,8 +62,6 @@ class OrderConfirmationStep extends StatelessWidget {
         return Colors.green.shade700;
       case 'telebirr':
       case 'cbebirr':
-      case 'mpesa':
-      case 'ebirr':
         return Colors.indigo.shade700;
       case 'chapa':
         return Colors.indigo.shade700;

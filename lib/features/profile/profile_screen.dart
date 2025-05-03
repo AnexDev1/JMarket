@@ -266,7 +266,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildProfileHeader() {
     final userProvider = Provider.of<UserProvider>(context);
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    Provider.of<AuthProvider>(context, listen: false);
 
     return Container(
       margin: const EdgeInsets.all(16),
@@ -274,7 +274,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.07),
+            color: Colors.black.withValues(alpha: .07),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -312,7 +312,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             border: Border.all(color: Colors.white, width: 4),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: .1),
                 blurRadius: 8,
                 offset: const Offset(0, 3),
               ),
@@ -403,7 +403,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const Icon(Icons.email_outlined, size: 16, color: Colors.grey),
               const SizedBox(width: 6),
               Text(
-                user.email ?? '',
+                user.email,
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey.shade700,
@@ -461,45 +461,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         //   },
         // ),
       ],
-    );
-  }
-
-  Widget _buildActionButton(
-      {required IconData icon,
-      required String label,
-      required VoidCallback onPressed}) {
-    return InkWell(
-      onTap: onPressed,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.indigo.shade100),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 16, color: Colors.indigo.shade700),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: Colors.indigo.shade700,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -687,7 +648,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: .04),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
