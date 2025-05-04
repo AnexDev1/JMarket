@@ -94,6 +94,7 @@ class _HomeScreenState extends State<HomeScreen>
                 // Elevated Search Bar
                 SliverPersistentHeader(
                   delegate: _SliverAppBarDelegate(
+                    60.0, // Specify the height
                     child: Container(
                       color: Colors.grey[50],
                       padding:
@@ -434,9 +435,8 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
   final double height;
 
-  _SliverAppBarDelegate({
+  _SliverAppBarDelegate(this.height, {
     required this.child,
-    this.height = 60.0,
   });
 
   @override

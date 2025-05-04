@@ -313,74 +313,77 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-          child: ElevatedButton(
-            onPressed: () {
-              HapticFeedback.mediumImpact();
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text(AppLocalizations.of(context)!.signOut),
-                  content:
-                      Text(AppLocalizations.of(context)!.signOutConfirmation),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Text(AppLocalizations.of(context)!.cancel),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        Navigator.pop(context);
-                        try {
-                          final authProvider =
-                              Provider.of<AuthProvider>(context, listen: false);
-                          await authProvider.signOut(context);
-                          if (context.mounted) {
-                            context.go('/');
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Signed Out'),
-                                duration: const Duration(seconds: 2),
-                              ),
-                            );
-                          }
-                        } catch (e) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    '${'Signed Out Failed'}: ${e.toString()}'),
-                              ),
-                            );
-                          }
-                        }
-                      },
-                      child: Text(AppLocalizations.of(context)!.signOut),
-                    )
-                  ],
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red.shade50,
-              foregroundColor: Colors.red.shade600,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              minimumSize: const Size(double.infinity, 0),
+Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+  child: ElevatedButton(
+    onPressed: () async {
+      HapticFeedback.mediumImpact();
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(AppLocalizations.of(context)!.signOut),
+          content: Text(AppLocalizations.of(context)!.signOutConfirmation),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
-            child: Text(
-              AppLocalizations.of(context)!.signOut.toUpperCase(),
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                try {
+                  final authProvider =
+                      Provider.of<AuthProvider>(context, listen: false);
+                  final userProvider =
+                      Provider.of<UserProvider>(context, listen: false);
+                  // Invalidate cached user data
+                  userProvider.invalidateCache();
+                  // Sign the user out
+                  await authProvider.signOut(context);
+                  if (context.mounted) {
+                    context.go('/');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Signed Out'),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Sign Out Failed: ${e.toString()}'),
+                      ),
+                    );
+                  }
+                }
+              },
+              child: Text(AppLocalizations.of(context)!.signOut.toUpperCase()),
+            )
+          ],
         ),
+      );
+    },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.red.shade50,
+      foregroundColor: Colors.red.shade600,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      minimumSize: const Size(double.infinity, 0),
+    ),
+    child: Text(
+      AppLocalizations.of(context)!.signOut.toUpperCase(),
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  ),
+),
         Padding(
           padding: const EdgeInsets.only(bottom: 24.0),
           child: Text(

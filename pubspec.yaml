@@ -56,6 +56,7 @@ dependencies:
   chapasdk: ^0.0.7+1
   awesome_snackbar_content: ^0.1.5
   flutter_local_notifications: ^19.1.0
+  url_launcher: ^6.3.1
 
 
 dev_dependencies:

@@ -33,7 +33,7 @@ class AboutUsScreen extends StatelessWidget {
               context,
               title: 'Our Story',
               content:
-                  'JMarket was founded in 2021 with a simple mission: to create an online marketplace that connects customers with quality products from trusted sellers. What started as a small team with big dreams has grown into a thriving platform serving customers worldwide.',
+                  'JMarket was founded in 2025 with a simple mission: to create an online marketplace that connects customers with quality products from trusted sellers. What started as a small team with big dreams has grown into a thriving platform serving customers locally in jimma.',
             ),
             _buildSection(
               context,
@@ -69,8 +69,8 @@ class AboutUsScreen extends StatelessWidget {
               content:
                   'We\'d love to hear from you! Reach out to our team at:\n\n'
                   'Email: support@jmarket.com\n'
-                  'Phone: +1 (555) 123-4567\n'
-                  'Address: 123 Market Street, Tech City, TC 12345',
+                  'Phone: +251 917 41 36 22\n'
+                  'Address: Jimma,Oromia Ethiopia',
               isLast: true,
             ),
             const SizedBox(height: 32),
