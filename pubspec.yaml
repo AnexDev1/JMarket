@@ -56,6 +56,7 @@ dependencies:
   chapasdk: ^0.0.7+1
   awesome_snackbar_content: ^0.1.5
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

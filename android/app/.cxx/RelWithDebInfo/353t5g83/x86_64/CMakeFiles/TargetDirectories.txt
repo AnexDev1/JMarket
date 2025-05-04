@@ -1,0 +1,2 @@
+/home/k/StudioProjects/JMarket/android/app/.cxx/RelWithDebInfo/353t5g83/x86_64/CMakeFiles/edit_cache.dir
+/home/k/StudioProjects/JMarket/android/app/.cxx/RelWithDebInfo/353t5g83/x86_64/CMakeFiles/rebuild_cache.dir
