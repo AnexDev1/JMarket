@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jmarket/providers/products_provider.dart';
 import 'package:jmarket/providers/user_provider.dart';
+import 'package:jmarket/services/local_notification_service.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -28,6 +29,7 @@ void main() async {
   OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
   OneSignal.initialize(dotenv.env['APP_ID'] ?? '');
   OneSignal.Notifications.requestPermission(true);
+  await LocalNotificationService().initialize(); // initialize the notifications
 
   await Firebase.initializeApp();
 

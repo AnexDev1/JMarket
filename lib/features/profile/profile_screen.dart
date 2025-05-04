@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/language_provider.dart';
 import '../../providers/user_provider.dart';
-import '../../services/user_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -31,199 +30,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  void _showDeleteAccountConfirmation(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(Icons.warning_amber_rounded, color: Colors.red.shade700),
-            const SizedBox(width: 8),
-            Text(
-              AppLocalizations.of(context)!.deleteAccount,
-              style: TextStyle(color: Colors.red.shade700),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(AppLocalizations.of(context)!.deleteAccountConfirmation),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.red.shade50,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.red.shade200),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.warningLabel,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red.shade700,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    AppLocalizations.of(context)!.deleteAccountWarning,
-                    style: TextStyle(color: Colors.red.shade800),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              AppLocalizations.of(context)!.cancel,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _showFinalDeleteConfirmation(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red.shade50,
-              foregroundColor: Colors.red.shade700,
-            ),
-            child: Text(AppLocalizations.of(context)!.continue_),
-          ),
-        ],
-      ),
-    );
-  }
 
-  void _showFinalDeleteConfirmation(BuildContext context) {
-    final TextEditingController passwordController = TextEditingController();
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.confirmWithPassword),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(AppLocalizations.of(context)!.enterPasswordToDelete),
-            const SizedBox(height: 16),
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.password,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                prefixIcon: const Icon(Icons.lock_outline),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              if (passwordController.text.trim().isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content:
-                        Text(AppLocalizations.of(context)!.passwordRequired),
-                    backgroundColor: Colors.red.shade700,
-                  ),
-                );
-                return;
-              }
 
-              Navigator.pop(context);
-              _deleteAccount(context, passwordController.text);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red.shade700,
-              foregroundColor: Colors.white,
-            ),
-            child: Text(
-              AppLocalizations.of(context)!.deleteAccount,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _deleteAccount(BuildContext context, String password) async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-
-    try {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-      // Verify credentials before deletion
-      await authProvider.verifyPassword(password);
-
-      // Delete user data from other tables first
-      await _deleteUserData(authProvider.user!.id);
-
-      // Delete the authentication account
-      await authProvider.deleteAccount(context);
-
-      if (context.mounted) {
-        Navigator.pop(context); // Close loading dialog
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.accountDeleted),
-            backgroundColor: Colors.green,
-          ),
-        );
-
-        // Redirect to home/login page
-        context.go('/');
-      }
-    } catch (e) {
-      if (context.mounted) {
-        Navigator.pop(context); // Close loading dialog
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                '${AppLocalizations.of(context)!.deleteFailed}: ${e.toString()}'),
-            backgroundColor: Colors.red.shade700,
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> _deleteUserData(String userId) async {
-    // Delete user data from related tables
-    try {
-      // Delete profile data
-      await UserService().deleteUser(userId);
-
-      // Delete other related data
-      // Add other service calls here to delete user-related data from other tables
-    } catch (e) {
-      print('Error deleting user data: $e');
-      throw Exception('Failed to delete user data');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -328,25 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ),
-        InkWell(
-          onTap: () {
-            HapticFeedback.mediumImpact();
-            // Add photo change functionality here
-          },
-          child: Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: Colors.indigo.shade700,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 2),
-            ),
-            child: const Icon(
-              Icons.camera_alt_rounded,
-              size: 15,
-              color: Colors.white,
-            ),
-          ),
-        ),
+        
       ],
     );
   }
@@ -476,23 +267,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: AppLocalizations.of(context)!.myOrders,
               onTap: () => context.push('/orders'),
             ),
-            ProfileMenuItem(
-              icon: Icons.card_giftcard_outlined,
-              title: AppLocalizations.of(context)!.myRewards,
-              badge: '3',
-              onTap: () => context.push('/rewards'),
-            ),
+          
           ],
         ),
         _buildMenuSection(
           title: AppLocalizations.of(context)!.preferences,
           icon: Icons.settings_outlined,
           items: [
-            ProfileMenuItem(
-              icon: Icons.notifications_outlined,
-              title: AppLocalizations.of(context)!.notifications,
-              onTap: () => context.push('/notifications-settings'),
-            ),
+           
             ProfileMenuItem(
               icon: Icons.language_outlined,
               title: AppLocalizations.of(context)!.language,
@@ -525,7 +307,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: AppLocalizations.of(context)!.deleteAccount,
               onTap: () {
                 HapticFeedback.mediumImpact();
-                _showDeleteAccountConfirmation(context);
+                //navigate to account deletion screen
+                context.push('/delete-account');
               },
             ),
           ],

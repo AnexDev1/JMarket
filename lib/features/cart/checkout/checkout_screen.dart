@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jmarket/services/local_notification_service.dart';
 import 'package:jmarket/widgets/custom_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -148,37 +149,58 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Future<void> _placeOrder() async {
-    HapticFeedback.mediumImpact();
-    final cartProvider = Provider.of<CartProvider>(context, listen: false);
-    final supabase = Supabase.instance.client;
-    final localizations = AppLocalizations.of(context)!;
-    final user = supabase.auth.currentUser;
-    if (user == null) {
-      CustomSnackbar.showFailureSnackBar(context, 'Not Authenticated ',
-          '${localizations.userNotAuthenticated}');
+ Future<void> _placeOrder() async {
+  HapticFeedback.mediumImpact();
+  final cartProvider = Provider.of<CartProvider>(context, listen: false);
+  final supabase = Supabase.instance.client;
+  final localizations = AppLocalizations.of(context)!;
+  final user = supabase.auth.currentUser;
+  if (user == null) {
+    CustomSnackbar.showFailureSnackBar(
+      context,
+      'Not Authenticated',
+      '${localizations.userNotAuthenticated}'
+    );
+    return;
+  }
+  if (paymentMethod != 'cod') {
+    final subtotal = cartProvider.totalPrice;
+    const shipping = 0;
+    final tax = 0;
+    final total = subtotal + shipping + tax;
+    List<String> nameParts = name.split(' ');
+    String firstName = nameParts.isNotEmpty ? nameParts[0] : 'Customer';
+    String lastName = nameParts.length > 1 ? nameParts.last : '';
+    try {
+      await _processPayment(total, firstName, lastName);
+      await _createOrder();
+    } catch (e) {
+      CustomSnackbar.showFailureSnackBar(
+        context,
+        'Payment Failed ',
+        '${localizations.errorWithMessage(e.toString())}'
+      );
       return;
     }
-    if (paymentMethod != 'cod') {
-      final subtotal = cartProvider.totalPrice;
-      const shipping = 0;
-      final tax = 0;
-      final total = subtotal + shipping + tax;
-      List<String> nameParts = name.split(' ');
-      String firstName = nameParts.isNotEmpty ? nameParts[0] : 'Customer';
-      String lastName = nameParts.length > 1 ? nameParts.last : '';
-      try {
-        await _processPayment(total, firstName, lastName);
-        await _createOrder();
-      } catch (e) {
-        CustomSnackbar.showFailureSnackBar(context, 'Payment Failed ',
-            '${localizations.errorWithMessage(e.toString())}');
-      }
-    } else {
-      await _createOrder();
-    }
-  }
+  } else {
+    await _createOrder();
+    // Show a success snackbar
+    CustomSnackbar.showSuccessSnackBar(
+      context,
+      'Order Placed',
+      '${localizations.orderPlacedSuccessfully}'
+    );
+   await _showCODNotification();
+    context.go('/orders');
 
+  }
+}
+Future<void> _showCODNotification() async {
+  await LocalNotificationService().showNotification(
+    title: 'Order Successful',
+    body: 'Your order has been placed successfully via COD.'
+  );
+}
   Widget _buildStepIndicator({
     required bool isActive,
     required bool isDone,

@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
+import 'package:supabase_flutter/supabase_flutter.dart';
+//http
+import 'package:http/http.dart' as http;
 import '../../providers/auth_provider.dart';
 
 class AccountDeletionScreen extends StatefulWidget {
@@ -25,28 +29,49 @@ class _AccountDeletionScreenState extends State<AccountDeletionScreen> {
   }
 
   Future<void> _deleteAccount() async {
-    if (_passwordController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.passwordRequired),
-          backgroundColor: Colors.red.shade700,
-        ),
-      );
-      return;
+  if (_passwordController.text.trim().isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.passwordRequired),
+        backgroundColor: Colors.red.shade700,
+      ),
+    );
+    return;
+  }
+
+  setState(() {
+    _isLoading = true;
+  });
+
+  try {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    // Verify the user's password before deletion:
+    await authProvider.verifyPassword(_passwordController.text);
+
+    // Get the user ID and auth token from Supabase.
+    final supabase = Supabase.instance.client;
+    final userId = supabase.auth.currentUser?.id;
+    final authToken = supabase.auth.currentSession?.accessToken;
+
+    if (userId == null || authToken == null) {
+      throw Exception('User not authenticated');
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    // Call the delete-user-with-orders edge function
+    final url = 'https://xhkqzuzzfcjvgvvspsqz.supabase.co/functions/v1/delete-user-with-orders';
+    final response = await http.delete(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer $authToken',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'userId': userId}),
+    );
 
-    try {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
-      // Verify password
-      await authProvider.verifyPassword(_passwordController.text);
-
-      // Delete account
-      await authProvider.deleteAccount(context);
+    if (response.statusCode == 200) {
+      // Sign out the user after deletion.
+      await supabase.auth.signOut();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -55,27 +80,29 @@ class _AccountDeletionScreenState extends State<AccountDeletionScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        context.go('/'); // Redirect to login/home
+        context.go('/'); // Redirect to login/home screen.
       }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                '${AppLocalizations.of(context)!.deleteFailed}: ${e.toString()}'),
-            backgroundColor: Colors.red.shade700,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+    } else {
+      final errorResponse = jsonDecode(response.body);
+      throw Exception(errorResponse['error'] ?? 'Unknown error');
+    }
+  } catch (e) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${AppLocalizations.of(context)!.deleteFailed}: ${e.toString()}'),
+          backgroundColor: Colors.red.shade700,
+        ),
+      );
+    }
+  } finally {
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
-
+}
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;

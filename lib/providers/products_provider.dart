@@ -43,7 +43,7 @@ class ProductsProvider with ChangeNotifier {
           }
         });
 
-        notifyListeners();
+        Future.microtask(() => notifyListeners());
       },
     );
 
@@ -64,7 +64,7 @@ class ProductsProvider with ChangeNotifier {
           }
         });
 
-        notifyListeners();
+         Future.microtask(() => notifyListeners());
       },
     );
 
@@ -82,7 +82,7 @@ class ProductsProvider with ChangeNotifier {
                 (p) => p['id'].toString() == deletedProductId.toString());
           });
 
-          notifyListeners();
+         Future.microtask(() => notifyListeners());
         }
       },
     );
@@ -108,32 +108,33 @@ class ProductsProvider with ChangeNotifier {
     return await fetchProducts(category);
   }
 
-  Future<List<Map<String, dynamic>>> fetchProducts(String category) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
+Future<List<Map<String, dynamic>>> fetchProducts(String category) async {
+  _isLoading = true;
+  _error = null;
+  // Defer notifying listeners until after the current build frame
+  Future.delayed(Duration.zero, () => notifyListeners());
 
-    try {
-      final products = await _productService.fetchProducts(category: category);
+  try {
+    final products = await _productService.fetchProducts(category: category);
 
-      // Cache the results
-      _productsCache[category] = products;
-      _lastFetchTime[category] = DateTime.now();
+    // Cache the results
+    _productsCache[category] = products;
+    _lastFetchTime[category] = DateTime.now();
 
-      if (category.toLowerCase() == 'all') {
-        products.shuffle();
-      }
-
-      _isLoading = false;
-      notifyListeners();
-      return products;
-    } catch (e) {
-      _isLoading = false;
-      _error = e.toString();
-      notifyListeners();
-      return [];
+    if (category.toLowerCase() == 'all') {
+      products.shuffle();
     }
+
+    _isLoading = false;
+    Future.delayed(Duration.zero, () => notifyListeners());
+    return products;
+  } catch (e) {
+    _isLoading = false;
+    _error = e.toString();
+    Future.delayed(Duration.zero, () => notifyListeners());
+    return [];
   }
+}
 
   Future<List<Map<String, dynamic>>> refreshProducts(String category) async {
     return await fetchProducts(category);
