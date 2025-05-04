@@ -387,7 +387,7 @@ Padding(
         Padding(
           padding: const EdgeInsets.only(bottom: 24.0),
           child: Text(
-            'Version 1.0.0',
+            'Version 1.1.2',
             style: TextStyle(
               fontSize: 12,
               color: Colors.grey.shade500,

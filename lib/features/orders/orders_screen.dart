@@ -350,34 +350,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     height: 1.4,
                   ),
                 ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.black87,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        side: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      child: const Text('Track Order'),
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.black87,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                      ),
-                      child: const Text('View Details'),
-                    ),
-                  ],
-                ),
+              
               ],
             ),
           ),
@@ -453,7 +426,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                '\$${product.price.toStringAsFixed(2)}',
+                '${product.price.toStringAsFixed(2)} ETB',
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 15,

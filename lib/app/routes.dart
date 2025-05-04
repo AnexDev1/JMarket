@@ -42,6 +42,7 @@ class AppRoutes {
   static const String checkout = '/checkout';
   static const String orderHistory = '/order-history';
   static const String orderDetails = '/orders';
+
   static const String help = '/help';
 }
 
@@ -142,6 +143,7 @@ final appRouter = GoRouter(
         return ProductDetailsScreen(productId: productId);
       },
     ),
+   
     GoRoute(
       path: AppRoutes.checkout,
       builder: (context, state) => const CheckoutScreen(),
